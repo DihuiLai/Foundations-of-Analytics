@@ -1,4 +1,4 @@
-**/*.aux
-**/*.tex
-**/*.log
-**/*.synctex.gz
+**.aux
+**.tex
+**.log
+**.synctex.gz
