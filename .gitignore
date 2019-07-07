@@ -2,3 +2,13 @@
 **.tex
 **.log
 **.synctex.gz
+**.bbl
+**.blg
+**.nav
+**.toc
+**.dvi
+**.out
+**.pyg
+**.snm
+**.vrb
+**.Rhistory
