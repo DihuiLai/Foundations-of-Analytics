@@ -1,59 +1,54 @@
-# washu_data_analytics_foundation
+# T81-574: Foundations of Analytics
 
 Topics
-1.	Introduction to Data Science/Analytics (1 class)
-1.1.	Data Analytics in Industry (risk management, marketing, operation, sales, finance, insurance)
-1.2.	Linear regression Example: hello world!
-1.3.	Supervised/unsupervised learning
-1.4.	Essences of machine learning: cost function, optimization methods
+1.	Introduction to data science/analytics
+*	Linear algebra review
+*	Python environment setup
 
-2.	Statistical Description of Structured Data (1 class)
-2.1.	Understand Data Distribution: histogram, density estimation
-2.2.	Data distribution comparisons: KS-test
-2.3.	Basic Distributions: Gaussian, Poisson, Gamma, Chi-square
-2.4.	Moments of a distribution: mean, variance etc.
-2.5.	Correlations
+2.	Statistical Description of Structured Data
+*	Introduction to statistics: random variables, random distribution, histogram, correlation
+*	Statistic distributions: Gaussian, Poisson etc.
 
-3.	Machine Learning I: Linear model and Generalized Linear Model (3 class)
-3.1.	Linear Regression
-3.2.	Cost function I: least square, likelihood function
-3.3.	Optimization Method I: Gradient Descent
-3.4.	Logistic Regression 
-3.5.	Generalized Linear Model (GLM)
-3.6.	Overfitting and prevention
-3.7.	Variable Selections
+3. Linear model and logistic regression
+*	Linear regression; logistic regression
+*	Newton Method and Gradient Descent
 
-4.	Distributed computing I: Map-reduce (1 class)
-4.1.	Methods of parallelization
-4.2.	Algorithms
+4. Generalized Linear Model
+*	Exponential Family 
+*	 Generalized Linear Model
 
-5.	Machine Learning II: Tree algorithms (2 class)
-5.1.	CART
-5.2.	Random forest and Gradient Boosting Machine
-5.3.	Optimization Method II
+5. Statistical Modeling Framework
+*	Empirical Modeling Practices 
+*	Feature engineer, Variable selection
+*	Model Evaluations
+*	Stochastic Gradient Descent
 
-6.	Machine Learning III: Generative Models (1 class)
-6.1.	Naïve Bayesian
-6.2.	Discriminative v.s. Generative Model 
-6.3.	Hidden Markov Model
-6.4.	Optimization Method II: expectation–maximization (EM) algorithm
+6. Machine Learning I
+*	Naïve Bayesian
+*	KNN
 
-7.	Introduction to Unstructured Data Analysis (1 class)
-7.1.	Image Analysis: face recognition, object detection etc. 
-7.2.	Document Analysis: OCR, nature language processing (NLP)
-7.3.	Speech recognition
-7.4.	Statistical Description of Unstructured Data
+7. Machine Learning II: Tree Algorithms
+*	CART Model
+*	Random Forest and GBM
+*	Optimization Method II
 
-8.	Machine Learning IV: Neural network and Deep learning (3 class)
-8.1.	Introduction to neural network
-8.2.	Convolution Neural Network 
-8.3.	LSTM
-8.4.	Cost function II: softmax, cross-entropy, CTC and CRF
-8.5.	Optimization Method III: stochastic gradient descent
-8.6.	Distributed computing: GPU
+8. Introduction to Unstructured Data
+*	Random Process, Random Walk 
+*	Neural Network
 
-9.	Machine Learning V: Unsupervised Learning (1 class)
-9.1.	PCA
-9.2.	K-mean Clustering and Hierarchical Clustering
-9.3.	Auto-encoder
+9. Nature Language Process I
+*	 Text mining basics: regular expression, word count, bag of words
+*	 Word embedding; Language model
+
+10. Nature Language Process II
+*	Hidden Markov Model
+*	Document classification, Part-of-speech tagging, Name Entity Recognition
+
+11. Unsupervised Learning
+*	PCA
+*	K-mean Clustering and Hierarchical Clustering
+
+12. Image Analysis
+*	Computer Vision
+*	Optical Character Recognition (OCR)
 
