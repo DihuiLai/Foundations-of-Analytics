@@ -30,3 +30,6 @@ More instructions see: https://jupyter.org/install
 
 You may start a jupyter notebook by using
 ```jupyter notebook```
+
+### Install Numpy
+```pip install numpy```
