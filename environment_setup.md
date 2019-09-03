@@ -1,4 +1,4 @@
-## Environment Setup on Linux
+## Environment Setup
 ### Install python on Linux
 ```sudo apt install python3.7```
 
