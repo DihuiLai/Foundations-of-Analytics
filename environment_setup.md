@@ -7,6 +7,12 @@ More instructions see: https://linuxize.com/post/how-to-install-python-3-7-on-ub
 ### Install python on Windows/Mac
 Download python https://www.python.org/downloads/
 
+### Install pyCharm
+
+Download the community version from https://www.jetbrains.com/pycharm/download/ 
+
+Install the software
+
 ### Install pip
 
 To install pip, securely download "get-pip.py" from https://bootstrap.pypa.io/get-pip.py
@@ -15,12 +21,6 @@ Run ```python get-pip.py```
 
 More instructions see: https://pip.pypa.io/en/stable/installing/
 
-
-### Install pyCharm
-
-Download the community version from https://www.jetbrains.com/pycharm/download/ 
-
-Install the software
 
 ### Install Jupyter-Notebook
 
