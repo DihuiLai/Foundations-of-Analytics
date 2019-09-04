@@ -24,12 +24,12 @@ More instructions see: https://pip.pypa.io/en/stable/installing/
 
 ### Install Jupyter-Notebook
 
-```pip install jupyterlab```
+Run ```pip install jupyterlab```
 
 More instructions see: https://jupyter.org/install
 
 You may start a jupyter notebook by using
-```jupyter notebook```
+Run ```jupyter notebook```
 
 ### Install Numpy
-```pip install numpy```
+Run ```pip install numpy```
