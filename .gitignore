@@ -1,3 +1,7 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
 **.aux
 **.tex
 **.log
@@ -14,3 +18,12 @@
 **.Rhistory
 **.eps
 assignment/data
+demo/Data
+demo/Homework_Solution
+demo/pythoncode
+demo/**.py
+demo/.idea
+**.DS_Store
+demo/.ipynb_checkpoints/
+~**
+lecture_demos/Data
