@@ -19,6 +19,7 @@
 **.eps
 assignment/data
 demo/Data
+demo/JupyterNotebook/Data
 demo/Homework_Solution
 demo/pythoncode
 demo/**.py
