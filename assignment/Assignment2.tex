@@ -1,0 +1,99 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Lachaise Assignment
+% LaTeX Template
+% Version 1.0 (26/6/2018)
+%
+% This template originates from:
+% http://www.LaTeXTemplates.com
+%
+% Authors:
+% Marion Lachaise & François Févotte
+% Vel (vel@LaTeXTemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{article}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr, graphicx}
+\fancyhf{}
+
+\rhead{\includegraphics[width=8cm]{washulogo.eps}}
+\lhead{T81-574: Foundations of Analytics}
+
+\input{structure.tex} % Include the file specifying the document structure and custom commands
+
+%----------------------------------------------------------------------------------------
+%	ASSIGNMENT INFORMATION
+%-----------------------------------the-----------------------------------------------------
+
+\title{Homework \#	2} % Title of the assignment
+
+%----------------------------------------------------------------------------------------
+\begin{document}
+
+\maketitle % Print the title
+\thispagestyle{fancy}
+\pagestyle{fancy}
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+
+\section{Optimization I: Linear Regression}
+
+\subsection{Single Variable Regression}
+Analyze the data set \textbf{"single\_variate\_optimization.csv"} and understand the relationship between the target variable Y and the predictor X
+\begin{enumerate}[(1)]
+\item Calculate the variance, standard deviation of X and Y
+\item Calculate the covariance, correlation coefficient of X and Y
+\item Using the LinearRegression from sklearn package in python and build a linear regression model $Y\sim X$, what are $\beta_0$ and $\beta_1$?
+\item Can you replicate $\beta_1$ using the calculation from (1) and (2)? How about $\beta_0$?  
+\end{enumerate}
+
+\subsection{Multivariate Regression}
+Analyze the data set \textbf{"multi\_variate\_optimization.csv"} and understand the relationship between the target variable Y and the predictor Xs
+
+\begin{enumerate}[(1)]
+\item Using the LinearRegression from sklearn package in python and build a linear regression model $Y\sim X$, what are the $\beta$s?
+
+\item Caculate the $\beta$s using the algorithm that we derived in class. hint: $\hat{
+\beta}=(X^TX)^{-1}X^TY$. Make sure you replicate $\beta_0$. 
+\end{enumerate}
+
+\section{Optimization II: Logistic Regression} % Unnumbered section
+Analyze the data set \textbf{"logistic\_regression\_optimization.csv"} and understand the relationship between the target variable Y and the predictor Xs
+
+\begin{enumerate}[(1)]
+\item Using the LogisticRegression from sklearn package in python and build a logistic regression model $Y\sim X$, what are the $\beta$s? Hint: make sure that you set the regularization parameter to be large e.g. $C=1e4$. See the code below for your reference
+\begin{lstlisting}[language=Python]
+from sklearn.linear_model import LogisticRegression
+logisticRegr = LogisticRegression(C=1e4)
+\end{lstlisting}
+
+\item Calculate $\beta$s using Newton-Raphson method. Hint: initialize $\beta$s with some random values e.g. $0.1$. Update $\beta$s using the formula below until $\vec{\beta}$ converges, i.e. stop updating when the minimum value of $|\Delta \vec{\beta}|$ is less than $\delta=1e^{-15}$. How are your $\beta$s compare to what you get in question (1)?
+
+\begin{align*}
+\vec{\beta}^{(k+1)} &\leftarrow \vec{\beta}^{(k)}+(\textbf{X}^T\textbf{W}\textbf{X})^{-1}\textbf{X}^T(\textbf{y}-\hat{\textbf{y}})
+\end{align*}
+Here,
+\begin{align*}
+\textbf{W}=  \begin{bmatrix}
+    \hat{y}^1 (1-\hat{y}^1) & & \\
+    & \ddots & \\
+    & & \hat{y}^n (1-\hat{y}^n)
+  \end{bmatrix}
+\end{align*}
+
+\item How many iteration is needed before  $\vec{\beta}$ converges?
+
+\item Change the convergence condition by setting $\delta$ to be 0.5 and 0.1. What are the $\vec{\beta}$s, for the two $\delta$s that you choose? How many iterations are needed before they converge?
+\end{enumerate}
+
+\end{document}

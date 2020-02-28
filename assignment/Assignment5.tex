@@ -1,0 +1,66 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Lachaise Assignment
+% LaTeX Template
+% Version 1.0 (26/6/2018)
+%
+% This template originates from:
+% http://www.LaTeXTemplates.com
+%
+% Authors:
+% Marion Lachaise & François Févotte
+% Vel (vel@LaTeXTemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{article}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr, graphicx}
+\fancyhf{}
+\usepackage{hyperref}
+
+\rhead{\includegraphics[width=8cm]{washulogo.eps}}
+\lhead{T81-574: Foundations of Analytics}
+
+\input{structure.tex} % Include the file specifying the document structure and custom commands
+
+%----------------------------------------------------------------------------------------
+%	ASSIGNMENT INFORMATION
+%-----------------------------------the-----------------------------------------------------
+
+\title{Homework \# 5} % Title of the assignment
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Print the title
+\thispagestyle{fancy}
+\pagestyle{fancy}%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+
+
+\section{Document Classification} % Unnumbered section
+Use the  data set of ~5000 medical cases \textbf{"medicaltranscriptions.csv"}. Build a document classification model.
+
+\begin{enumerate}[(1)]
+
+\item Convert the "description" of each case to a vector (using the pretrained word to vector dictionary "PubMed-and-PMC-w2v.bin"). You may use the average of word vectors as the document vector representation.
+\item Build a multi-class classification SVM model to classify a document into one of the "medical\_ specialty" categories.  Use the document vector as your predictors and use "medical\_ specialty" as your target variable. 
+\item What are the in-sample recall rates for each document types?
+\item Which "medical\_ specialty" has the highest recall rate?
+\item Validate your SVM model by training your model on 3000 cases and apply the model to the rest 1999 cases. Create the confusion matrix and  calculate the recall rates for each document type.
+\item How are the test recall rates compare to the in sample recall rates?
+
+\end{enumerate}
+
+
+\end{document}

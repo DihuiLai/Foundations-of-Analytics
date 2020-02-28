@@ -1,0 +1,78 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Lachaise Assignment
+% LaTeX Template
+% Version 1.0 (26/6/2018)
+%
+% This template originates from:
+% http://www.LaTeXTemplates.com
+%
+% Authors:
+% Marion Lachaise & François Févotte
+% Vel (vel@LaTeXTemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{article}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr, graphicx}
+\fancyhf{}
+\usepackage{hyperref}
+
+\rhead{\includegraphics[width=8cm]{washulogo.eps}}
+\lhead{T81-574: Foundations of Analytics}
+
+\input{structure.tex} % Include the file specifying the document structure and custom commands
+
+%----------------------------------------------------------------------------------------
+%	ASSIGNMENT INFORMATION
+%-----------------------------------the-----------------------------------------------------
+
+\title{Homework \#	4} % Title of the assignment
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Print the title
+\thispagestyle{fancy}
+\pagestyle{fancy}%----------------------------------------------------------------------------------------
+%	PROBLEM 4
+%----------------------------------------------------------------------------------------
+
+\section{Bigram Language Model}
+Build a bigram language model on the data "J. K. Rowling - Harry Potter 1 - Sorcerer's Stone". 
+\begin{enumerate}[(1)]
+\item Tokenize the data into a list of words using the function \textbf{nltk.wordpunct\_tokenize}; convert all words to lower case; remove stop words and only keep alphabetic terms.
+\item Build a vocabulary from the tokens, how many unique words do you find?
+\item Build a frequency table where the rows represents the word $w_{t-1}$ and the columns represent one word afterwards $w_{t}$. Count the occurrence of each word pair $C({w_{t-1} w_{t}})$
+\item How many times doe the following words occur: "harry", "stone",  "hagrid", "feeling", "living" (hint: what if you sum all the numbers in a row?)
+\item Calculate the following conditional probabilities $p(potter|harry)$, $p(said|harry)$, $p(knows|everyone)$.
+\end{enumerate}
+
+
+\section{Word2vec and POS-tag of Medical Transcripts} % Unnumbered section
+Understand medical notes is a challenging NLP problem. Lots of good application can be made if a machine can read doctors' notes and interpret the underlying medical conditions and severity. In this exercise, you are presented a simple data of ~5000 medical cases \textbf{"medicaltranscriptions.csv"}. Each case has the transcript and the associated medical specialty. Please 
+
+\begin{enumerate}[(1)]
+	\item For the "description" of each individual, use "word\_tokenize" function from nltk and convert the corpus into a list of words.
+	\item Create a vocabulary containing all words appear in the descriptions. Count the number of total occurrence of each word. List the top 10 words that has the highest occurrence. Are those words related to medical terms?
+	\item Instead of creating a vocabulary for all words, apply POS-tag on each word and create a vocabulary of nouns only (i.e. NN, NNP, NNS and NNPS)
+	\item Count the number of occurrence of each word in the new vocabulary. List the top 10 words that have the highest occurrence. Are those words related to medical terms?
+	\item Convert the words in question (3) vocabulary to continuous vectors, using the pretrained word to vector dictionary "PubMed-and-PMC-w2v.bin". You may download the data from \url{http://evexdb.org/pmresources/vec-space-models}. Can all words find the corresponding vector representations?
+	\item Calculate the cosine-similarity of the following word pair: "allergy/allergic"; "heart/lung"; "water/heart". Do the similarity measures make sense to you?
+\end{enumerate}
+
+
+
+
+
+
+\end{document}

@@ -1,0 +1,354 @@
+%!TeX encoding = UTF-8
+%!TeX program = xelatex
+\documentclass[notheorems, aspectratio=54]{beamer}
+% aspectratio: 1610, 149, 54, 43(default), 32
+\usepackage{hyperref}
+
+ 
+\usepackage{latexsym}
+\usepackage{amsmath,amssymb}
+\usepackage{mathtools}
+\usepackage{color,xcolor}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{amsthm}
+\DeclareMathOperator*{\argmax}{argmax} % thin space, limits underneath in displays
+\usepackage{lmodern} % 解决 font warning
+% \usepackage[UTF8]{ctex}
+\usepackage{animate} % insert gif
+
+\usepackage{lipsum} % To generate test text 
+\usepackage{ulem} % 下划线，波浪线
+
+\usepackage{listings} % display code on slides; don't forget [fragile] option after \begin{frame}
+
+% ----------------------------------------------
+% tikx
+\usepackage{framed}
+\usepackage{fancybox}
+\usepackage{tikz}
+\usepackage{pgf}
+\usetikzlibrary{automata, calc,trees,positioning,arrows,chains,shapes.geometric,%
+    decorations.pathreplacing,decorations.pathmorphing,shapes,%
+    matrix,shapes.symbols}
+\pgfmathsetseed{1} % To have predictable results
+% Define a background layer, in which the parchment shape is drawn
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+% define styles for the normal border and the torn border
+\tikzset{
+  normal border/.style={orange!30!black!10, decorate, 
+     decoration={random steps, segment length=2.5cm, amplitude=.7mm}},
+  torn border/.style={orange!30!black!5, decorate, 
+     decoration={random steps, segment length=.5cm, amplitude=1.7mm}}}
+
+% Macro to draw the shape behind the text, when it fits completly in the
+% page
+\def\parchmentframe#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};  % Draw the text of the node
+  \begin{pgfonlayer}{background}  % Draw the shape behind
+  \fill[normal border] 
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text will continue in next page
+\def\parchmentframetop#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};    % Draw the text of the node
+  \begin{pgfonlayer}{background}    
+  \fill[normal border]              % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]                % Add the torn lower border
+        ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+        ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text continues from previous page
+\def\parchmentframebottom#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};   % Draw the text of the node
+  \begin{pgfonlayer}{background}   
+  \fill[normal border]             % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]               % Add the torn upper border
+        ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+        ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when both the text continues from previous page
+% and it will continue in next page
+\def\parchmentframemiddle#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};   % Draw the text of the node
+  \begin{pgfonlayer}{background}   
+  \fill[normal border]             % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]               % Add the torn lower border
+        ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+        ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+  \fill[torn border]               % Add the torn upper border
+        ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+        ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Define the environment which puts the frame
+% In this case, the environment also accepts an argument with an optional
+% title (which defaults to ``Example'', which is typeset in a box overlaid
+% on the top border
+\newenvironment{parchment}[1][Example]{%
+  \def\FrameCommand{\parchmentframe}%
+  \def\FirstFrameCommand{\parchmentframetop}%
+  \def\LastFrameCommand{\parchmentframebottom}%
+  \def\MidFrameCommand{\parchmentframemiddle}%
+  \vskip\baselineskip
+  \MakeFramed {\FrameRestore}
+  \noindent\tikz\node[inner sep=1ex, draw=black!20,fill=white, 
+          anchor=west, overlay] at (0em, 2em) {\sffamily#1};\par}%
+{\endMakeFramed}
+
+% ----------------------------------------------
+
+\mode<presentation>{
+    \usetheme{CambridgeUS}
+    % Boadilla CambridgeUS
+    % default Antibes Berlin Copenhagen
+    % Madrid Montpelier Ilmenau Malmoe
+    % Berkeley Singapore Warsaw
+    \usecolortheme{beaver}
+    % beetle, beaver, orchid, whale, dolphin
+    \useoutertheme{infolines}
+    % infolines miniframes shadow sidebar smoothbars smoothtree split tree
+    \useinnertheme{circles}
+    % circles, rectanges, rounded, inmargin
+}
+% 设置 block 颜色
+\setbeamercolor{block title}{bg=red!30,fg=white}
+
+\newcommand{\reditem}[1]{\setbeamercolor{item}{fg=red}\item #1}
+
+% 缩放公式大小
+\newcommand*{\Scale}[2][4]{\scalebox{#1}{\ensuremath{#2}}}
+
+% 解决 font warning
+\renewcommand\textbullet{\ensuremath{\bullet}}
+
+% ---------------------------------------------------------------------
+% flow chart
+\tikzset{
+    >=stealth',
+    punktchain/.style={
+        rectangle, 
+        rounded corners, 
+        % fill=black!10,
+        draw=white, very thick,
+        text width=6em,
+        minimum height=2em, 
+        text centered, 
+        on chain
+    },
+    largepunktchain/.style={
+        rectangle,
+        rounded corners,
+        draw=white, very thick,
+        text width=10em,
+        minimum height=2em,
+        on chain
+    },
+    line/.style={draw, thick, <-},
+    element/.style={
+        tape,
+        top color=white,
+        bottom color=blue!50!black!60!,
+        minimum width=6em,
+        draw=blue!40!black!90, very thick,
+        text width=6em, 
+        minimum height=2em, 
+        text centered, 
+        on chain
+    },
+    every join/.style={->, thick,shorten >=1pt},
+    decoration={brace},
+    tuborg/.style={decorate},
+    tubnode/.style={midway, right=2pt},
+    font={\fontsize{10pt}{12}\selectfont},
+}
+% ---------------------------------------------------------------------
+
+% code setting
+\lstset{
+    language=C++,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{red},
+    breaklines=true,
+    xleftmargin=2em,
+    numbers=left,
+    numberstyle=\color[RGB]{222,155,81},
+    frame=leftline,
+    tabsize=4,
+    breakatwhitespace=false,
+    showspaces=false,               
+    showstringspaces=false,
+    showtabs=false,
+    morekeywords={Str, Num, List},
+}
+
+% ---------------------------------------------------------------------
+
+%% preamble
+\title{Lecture 10}
+% \subtitle{The subtitle}
+\author{Dihui Lai}
+\institute[WUSTL]{dlai@wustl.edu}
+
+% -------------------------------------------------------------
+
+\begin{document}
+
+%% title frame
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\section{Document Representation}
+
+
+
+\begin{frame}
+\frametitle{Document Representations}
+A document can be represented by the words and the number of their occurence using term-document matrxix
+\begin{center}
+ \begin{tabular}{c c c c c} 
+ \hline
+ Words & As You Like It& Twelfth Night& Ulius Caesar& Henry V\\ [0.5ex] 
+ \hline\hline
+ battle & 1 & 0 & 7 &13 \\ 
+ \hline
+ good & 114 & 80 &62 & 89\\
+ \hline
+ fool & 36 & 58 & 1 & 5 \\
+ \hline
+ wit & 20 & 15 & 2 & 3 \\
+ \hline
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{tf-idf Weighted Measure}
+Certain words are more common in all documents e.g. the, it, they. The less frequent like "litigation" might be more important that the more frequent word "good". The tf-idf algorithms can be used to adjust the intuition.
+$$
+w_{t,d} = tf_{t,d}\times idf_{t}
+$$
+
+Here,
+$$
+tf_{t, d}=1 + log_{10}(count(t, d)) \text{ if } count(t, d) > 0, \text{ else } 0
+$$
+With $count(t, d)$  the number of occurence of the term $t$ in the document $d$
+
+$$
+idf_{t}=log_{10}\left(\frac{N}{df_t}\right)
+$$ 
+N is the total number of documents in the collection, and $df_t$ is the number of documents in which term t occurs. If word good appears in all collected document, $idf_t=0$
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Document/Paragraph to Vector Representation}
+
+\begin{itemize}
+\item Average of the word embedding: take the mean of the vector embedding of the words in the document. 
+\item LDA (Latent Dirichlet Allocation) [David Blei, Andrew Ng, and Michael I. Jordan, 2003]
+\item Distributed Memory version of Paragraph Vector (PV-DM)
+\item ...
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Document Classification, Sentiment Analysis}
+\begin{itemize}
+\item Document classification: use machine learning to classify a document type, novel, news, entertainment etc. 
+\item Sentiment Analysis: given a document/paragraph, infer the underlying sentiment (positive/negative, like/dislike)
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Support Vector Machine (SVM)}
+
+\begin{itemize}
+\item SVM is a classification/regression model that use hyperplane to categorize data points in high dimension space. 
+\item Loss function: $\mathnormal{L=\frac{1}{2}|w|^2}$ when $\mathnormal{y^i (\vec{w}\cdot \vec{x}^i+b)\geq 1}$
+\item or equivalently  $\mathnormal{L'=\frac{1}{2}|w|^2-\sum\limits_{i=1}^N \alpha_i (y^i (\vec{w}\cdot \vec{x}^i+b)-1)}$ 
+\item Optimization: $\mathnormal{\frac{\partial L'}{\partial w_i}=0}$
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Other NLP Challenges and Transfer Learning}
+
+\begin{itemize}
+\item Question and answer, e.g. SQuAD (the Stanford Question Answering Dataset)
+\item Machine translation
+\item Multi-lingual NLP
+\item Transfer learning e.g. BERT (\url {https://arxiv.org/abs/1810.04805})
+\end{itemize}
+
+\end{frame}
+
+%% normal frame
+\section{Regular Expression}
+
+\begin{frame}
+   \frametitle{Regular Expression}
+\begin{itemize}
+\item Algebraic notation for characterizing a set of strings.
+\item Useful for searching in corpus of texts
+\item Python example: str = "The rain in Spain"; x = re.findall("Spain", str)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Basic Regular Expression}
+\begin{itemize}
+\item[-][]: Used to indicate a set of characters e.g. [abc] will match 'a', 'b', or 'c'.
+\item[-]'\textbackslash d': matches any decimal digit; equivalent to the set [0-9].
+\item[-] '+': match 1 or more repetitions of the preceding RE
+\item[-]'\textbackslash D': anything but a number (a non-digit)	
+\item[-] '\textbackslash s': space (tab,space,newline etc.)
+\item[-] '\textbackslash S': anything but a space e.g. '\textbackslash S+@\textbackslash S+' represents email address
+\item[-]'\textasciicircum': This expression matches the start of a string
+\end{itemize}
+
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Regular Expression in Python}
+re.search(regex, text) returns a match object when the pattern is found or not match if the pattern is not found.
+\begin{lstlisting}
+import re
+m = re.search('hello', 'hello world, hello all, good afternoon')
+print m.group(0)
+#hello
+\end{lstlisting}
+
+re.findall(regex, text) will return a list of all the matches.
+\begin{lstlisting}
+m = re.findall('hello', 'hello world, hello all, good afternoon')
+print m
+#['hello', 'hello']
+\end{lstlisting}
+\end{frame}
+
+\end{document}

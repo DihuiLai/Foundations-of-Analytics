@@ -1,0 +1,156 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Lachaise Assignment
+% LaTeX Template
+% Version 1.0 (26/6/2018)
+%
+% This template originates from:
+% http://www.LaTeXTemplates.com
+%
+% Authors:
+% Marion Lachaise & François Févotte
+% Vel (vel@LaTeXTemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{article}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr, graphicx}
+\fancyhf{}
+
+\rhead{\includegraphics[width=8cm]{washulogo.eps}}
+\lhead{T81-574: Foundations of Analytics}
+
+\input{structure.tex} % Include the file specifying the document structure and custom commands
+
+%----------------------------------------------------------------------------------------
+%	ASSIGNMENT INFORMATION
+%-----------------------------------the-----------------------------------------------------
+
+%----------------------------------------------------------------------------------------
+\usepackage{color}
+\usepackage{listings}
+\usepackage{setspace}
+\definecolor{Code}{rgb}{0,0,0}
+\definecolor{Decorators}{rgb}{0.5,0.5,0.5}
+\definecolor{Numbers}{rgb}{0.5,0,0}
+\definecolor{MatchingBrackets}{rgb}{0.25,0.5,0.5}
+\definecolor{Keywords}{rgb}{0,0,1}
+\definecolor{self}{rgb}{0,0,0}
+\definecolor{Strings}{rgb}{0,0.63,0}
+\definecolor{Comments}{rgb}{0,0.63,1}
+\definecolor{Backquotes}{rgb}{0,0,0}
+\definecolor{Classname}{rgb}{0,0,0}
+\definecolor{FunctionName}{rgb}{0,0,0}
+\definecolor{Operators}{rgb}{0,0,0}
+\definecolor{Background}{rgb}{0.98,0.98,0.98}
+\lstdefinelanguage{Python}{
+numbers=left,
+numberstyle=\footnotesize,
+numbersep=1em,
+xleftmargin=1em,
+framextopmargin=2em,
+framexbottommargin=2em,
+showspaces=false,
+showtabs=false,
+showstringspaces=false,
+frame=l,
+tabsize=4,
+% Basic
+basicstyle=\ttfamily\small\setstretch{1},
+backgroundcolor=\color{Background},
+% Comments
+commentstyle=\color{Comments}\slshape,
+% Strings
+stringstyle=\color{Strings},
+morecomment=[s][\color{Strings}]{"""}{"""},
+morecomment=[s][\color{Strings}]{'''}{'''},
+% keywords
+morekeywords={import,from,class,def,for,while,if,is,in,elif,else,not,and,or,print,break,continue,return,True,False,None,access,as,,del,except,exec,finally,global,import,lambda,pass,print,raise,try,assert},
+keywordstyle={\color{Keywords}\bfseries},
+% additional keywords
+morekeywords={[2]@invariant,pylab,numpy,np,scipy},
+keywordstyle={[2]\color{Decorators}\slshape},
+emph={self},
+emphstyle={\color{self}\slshape},
+%
+}
+\title{Homework \#	3} % Title of the assignment
+
+\begin{document}
+
+\maketitle % Print the title
+\thispagestyle{fancy}
+\pagestyle{fancy}
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+
+
+\section{S\&P500 index} % Unnumbered section
+Your friend Joe, who has recently started a consluting firm. He is working on a project to help a client understand the S\&P500 index. Since both Joe and his client are new to the financiel industry and had little knowledge about the market, they decide to starting with public available data and do some simple analysis. Joe learned that you are working on a master's program on data analytic and called you for your opinion. Joe provide you with two data set in ".csv" format.
+
+
+\begin{warn}[Data:] % Information block
+\\
+S\&P500 historcal index value: \textbf{"sp500indexdaily.csv"}\\
+Stock price of S\&P500 listed companies (2013-2018):  \textbf{"sp500\_cmpny\_all\_stocks\_5yr.csv"}
+\end{warn}
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 2
+%----------------------------------------------------------------------------------------
+
+\subsection{Data Exploration} % Numbered section
+
+After getting the data, you decide to explore the data by visualizing it first. You started by looking at the records in \textbf{"sp500indexdaily.csv"} and made the following plots
+
+% Subquestions numbered with letters
+\begin{enumerate}[(1)]
+	\item Use the "close" price of SP500 and plot it against trading dates (between 2009-01-01 and 2018-12-31). Instead of using actual date as x-axis, you can assign an integer to each trading date and set "2009-1-1" to "0", "2009-1-2" to "1",  "2009-1-3" to "2" ... etc.).
+	\item In addition to the trend of SP500 against time, you look into the statistical distribution of the index. Specifically, create a histogram of the SP500 index between 2009 and 2018.
+	\item Does the histogram look like any distribution that you have learned so far? Provide your thoughts on how to describe a distribution like this (hints: where are the distribution peaks; could it be superposition of multiple normal distributions)? 
+\end{enumerate}
+
+\subsection{Regression - Single Predictor}
+
+After looking at the SP500 index change over time i.e. plots 1.1(1), you decide to build a regression model to capture the trend of SP500 index. 
+\begin{enumerate}[(1)]
+\item In the GLM framework that you learned, what kind of distribution will you choose from the exponential family?
+\item Build the GLM model
+\item How can you interpret the parameters in your model?
+\item Make an in sample prediction for the SP500 index between 2009 and 2018. Compare it with the actual SP500 index (visualize it in a graph). What does the model capture/not capture?
+\item Based on the model, where do you think the SP500 index will be by the end of year 2019.
+\item In order to validate your model, you also decide to use the data between 2009 and 2016 as training set and use 2017 and 2018 as test data set. What's the summed square error after applying the model on the test data set.  
+\end{enumerate}
+
+\subsection{Regression - Multiple Predictors}
+After searching the website, you learned that SP500 is an index built based on the stock price 500+ companies. The largest 5 components are "Microsoft (MSFT)", "Apple Inc. (AAPL)", "Amazon.com Inc (AMZN)", "Berkshire Hathaway Inc (BRK.B)" and "Johnson \& Johnson (JNJ)". You postulate that the SP500 index might be a weighted average of the stock prices i.e. $SP500=\beta_1MSFT+\beta_2AAPL+\beta_3AMZN+\beta_4BRK.B+...+\beta0$. 
+
+\begin{enumerate}[(1)]
+\item Build a multi-predictor regression model using SP500 index as the target variable and the stock price of MSFT, AAPL, AMZN, BRK.B and JNJ as the predictors (only use the stock price and SP500 index between 2013-02-08 and 2018-02-07). Hint: you need to reformat the company data so that each column represents the stock price and the row represents the date. A sample code is provided to you.
+\item How does the in-sample prediction compare to the actual SP500 index now (visualize it in a graph)?
+\item Check the significance of the variables by looking at the p-values of each variable. How do you interpret the coefficients? Are they all positive, what does negative number imply here?
+\item Can the model be used to predict future SP500 price?
+\end{enumerate}
+
+\section{Mammal Classification Tree}
+You were given a data set \textbf{"zoo.csv"} that includes 101 animals and a list of characteristics of the animals e.g. do they have feather, do they lay eggs or not etc. Build a CART model to classify if an animal is mammal or not.
+
+\begin{enumerate}[(1)]
+\item Calculate the overall entropy of of the target variable "ismammal", using the definition $H=p_1 log(p_1)+(1-p_1) log(1-p_1)$
+\item To build a classification tree, you need to decide the splitter for each nodes of a binary tree. Using the criterion that $hair>0.5$ and split the dataset in to two branches. Calculate the entropy at each branch and the average entropy change.
+\item Check the entropy changes for all the following features i.e. 'feathers', 'eggs', 'airborne', 'aquatic' and 'backbone'. Which one would you use to make the first split?
+\item Build a CART model using the sklearn package and compare the model with your calculation. Is the first split the same as yours? You may use the python code provided in "CARTmammals.py"
+
+\end{enumerate}
+
+\end{document}

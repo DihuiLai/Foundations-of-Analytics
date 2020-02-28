@@ -1,0 +1,363 @@
+%!TeX encoding = UTF-8
+%!TeX program = xelatex
+\documentclass[notheorems, aspectratio=54]{beamer}
+% aspectratio: 1610, 149, 54, 43(default), 32
+\usepackage{hyperref}
+
+ 
+\usepackage{latexsym}
+\usepackage{amsmath,amssymb}
+\usepackage{mathtools}
+\usepackage{color,xcolor}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{amsthm}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\usepackage{lmodern} % 解决 font warning
+% \usepackage[UTF8]{ctex}
+\usepackage{animate} % insert gif
+
+\usepackage{lipsum} % To generate test text 
+\usepackage{ulem} % 下划线，波浪线
+
+\usepackage{listings} % display code on slides; don't forget [fragile] option after \begin{frame}
+
+% ----------------------------------------------
+% tikx
+\usepackage{framed}
+\usepackage{fancybox}
+\usepackage{tikz}
+\usepackage{pgf}
+\usetikzlibrary{automata, calc,trees,positioning,arrows,chains,shapes.geometric,%
+    decorations.pathreplacing,decorations.pathmorphing,shapes,%
+    matrix,shapes.symbols}
+\pgfmathsetseed{1} % To have predictable results
+% Define a background layer, in which the parchment shape is drawn
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+% define styles for the normal border and the torn border
+\tikzset{
+  normal border/.style={orange!30!black!10, decorate, 
+     decoration={random steps, segment length=2.5cm, amplitude=.7mm}},
+  torn border/.style={orange!30!black!5, decorate, 
+     decoration={random steps, segment length=.5cm, amplitude=1.7mm}}}
+
+% Macro to draw the shape behind the text, when it fits completly in the
+% page
+\def\parchmentframe#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};  % Draw the text of the node
+  \begin{pgfonlayer}{background}  % Draw the shape behind
+  \fill[normal border] 
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text will continue in next page
+\def\parchmentframetop#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};    % Draw the text of the node
+  \begin{pgfonlayer}{background}    
+  \fill[normal border]              % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]                % Add the torn lower border
+        ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+        ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text continues from previous page
+\def\parchmentframebottom#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};   % Draw the text of the node
+  \begin{pgfonlayer}{background}   
+  \fill[normal border]             % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]               % Add the torn upper border
+        ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+        ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when both the text continues from previous page
+% and it will continue in next page
+\def\parchmentframemiddle#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};   % Draw the text of the node
+  \begin{pgfonlayer}{background}   
+  \fill[normal border]             % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]               % Add the torn lower border
+        ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+        ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+  \fill[torn border]               % Add the torn upper border
+        ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+        ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Define the environment which puts the frame
+% In this case, the environment also accepts an argument with an optional
+% title (which defaults to ``Example'', which is typeset in a box overlaid
+% on the top border
+\newenvironment{parchment}[1][Example]{%
+  \def\FrameCommand{\parchmentframe}%
+  \def\FirstFrameCommand{\parchmentframetop}%
+  \def\LastFrameCommand{\parchmentframebottom}%
+  \def\MidFrameCommand{\parchmentframemiddle}%
+  \vskip\baselineskip
+  \MakeFramed {\FrameRestore}
+  \noindent\tikz\node[inner sep=1ex, draw=black!20,fill=white, 
+          anchor=west, overlay] at (0em, 2em) {\sffamily#1};\par}%
+{\endMakeFramed}
+
+% ----------------------------------------------
+
+\mode<presentation>{
+    \usetheme{CambridgeUS}
+    % Boadilla CambridgeUS
+    % default Antibes Berlin Copenhagen
+    % Madrid Montpelier Ilmenau Malmoe
+    % Berkeley Singapore Warsaw
+    \usecolortheme{beaver}
+    % beetle, beaver, orchid, whale, dolphin
+    \useoutertheme{infolines}
+    % infolines miniframes shadow sidebar smoothbars smoothtree split tree
+    \useinnertheme{circles}
+    % circles, rectanges, rounded, inmargin
+}
+% 设置 block 颜色
+\setbeamercolor{block title}{bg=red!30,fg=white}
+
+\newcommand{\reditem}[1]{\setbeamercolor{item}{fg=red}\item #1}
+
+% 缩放公式大小
+\newcommand*{\Scale}[2][4]{\scalebox{#1}{\ensuremath{#2}}}
+
+% 解决 font warning
+\renewcommand\textbullet{\ensuremath{\bullet}}
+
+% ---------------------------------------------------------------------
+% flow chart
+\tikzset{
+    >=stealth',
+    punktchain/.style={
+        rectangle, 
+        rounded corners, 
+        % fill=black!10,
+        draw=white, very thick,
+        text width=6em,
+        minimum height=2em, 
+        text centered, 
+        on chain
+    },
+    largepunktchain/.style={
+        rectangle,
+        rounded corners,
+        draw=white, very thick,
+        text width=10em,
+        minimum height=2em,
+        on chain
+    },
+    line/.style={draw, thick, <-},
+    element/.style={
+        tape,
+        top color=white,
+        bottom color=blue!50!black!60!,
+        minimum width=6em,
+        draw=blue!40!black!90, very thick,
+        text width=6em, 
+        minimum height=2em, 
+        text centered, 
+        on chain
+    },
+    every join/.style={->, thick,shorten >=1pt},
+    decoration={brace},
+    tuborg/.style={decorate},
+    tubnode/.style={midway, right=2pt},
+    font={\fontsize{10pt}{12}\selectfont},
+}
+% ---------------------------------------------------------------------
+
+% code setting
+\lstset{
+    language=C++,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{red},
+    breaklines=true,
+    xleftmargin=2em,
+    numbers=left,
+    numberstyle=\color[RGB]{222,155,81},
+    frame=leftline,
+    tabsize=4,
+    breakatwhitespace=false,
+    showspaces=false,               
+    showstringspaces=false,
+    showtabs=false,
+    morekeywords={Str, Num, List},
+}
+
+% ---------------------------------------------------------------------
+
+%% preamble
+\title{Lecture 09}
+% \subtitle{The subtitle}
+\author{Dihui Lai}
+\institute[WUSTL]{dlai@wustl.edu}
+
+% -------------------------------------------------------------
+
+\begin{document}
+
+%% title frame
+\begin{frame}
+    \titlepage
+\end{frame}
+\begin{frame}
+\frametitle{Part of Speech (POS) Tagging}
+\begin{itemize}
+\item General Part-of-speech (POS) categories: 
+\begin{itemize}
+\item nouns (data, chair),
+\item verbs (debate, discuss),
+\item  adverbs (slowly), 
+\item  adjectives (funny)
+\item etc.
+\end{itemize}
+\item Fine-grained POS categories:
+\begin{itemize}
+\item nouns: proper noun (Lisa, Paris) v.s. common nouns (woman, city); 
+\item adverb: comparative (more happily) v.s. superlative (most happily)
+\item etc.
+\end{itemize}
+\item A word could have multiple POS tags e.g. 
+\begin{itemize}
+\item A number of factors account [verb] for the differences between the two scores.
+\item How do I open an account [noun] with your bank?
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+
+\frametitle{English Penn Treebank part-of-speech Tagset}
+
+An important tagset for English is the 45-tag Penn Treebank tagset. 
+
+\vspace{1cm}
+
+\url{https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{POS-tag Model}
+
+\begin{itemize}
+\item Label the words in a document using POS tags, e.g. 
+
+The[DT] Itek[NNP] Air[NNP] Boeing[NNP] 737[CD] took[VBD] off[RP] bound[VBN] for[IN] Mashhad[NNP] in[IN] north-eastern[JJ] Iran[NNP].
+
+\item If a word $w$ that could be tagged as $\mathnormal{t_1}$, $\mathnormal{t_2}$, ... $\mathnormal{t_k}$, the probabilities the word has tagged  $\mathnormal{t_i}$ is calculated as
+$\mathnormal{p(t_i|w) = \frac{c(w,t_i)}{\sum\limits_{i=1}^{k}c(w, t_i)}}$
+
+\textbf{This approach does not take the order of the word into consideration!}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle {POS tag Sequencing Model}
+Provided that we have a sequence of words $\mathnormal{W=w_1, w_2,  ...w_i, ...w_n}$ and we want to figure out the their POS tags $\mathnormal{T= t_1, t_2, ... t_i ...t_n}$
+
+Using Bayes' theorem
+$$\mathnormal{P(T | W) = P(W|T) P(T) / P(W) = const \times P(W|T) P(T)}$$
+
+Assume that $\mathnormal{t_i}$ is only dependent on $\mathnormal{t_{i-1}}$ and $\mathnormal{w_{i}}$, we have
+\begin{align*}
+\mathnormal{P(T)}&=\mathnormal{ P(t_1) P(t_2 | t_1) P(t_3 | t_1, t_2) P(t_4 | t_1, t_2, t_3)  ...P(t_n | t_{1}, t_{2}, ... t_{n-1})}\\
+&=\mathnormal{ P(t_1) P(t_2 | t_1) P(t_3 | t_2) P(t_4 |  t_3)  ...P(t_n | t_{n-1})}
+\end{align*}
+\begin{align*}
+\mathnormal{P(W|T)}=\mathnormal{ P(w_1 | t_1) P(w_2 | t_2) P(w_3 | t_3)  ...P(w_n | t_{n})}
+\end{align*}
+\end{frame}
+
+\begin{frame}
+\frametitle {POS tag Sequencing Model (Continued)}
+In summary, we have 
+$$\mathnormal{P(T|W) \approx P(t_1) P(t_2|t_1) ... P(t_{n}|t_{n-1}) P(w_1|t_1) P(w_2|t_2) ... P(w_n|t_n)}$$
+Each term on the right hand side of the equation can be calculated as 
+$$\mathnormal{P(t_{i}|t_{i-1}) = \frac{c(t_{i-1},t_{i})}{c(t_{i-1})}} \text{ (transition probability)}$$ , 
+$$\mathnormal{P(w_i|t_i) = \frac{c(w_i,t_i)}{c(t_i)}} \text{ (emission probability)}$$
+
+where 
+
+$\mathnormal{c(t_i)} = \text{count of } \mathnormal{t_i} \text{ in the corpus}$,  
+
+$ \mathnormal{c(w_i,t_i)} = \text{count of }  \mathnormal{(w_i, t_i)} \text{ in the corpus}$,
+
+$ \mathnormal{c(t_{i-1},t_{i})} = \text{count of }  \mathnormal{(t_{i-1}, t_i)} \text{ in the corpus}$
+
+\end{frame}
+
+\begin{frame}
+\frametitle {POS tag Sequencing Model (Continued): Hidden Markov Model and Viterbi Algorithm}
+The best tag sequence is the sequence that maximize the conditional probability $P(T|W)$ i.e.
+\begin{align*}
+\mathnormal{(t_1, t_2, ...t_n)} & = \mathnormal{\argmax_{t_1, t_2, ...t_n}P(t_1, t_2..., t_n|w_1, w_2, ...w_n)}\\
+&= \mathnormal{\argmax_{t_1, t_2, ...t_n} \prod\limits_{i=1}^n P(w_i |t_i ) P(t_i |t_{i-1})}
+\end{align*}
+
+To solve the problem, we can use the Viterbi Algorithms for Hidden Markov Model
+\end{frame}
+
+\begin{frame}
+\frametitle {POS tag Model: the State of the Art}
+
+\url{https://aclweb.org/aclwiki/POS_Tagging_(State_of_the_art)}
+\end{frame}
+
+\begin{frame}
+\frametitle{Name Entity Recognition (NER)}
+\begin{itemize}
+\item POS tag usually label a single word. However, to understand text, we also need to consider the meaning of a set of words.
+\item NER labels words in a texts that are names of things e.g. person, organization, money amount, gene/protein names
+\item John (person) Lee (person) is the chief of CBSE (organization). 
+\item the output of POS-tag could be used as input to accomplish a NER model.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{NER and IOB Format Tag}
+IOB: I-Inside, O-Outside, B-Begin
+
+Example: Alex is going to Los Angeles
+\begin{align*}
+&\text{Alex I-PER}\\
+&\text{is O}\\
+&\text{going O}\\
+&\text{to O}\\
+&\text{Los B-LOC}\\
+&\text{Angeles I-LOC}
+\end{align*}
+\end{frame}
+
+\begin{frame}
+\frametitle{NER model and the State of the Art}
+\begin{itemize}
+\item The state of art algorithms:
+\url{https://paperswithcode.com/sota/named-entity-recognition-ner-on-conll-2003}
+\item Useful packages, softwares, services
+\url{https://nlp.stanford.edu/software/CRF-NER.shtml}
+\url{http://nlp_architect.nervanasys.com/installation.html}
+\url{https://cloud.google.com/natural-language/}
+
+\end{itemize}
+
+
+\end{frame}
+
+\end{document}

@@ -1,0 +1,387 @@
+%!TeX encoding = UTF-8
+%!TeX program = xelatex
+\documentclass[notheorems, aspectratio=54, tikz,border=10pt,multi]{beamer}
+% aspectratio: 1610, 149, 54, 43(default), 32
+
+\usepackage{latexsym}
+\usepackage{amsmath,amssymb}
+\usepackage{mathtools}
+\usepackage{color,xcolor}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\usepackage{amsthm}
+\DeclareMathOperator*{\argmax}{argmax} % thin space, limits underneath in displays
+\usepackage{lmodern} % 解决 font warning
+% \usepackage[UTF8]{ctex}
+\usepackage{animate} % insert gif
+
+\usepackage{lipsum} % To generate test text 
+\usepackage{ulem} % 下划线，波浪线
+
+\usepackage{listings} % display code on slides; don't forget [fragile] option after \begin{frame}
+
+% ----------------------------------------------
+% tikx
+\usepackage{framed}
+\usepackage{fancybox}
+\usepackage{tikz}
+\usepackage{pgf}
+\usetikzlibrary{automata, calc,trees,positioning,arrows,chains,shapes.geometric,%
+    decorations.pathreplacing,decorations.pathmorphing,shapes,%
+    matrix,shapes.symbols, hobby}
+\pgfmathsetseed{1} % To have predictable results
+% Define a background layer, in which the parchment shape is drawn
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+% define styles for the normal border and the torn border
+\tikzset{
+  normal border/.style={orange!30!black!10, decorate, 
+     decoration={random steps, segment length=2.5cm, amplitude=.7mm}},
+  torn border/.style={orange!30!black!5, decorate, 
+     decoration={random steps, segment length=.5cm, amplitude=1.7mm}}}
+
+% Macro to draw the shape behind the text, when it fits completly in the
+% page
+
+\def\parchmentframe#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};  % Draw the text of the node
+  \begin{pgfonlayer}{background}  % Draw the shape behind
+  \fill[normal border] 
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text will continue in next page
+\def\parchmentframetop#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};    % Draw the text of the node
+  \begin{pgfonlayer}{background}    
+  \fill[normal border]              % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]                % Add the torn lower border
+        ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+        ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text continues from previous page
+\def\parchmentframebottom#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};   % Draw the text of the node
+  \begin{pgfonlayer}{background}   
+  \fill[normal border]             % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]               % Add the torn upper border
+        ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+        ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when both the text continues from previous page
+% and it will continue in next page
+\def\parchmentframemiddle#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};   % Draw the text of the node
+  \begin{pgfonlayer}{background}   
+  \fill[normal border]             % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]               % Add the torn lower border
+        ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+        ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+  \fill[torn border]               % Add the torn upper border
+        ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+        ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Define the environment which puts the frame
+% In this case, the environment also accepts an argument with an optional
+% title (which defaults to ``Example'', which is typeset in a box overlaid
+% on the top border
+\newenvironment{parchment}[1][Example]{%
+  \def\FrameCommand{\parchmentframe}%
+  \def\FirstFrameCommand{\parchmentframetop}%
+  \def\LastFrameCommand{\parchmentframebottom}%
+  \def\MidFrameCommand{\parchmentframemiddle}%
+  \vskip\baselineskip
+  \MakeFramed {\FrameRestore}
+  \noindent\tikz\node[inner sep=1ex, draw=black!20,fill=white, 
+          anchor=west, overlay] at (0em, 2em) {\sffamily#1};\par}%
+{\endMakeFramed}
+
+% ----------------------------------------------
+
+\mode<presentation>{
+    \usetheme{CambridgeUS}
+    % Boadilla CambridgeUS
+    % default Antibes Berlin Copenhagen
+    % Madrid Montpelier Ilmenau Malmoe
+    % Berkeley Singapore Warsaw
+    \usecolortheme{beaver}
+    % beetle, beaver, orchid, whale, dolphin
+    \useoutertheme{infolines}
+    % infolines miniframes shadow sidebar smoothbars smoothtree split tree
+    \useinnertheme{circles}
+    % circles, rectanges, rounded, inmargin
+}
+% 设置 block 颜色
+\setbeamercolor{block title}{bg=red!30,fg=white}
+
+\newcommand{\reditem}[1]{\setbeamercolor{item}{fg=red}\item #1}
+
+% 缩放公式大小
+\newcommand*{\Scale}[2][4]{\scalebox{#1}{\ensuremath{#2}}}
+
+% 解决 font warning
+\renewcommand\textbullet{\ensuremath{\bullet}}
+
+% ---------------------------------------------------------------------
+% flow chart
+\tikzset{
+    >=stealth',
+    punktchain/.style={
+        rectangle, 
+        rounded corners, 
+        % fill=black!10,
+        draw=white, very thick,
+        text width=6em,
+        minimum height=2em, 
+        text centered, 
+        on chain
+    },
+    largepunktchain/.style={
+        rectangle,
+        rounded corners,
+        draw=white, very thick,
+        text width=10em,
+        minimum height=2em,
+        on chain
+    },
+    line/.style={draw, thick, <-},
+    element/.style={
+        tape,
+        top color=white,
+        bottom color=blue!50!black!60!,
+        minimum width=6em,
+        draw=blue!40!black!90, very thick,
+        text width=6em, 
+        minimum height=2em, 
+        text centered, 
+        on chain
+    },
+    every join/.style={->, thick,shorten >=1pt},
+    decoration={brace},
+    tuborg/.style={decorate},
+    tubnode/.style={midway, right=2pt},
+    font={\fontsize{10pt}{12}\selectfont},
+}
+% ---------------------------------------------------------------------
+
+% code setting
+\lstset{
+    language=C++,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{red},
+    breaklines=true,
+    xleftmargin=2em,
+    numbers=left,
+    numberstyle=\color[RGB]{222,155,81},
+    frame=leftline,
+    tabsize=4,
+    breakatwhitespace=false,
+    showspaces=false,               
+    showstringspaces=false,
+    showtabs=false,
+    morekeywords={Str, Num, List},
+}
+% ---------------------------------------------------------------------
+
+%% preamble
+\title{Introduction to Machine Leaning I}
+% \subtitle{The subtitle}
+\author{Dihui Lai}
+\institute[WUSTL]{dlai@wustl.edu}
+
+
+% -------------------------------------------------------------
+
+\begin{document}
+
+%% title frame
+\begin{frame}
+    \titlepage
+\end{frame}
+
+
+\begin{frame}
+CONTENT
+\begin{itemize}
+\item Supervised Learning v.s. Unsupervised Learning
+\item k-Nearest Neighbors
+\item Naive Bayes Classifier
+\item Overfitting \& Corss-validation
+\end{itemize} 
+\end{frame}
+
+
+%% normal frame
+\section{Supervised Learning v.s. Unsupervised Learning}
+
+\begin{frame}
+\frametitle{Supervised Learning v.s. Unsupervised Learning}
+\begin{itemize}
+\item \textbf{Supervised Leaning}: a model/algorithm that is built on a dataset that contains both input data and desired outcome. For example, logistic regression; linear regression.
+\item \textbf{Unsupervised Leaning}: a model/algorithm that is built on a dataset that contains both input data but no desired outcome. For example, K-mean clustering
+\end{itemize}
+
+\end{frame}
+
+\section{k-Nearest Neighbors}
+\begin{frame}
+
+\frametitle{Distance Metrics and Geometrics of Data}
+
+The distance between two data points $\vec{x}^i$ and $\vec{x}^j$ could be measured using different metrics:
+\begin{itemize}
+\item Euclidean distance 
+$$d_{ij}=\sqrt{\sum_{k=1}^{n}\left(x_k^{i}-x_k^{j}\right)^2}$$
+\item Manhattan distance:
+$$d_{ij}=\sum_{k=1}^{n}\mid(x_k^{i}-x_k^{j})\mid$$
+\item Winkowski distance:
+$$d_{ij}=\left(\sum_{k=1}^{n}(x_k^{i}-x_k^{j})^q\right)^{1/q}$$
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{k-Nearest Neighbors}
+\begin{itemize}
+\item Non-parametric classification/regression machine learning algorithm. 
+\item Very easy to implement but can be useful.
+\item A decision is made based on the k closest-points in the training dataset. If k is too small (k = 1), the decision will be very noisy. If k is too large, neighbor includes too many data from other classes.  
+
+\end{itemize}
+
+
+\end{frame}
+\begin{frame}
+\frametitle{k-Nearest Neighbors Algorithm}
+\begin{itemize}
+\item[] Load the training and test data 
+\item[] Set the value of k to a reasonable value 
+\item[] For each point in test data:
+\begin{itemize}
+       \item[-] Calculate its distance (pick an appropriate metric like Euclidean, Manhattan etc.) to all training data points
+       \item[-] Sort the distances from low to high
+       \item[-] Choose the first k points in the training data
+       \item[-] Assign a class based on the majority of classes present in the chosen points (or take the weighted average for regression)
+       
+\end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\section{Naive Bayes Classifier}
+
+
+\begin{frame}
+
+\frametitle{Joint Probability Distribution and Chain Rule}
+
+\begin{itemize}
+\item The joint probability distrution of two events can be discribed as $$P(A, B)=P(A\mid B)P(B)=P(B \mid A)P(A)$$
+
+If $A$ and $B$ are two indpendent events, then we have $P(B)=P(B\mid A)$ and $P(A)=P(A\mid B)$
+
+\vspace{0.5cm}
+
+\item \textbf{Chain Rule}: Considering n random events $X_1$, $X_2$, $X_3$ ... $X_n$, their joint probability distribution can be described as
+\begin{align*}
+&P(X_n, \ldots, X_1)\\
+&=P(X_{n}|X_{n-1},\ldots ,X_{1})P(X_{n-1},\ldots ,X_{1})\\
+&=P(X_{n}|X_{n-1},\ldots ,X_{1})P(X_{n-1}|X_{n-2},\ldots ,X_{1})P(X_{n-2},\ldots ,X_{1})\\
+&=...
+\end{align*}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Bayes' Theorem}
+\textbf{Bayes' Theorem}: given two random variables $X$ and $Y$, the conditional probability of $X$ given $Y$ is expressed as:
+$$P(Y\mid X)=\frac {P(X\mid Y)P(Y)}{P(X)}$$
+
+Useful terminologies to interpret the equations: $P(Y)$ is called prior, which is the belif in Y without any other knowledge. $P(Y\mid X)$ is the posterior taking into consideration of X. $P(X\mid Y)$ is the likelihood.\\
+\vspace{0.5cm}
+In a discrete case, the probability distribution of $X$ can be calculated as
+$P(X)=\sum _{i}P(X\mid Y_{i})P(Y_{i})$
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Baye's Theorem Example}
+\begin{parchment}[Rain in California]
+You are planning a trip to california tomorrow. Unfortunately, the weatherman has predicted rain for tomorrow. You know in southern california, it only rains 5 days each year and there is a chance the weather man makes false predictions. You searched on line and find that when it rains, the weatherman correctly forecasts rain of 90\% of the time. When it doesn't rain, he incorrectly forecasts rain 10\% of the time. What is the probability that it will rain tomorrow. 
+\end{parchment}
+\end{frame}
+
+\begin{frame}
+\frametitle{Baye's Theorem Example}
+\textbf{Solution}: Denote the event that the weatherman forcast a raining day as F. The probability of rain given weatherman's forcast is $$P(1 \mid F)=\frac{P(1)P(F\mid 1)}{P(F)}$$. 
+
+Given that we have $P(F \mid 1)=0.9$, $P(F\mid 0)=0.1$, $P(1)=\frac{5}{365}$ and $P(0)=1-P(1)= \frac{360}{365}$. $P(F)=P(F|1)P(1)+P(F|0)P(0)$,
+Therefore, 
+$$P(1 \mid F)=\frac{P(1)P(F\mid 1)}{P(F)}=\frac{\frac{5}{365}\cdot0.9}{0.1109}=0.111$$
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Naive Bayes Classifier}
+The joint probability distribution of predictor $\vec{x}$ and target variable $y$ can be written as
+\begin{align*}
+&p(x_1, x_2, ...x_n, y)\\
+&=p(x_1|x_2, x_3, ..., y)p(x_2, x_3, ..., y)\\
+&=p(x_1|x_2, x_3, ..., y)p(x_2|x_3, x_4, ..., y)p(x_3, x_4, ..., y)\\
+&=p(x_1|x_2, x_3, ..., y)p(x_2|x_3, x_4, ..., y)...p(x_{n-1}|x_n, y)p(x_n|y)p(y)
+\end{align*}
+
+
+Assuming features are indepedent of each other but only dpendent on the target variable, then we have
+$$
+p(x_1, x_2, ...x_n, y)=p(y)\prod\limits_{i=1}^{N}p(x_i|y)
+$$
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Naive Bayes Classifier}
+Using Bayes' theorem, we can get the conditional probability distribution of the target variable as
+$$
+p(Y|X)=\frac{p(X,Y)}{p(X)}
+$$
+Therefore, we have 
+$$
+p(Y|X)=\frac{p(y)\prod\limits_{i=1}^{N}p(x_i|y)}{\sum\limits_{y}p(y)\prod\limits_{i=1}^{N}p(x_i|y)}
+$$
+
+The denominator is constant if the features are know. $p(y)$ and $p(x_i\mid y)$ can be calculated from the data. We need to find the y that maximize the $p(Y\mid X)$, i.e.
+
+$$
+\hat{y}=\argmax_{y}p(y)\prod\limits_{i=1}^{N}p(x_i|y)
+$$
+
+\end{frame}
+
+\section{}
+
+
+
+\end{document}
