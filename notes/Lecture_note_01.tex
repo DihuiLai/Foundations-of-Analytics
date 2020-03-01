@@ -1,0 +1,145 @@
+\documentclass[12pt, oneside]{article} 
+\usepackage{amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry}
+
+\geometry{tmargin=.75in, bmargin=.75in, lmargin=.75in, rmargin = .75in}  
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Cdot}{\boldsymbol{\cdot}}
+
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{conv}{Convention}
+\newtheorem{rem}{Remark}
+\newtheorem{lem}{Lemma}
+\newtheorem{cor}{Corollary}
+
+
+\title{Lecture Note - 01}
+\author{Dihui Lai}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\vspace{.25in}
+
+\section{Data Science - Toy Problem}
+
+\subsection{Toy Problem}
+Suppose you learned from 3 of your friends who went on shopping recently, who bought pants and socks. The number and costs are shown as below:
+
+\vspace{.1in}
+\begin{tabular}{llll}
+ &Pants  &Socks &Cost  \\
+ John &1 	 &2      &23   \\
+ Lisa &1      &2      &26   \\
+ David &1      &1      &24 
+\end{tabular}
+
+\vspace{.1in}
+According to John and Lisa, the prices of a pant and a sock can be calcuated as $P=20$ and $S=3$, respectively. However, David should have paid $23$ dollar given the inferred prices. Why did David pay $24$ dollar instead of $23$? It could be due to price variation.
+
+\subsection{Price Estimation}
+To get a good estimation of the prices of socks and pants, we can use the following error function
+$$\epsilon=(P+S-23)^2+(P+2S-26)^2+(P+S-24)^2$$
+Ideally, we would like to have our estimated socks ($S$) and pants ($P$) price as close to the real cost, i.e. minimize $\epsilon$.
+Use basic calculus knowledge, we know the optimal $P$ and $S$ should satisfy the following equations.
+
+\begin{equation}
+\begin{cases}
+\frac{\partial{\epsilon}}{\partial{P}}=0\\
+\frac{\partial{\epsilon}}{\partial{S}}=0
+\end{cases}
+\end{equation}
+
+\begin{equation}
+\begin{cases}
+\frac{\partial \epsilon }{\partial P}=2(P+S-23)+2(P+2S-26)+2(P+S-24)=0\\
+\frac{\partial \epsilon}{\partial S}=2(P+S-23)+4(P+2S-26)+2(P+S-24)=0
+\end{cases}
+\Longrightarrow
+\begin{cases}
+9P+12S-219=0\\
+8P+12S-198=0
+\end{cases}
+\end{equation}
+
+\begin{equation}
+\begin{cases}
+P=21\\
+S=2.5
+\end{cases}
+\end{equation}
+
+\section{Structured Data and Linear Model}
+
+\subsection{Tabular Data and Matrix}
+In general, if we want to consider a model of $m$ types of goods and collect data from $n$ people. The toy model can be generalized to a problem that needs to estimate $m$ variables on $n$ data points
+\[
+\begin{bmatrix}
+    y^1      \\
+    y^2      \\
+    \vdots \\
+    y^n    
+\end{bmatrix}
+\sim
+\begin{bmatrix}
+    x_1^1 & x_2^1  & x_1^3  & \dots  & x_m^1 \\
+    x_1^2 & x_2^2  & x_1^2  & \dots  & x_m^2\\
+    \vdots& \vdots & \vdots & \ddots & \vdots \\
+  	x_1^n & x_2^n  & x_1^n  & \dots  & x_m^n
+\end{bmatrix}
+\]
+Using vector notation, we have
+\[
+Y=\vec{y}=
+\begin{bmatrix}
+    y^1      \\
+    y^2      \\
+    \vdots \\
+    y^n    
+\end{bmatrix}\]
+,
+
+\[X=
+[\vec{x}_1,\vec{x}_2, \hdots, \vec{x}_m]=
+\begin{bmatrix}
+    x_1^1 & x_2^1  & x_1^3  & \dots  & x_m^1 \\
+    x_1^2 & x_2^2  & x_1^2  & \dots  & x_m^2\\
+    \vdots& \vdots & \vdots & \ddots & \vdots \\
+  	x_1^n & x_2^n  & x_1^n  & \dots  & x_m^n
+\end{bmatrix}
+\]
+The vectors $\vec{x}_i$ are called covariates, or predictors. 
+$\vec{y}$ is normally called  target variable 
+
+\subsection{Linear Model}
+If we assume $\vec{y}$ is linearly dependent on $\vec{x}$s, we have a linear model
+$${\hat{\vec{y}}}=\beta_1\vec{x}_2+\beta_2\vec{x}_2+ \dots +\beta_m\vec{x}_m$$
+An optimal model should estimate $\hat{\vec{y}}$ as close as $\vec{y}$. e.g.
+\begin{align*}
+\epsilon&=(\hat{\vec{y}}-\vec{y})\cdot(\hat{\vec{y}}-\vec{y})\\
+\frac{\partial{\epsilon}}{\partial \beta_i}&=0 \text{, i=1, 2, 3,..., m}
+\end{align*}
+How can we solve the problem?
+
+
+\subsection{General Models}
+In general, $\vec{y}$ could be any function of $\vec{x}$s i.e. $\vec{y}=\mathnormal{f}({\vec{x}})$.
+
+\begin{itemize}
+\item Kepler's Law: $T^2 \sim r^3$
+\item House price: $P \sim \mathnormal{f}(size, location)$
+\end{itemize}
+
+\section{Geometric Interpretation and Visualization}
+Scatter plot and projection operation
+pick any two columns from matrix $[Y, X]$
+
+
+\end{document}
