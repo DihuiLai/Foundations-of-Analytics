@@ -18,6 +18,8 @@
 \newtheorem{rem}{Remark}
 \newtheorem{lem}{Lemma}
 \newtheorem{cor}{Corollary}
+\setlength{\parindent}{0in}
+
 
 
 \title{Lecture Note - 02}
@@ -34,7 +36,7 @@
 
 \subsection{Probability Distribution/Mass}
 
-A discrete random variable $X$ can take on $k$ different values: $x_1$, $x_2$, ..., $x_k$, each value occurs with probablity $p_1$, $p_2$, ..., $p_k$. The probablity distribution function or probability mass can be denoted as $X: P(x_i)=p_i$
+A discrete random variable $X$ can take on $k$ different values: $x_1$, $x_2$, ..., $x_k$, each value occurs with probability $p_1$, $p_2$, ..., $p_k$. The probability distribution function or probability mass can be denoted as $X: P(x_i)=p_i$
 
 \subsection{Momentum}
 
@@ -47,8 +49,8 @@ $$Var(X)=\sum\limits_{i=1}^k (x_i-\bar{x})^2 p_i$$
 Mean of a general function $f(x)$
 $$E(f(X))=\sum\limits_{i=1}^k f(x_i) p_i$$
 
-\subsection{Bernouli Distribution}
-A random variable that follows Bernouli Distribution can have two possible values $1$ or $0$, with probability $p$ and $1-p$, respectively.
+\subsection{Bernoulli Distribution}
+A random variable that follows Bernoulli Distribution can have two possible values $1$ or $0$, with probability $p$ and $1-p$, respectively.
 
 \begin{equation}
 P(x)=
@@ -58,18 +60,18 @@ p, &x=1\\
 \end{cases}
 \end{equation}
 
-The mean of a Bernouli random variable can be calculated as 
+The mean of a Bernoulli random variable can be calculated by definition using the distribution function 
 $$\bar{x}=1\cdot p+0\cdot(1-p)=p$$
 
-A sample Bernouli Distribution dataset of N samples is a vector composed of 0/1 e.g. $x=[1, 0, 0, 1, ...1]$ and has $N$ elements. Let's assume there are $N_1$ 1s and $N_0$ 0s in the dataset. Numerically, the average of the dataset can be calculated as 
+A sample Bernoulli Distribution dataset of N samples is a vector composed of 0/1 e.g. $x=[1, 0, 0, 1, ...1]$ and has $N$ elements. Let's assume there are $N_1$ 1s and $N_0$ 0s in the dataset. Numerically, the average of the dataset can be calculated as 
 
 $$\bar{x}=\frac{1+0+0+1...1}{N}=\frac{N_0}{N}=\frac{N_0}{N_0+N_1}$$
 
 Here,
-$\frac{N_0}{N_0+N_1}$ is also the occurence probability of 1 in the dataset i.e. $\frac{N_0}{N_0+N_1}\sim p$
+$\frac{N_0}{N_0+N_1}$ is also the occurrence probability of 1 in the dataset i.e. $\frac{N_0}{N_0+N_1}\sim p$
 
 \subsection{Binomial Distribution}
-Assume we do 3 experiments and each experiment has an outcome of either 1 or 0. In another word, each experiment's outcome follows Bernouli Distribution. A sample 3 bernouli experiment dataset looks like the following
+Assume we do 3 experiments and each experiment has an outcome of either 1 or 0. In another word, each experiment's outcome follows Bernoulli Distribution. A sample 3 Bernoulli experiment dataset looks like the following
 \[
 \begin{bmatrix}
     1 & 0  &0 \\
@@ -81,7 +83,7 @@ Assume we do 3 experiments and each experiment has an outcome of either 1 or 0. 
     0 &1  &1
 \end{bmatrix}
 \]
-The total number of experiments that have an outcome of 1 can be calclulted as the summation of 3 random variables. 
+The total number of experiments that have an outcome of 1 can be calculated as the summation of 3 random variables. 
 $X$ can have 4 possible values 0, 1, 2, 3 out of 8 configurations
 \begin{equation*}
 X=
@@ -103,7 +105,7 @@ x=3, (1-p)^3\\
 \end{cases}
 \end{equation*}
 
-In an n-expemriments case, the dataset looks like the following
+In an n-experiments case, the dataset looks like the following
 \[
 \underbrace{
 \begin{bmatrix}
@@ -129,10 +131,9 @@ E(X)&=\sum\limits_{k=0}^{n}kp(k)\\
 &=np
 \end{align*}
 
-\section{Poisson Distribution}
-\subsection{Probability Distribution}
-Consider a random event, the probability of 1 occurence within a unit time is $p$. What's the probability distribution of events occurence within time interval of $\tau$ (e.g. No. of car accidents occurs in a day in MO). 
-Assume the probablity of 1 event occurring is p in a unit time period. We then have the following probability distribution within a short interval $dt$, where $dt\rightarrow 0$
+\subsection{Poisson Distribution}
+\textbf{Probability distribution}: consider a random event, the probability of 1 occurrence within a unit time is $p$. What is the probability distribution of events occurrence within a time interval of $\tau$ (e.g. No. of car accidents occurs in a day in MO). 
+Assume the probability of 1 event occurring is p in a unit time period. We then have the following probability distribution within a short interval $dt$, where $dt\rightarrow 0$
 \begin{equation*}
 P=
 \begin{cases}
@@ -141,7 +142,7 @@ pdt, \text{1 event}\\
 (pdt)^n\approx 0, \text{n events}
 \end{cases}
 \end{equation*}
-The event occured within a time period of $dt$ follows a Bernouli distribution
+The event occurred within a time period of $dt$ follows a Bernoulli distribution
 \begin{equation*}
 {\Delta}=
 \begin{cases}
@@ -149,7 +150,7 @@ The event occured within a time period of $dt$ follows a Bernouli distribution
 1, pdt\\
 \end{cases}
 \end{equation*}
-For an period of $\tau$, we can construct a random variable $X$ that is a summation of $N$ random variables $X=\Delta_1+\Delta_2+...\Delta_N$. Each variable on the right hand side follows the Bernouli distribution described above. Becase $dt \rightarrow 0$ we need to have $N\rightarrow \infty$ to have $Ndt=\tau$. In another word, $X$ is the summation of infinite number of Bernouli distribution or a binomial distribution when $N\rightarrow \infty$
+For a period of $\tau$, we can construct a random variable $X$ that is a summation of $N$ random variables $X=\Delta_1+\Delta_2+...\Delta_N$. Each variable on the right hand side follows the Bernoulli distribution described above. In the limit when $dt \rightarrow 0$ we need to have $N\rightarrow \infty$ to have $Ndt=\tau$. In another word, $X$ is the summation of infinite number of Bernoulli distribution or a binomial distribution when $N\rightarrow \infty$
 $$X=\Delta_1+\Delta_2+...\Delta_i+...$$
 The distribution of X can be derived by taking the limit of a Binomial distribution.
 \begin{align*}
@@ -160,18 +161,16 @@ P(k)&=\lim_{N \rightarrow \infty}\frac{N!}{k!(N-k)!}(pdt)^k(1-pdt)^{N-k}\\
 &=\frac{\lambda^k}{k!}e^{-\lambda}
 \end{align*}
 
-According to Taylor expasion of a exponential function, the summation of $P(k)$ is 
+According to Taylor expansion of a exponential function, the summation of $P(k)$ is 
 \begin{align*}
 \sum\limits_{k=0}^{\infty} P(k)&=e^{-\lambda}\sum\limits_{k=0}^{\infty}\frac{\lambda^k}{k!}=e^{-\lambda}e^{\lambda}=1
 \end{align*}
-
-\subsection{Moments}
 \textbf{Mean}: there are many ways to calculate the mean of Poisson distribution. Here we use a trick by taking the derivative of the equation above, $e^{-\lambda}\sum\limits_{k=0}^{\infty}\frac{\lambda^k}{k!}=1$, we then have 
 $$\frac{d}{d\lambda}e^{-\lambda}\sum\limits_{k=0}^{\infty}\frac{\lambda^k}{k!}=0$$ 
 $$\rightarrow-e^{-\lambda}\sum\limits_{k=0}^{\infty}\frac{\lambda^k}{k!}+e^{-\lambda}\sum\limits_{k=0}^{\infty}\frac{k\lambda^{k-1}}{k!}=0$$
-The first of the equation above is nothing but 1, we therefore have
+The first term of the equation above is nothing but 1, we therefore have
 $$-1+e^{-\lambda}\sum\limits_{k=0}^{\infty}\frac{k\lambda^{k-1}}{k!}=0$$
-Organize the equation a little bit we have
+Organize the equation a little we have
 $$\frac{1}{\lambda}e^{-\lambda}\sum\limits_{k=0}^{\infty}\frac{k\lambda^{k}}{k!}=1$$
 By definition,  $E(X)=e^{-\lambda}\sum\limits_{k=0}^{\infty}\frac{k\lambda^{k}}{k!}$, we therefore have
 $$\frac{1}{\lambda}E(X)=1 \text{ or } E(X)=\lambda$$ 
@@ -190,9 +189,8 @@ Var(X)&=\sum\limits_{k=0}^{\infty}(k-\lambda)^2\frac{k\lambda^{k}}{k!}e^{-\lambd
 &=\lambda
 \end{align*}
 
-
 \section{Algebra of Multiple Random Variables}
-Assume the value of a random variable $X$ is the summation of n random varaibles, $X_1$, $X_2$, ... $X_n$. It can be denoted as
+Assume the value of a random variable $X$ is the summation of n random variables, $X_1$, $X_2$, ... $X_n$. It can be denoted as
 $$X=X_1+X_2+ ... +X_n$$
 The expectation of the random variable can be calculated as 
 $$E(X)=E(X_1+X_2+X_3 ... +X_n)=E(X_1)+E(X_2)+E(X_3)...+E(X_n)$$
@@ -201,7 +199,7 @@ $$Var(X)=Var(X_1+X_2+X_3 ... +X_n)=Var(X_1)+Var(X_2)+Var(X_3)...+Var(X_n)+\sum_{
 When $X_1$, $X_2$, ... $X_n$ are independent, we have $Cov(X_i, X_j)=0$, therefore,
 $$Var(X)=Var(X_1)+Var(X_2)+Var(X_3)...+Var(X_n)$$
 
-
+Consider a binomial distribution that is constructed from n Bernoulli distribution. Since each Bernoulli distribution has mean $p$ and variance $p(1-p)$. The mean of the binomial distribution is the summation of the mean of n Bernoulli distributions i.e. $E(X)=np$. Similarly, the variance follows as $Var(X)=np(1-p)$.
 
 
 
