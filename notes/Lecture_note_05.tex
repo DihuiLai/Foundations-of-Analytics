@@ -23,7 +23,7 @@
 \newtheorem{cor}{Corollary}
 
 
-\title{Lecture Note - 05}
+\title{Lecture Note - 05: Exponential Family, Generalize Linear Model (GLM)}
 \author{Dihui Lai}
 
 \begin{document}
@@ -144,12 +144,24 @@ E(Y)=b'(\theta)=g(\eta)
 \end{equation}
 
 
-If we want to estimate the parameter $\theta$, we can solve the equation (4) by taking the inverse of the function $b'(\cdot)$. If we choose the link function $g^{-1}(\cdot)$ carefully and set
+If we want to estimate the parameter $\theta$, we can solve the equation (4) by taking the inverse of the function $b'(\cdot)$. If we choose the inverse link function $g(\cdot)$ to be the same as $b'(\cdot)$
 \begin{equation}
-g^{-1}(\cdot)=b'(\cdot)
+g(\cdot)=b'(\cdot)
 \end{equation}
 we get a model with nice property where $\eta=\theta$. A link function chosen this way is called a Canonical link function.
 
+\subsection{Canonical Link Function of Bernouli Distributioin}
+Use Bernouli distribution as an example, we have $b'(\theta)=\frac{e^\theta}{1+e^\theta}$. The inverse canonical link function is 
+
+$$g(\eta)=\frac{e^{\eta}}{1+e^{\eta}}=\frac{1}{1+e^{-\eta}}$$. As we known,  $$p=b'(\theta)=\frac{1}{1+e^{-\eta}}$$. The equation looks a lot like the probability model in the logistic regression model. In fact, as we will learn in the following section, GLM in the special caes of Bernouli distribution is equivalent to logistic regression.
+
+\subsection{Canonical Link Function of Gaussian Distribution}
+In the case of a Gaussian distribution, $b'(\theta)=\theta$, which is an identity function. Choose the link function as the identify function, we have 
+$$g(\eta)=\eta$$
+Since we have $\mu=\theta$, the canonical link function of a Gaussian distribution models the expectation of the target variable as of the following
+$$\mu=\eta=\vec{x}\cdot\vec{\beta}$$ 
+
+This looks a lot like the linear regression model, except that we don not know how GLM estimates the error function yet. In the following sections, we are goingn to discuss how to use MLE to optimize the a GLM.
 
 \end{document}
 
