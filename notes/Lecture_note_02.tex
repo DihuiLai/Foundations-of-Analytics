@@ -190,6 +190,32 @@ Var(X)&=\sum\limits_{k=0}^{\infty}(k-\lambda)^2\frac{k\lambda^{k}}{k!}e^{-\lambd
 &=\lambda
 \end{align*}
 
+\section{Continous Random Variable}
+\subsection{Probability Density Function}
+A continous variable X can take on real value. The probability that $X$ is between $x_i-\Delta x$ and $x_i+ \Delta x$ can be described by the following probability function
+$$P(x_i-\Delta x<x<x_i+\Delta x)\sim f(x_i)\Delta x$$
+where $x_i$ can be any value between $(-\infty, \infty)$. More precisely, we can write the relationship in integral formula
+$$P(x_i-\Delta x<x<x_i+\Delta x)=\int\limits_{x_i-\Delta x}^{x_i+\Delta x}f(x)dx$$
+Here $f(x)$ is called probability density function and has to satisfy the following constraint
+$$\int\limits_{-\infty}^{\infty}f(x)dx=1$$
+\subsection{Moments}
+\textbf{Mean}: the mean of a continous random variable is defined as 
+$$\bar{x}=E(X)=\int\limits_{-\infty}^{\infty}xf(x)dx$$
+\textbf{Mean of arbitrary function}:
+$$E(g(x))=\int\limits_{-\infty}^{\infty}g(x)f(x)dx$$
+\textbf{Variacne}: the variance of a continous random variable is defined as 
+$$Var(X)=\int\limits_{-\infty}^{\infty}(x-\bar{x})^2f(x)dx$$
+
+\section{Gaussian Distribution}
+The probability density function of a standard Gaussian function is defined as 
+$$f(x)=\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}{2}}$$
+$$E(X)==\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}xe^{-\frac{x^2}{2}}dx=0$$
+\begin{align*}
+Var(X)&=\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}x^2e^{-\frac{x^2}{2}}dx\\
+&=\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}x(e^{-\frac{x^2}{2}})'dx \text{ integrate by parts}\\
+&=\frac{1}{\sqrt{2\pi}}x(e^{-\frac{x^2}{2}})|_{-\infty}^{\infty}+\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}{2}}dx\\
+&=1
+\end{align*}
 
 \section{Algebra of Multiple Random Variables}
 Assume the value of a random variable $X$ is the summation of n random varaibles, $X_1$, $X_2$, ... $X_n$. It can be denoted as
