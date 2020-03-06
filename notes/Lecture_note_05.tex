@@ -1,0 +1,155 @@
+\documentclass[12pt, oneside]{article} 
+\usepackage{amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry}
+
+\geometry{tmargin=.75in, bmargin=.75in, lmargin=.75in, rmargin = .75in}  
+\setlength{\parindent}{0in}
+\setlength{\parskip}{\baselineskip}%
+\setlength{\parindent}{1.5pt}%
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Cdot}{\boldsymbol{\cdot}}
+\newcommand{\block}[1]{
+  \underbrace{\begin{matrix}1 & \cdots & 1\end{matrix}}_{#1}
+}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{conv}{Convention}
+\newtheorem{rem}{Remark}
+\newtheorem{lem}{Lemma}
+\newtheorem{cor}{Corollary}
+
+
+\title{Lecture Note - 05}
+\author{Dihui Lai}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\vspace{.25in}
+
+\section{Exponential Family }
+
+\subsection{Probability Density Function}
+The probability density function (PDF) of an exponential family can be written in a unified format
+$$
+{f(y)}=\exp{\left( \frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}
+$$
+
+There are two parameters in the function: $\theta$ and $\phi$. Probability distributions like normal, Poisson or binomial can all be written in this format when we choose the right functions $a(\cdot)$, $b(\cdot)$, and $c(y, \cdot)$ and parameter $\theta$,  $\phi$. 
+
+\subsection{Special Case: Gaussian Distribution}
+For example, if we set $\theta$ as the mean and $\phi$ as the standard deviation:
+$$\theta=\mu$$
+$$\phi=\sigma$$
+Make the three functions $a$, $b$, $c$, to be the followings:
+$$a(\phi)=\phi^2=\sigma^2$$
+$$b(\theta)=\frac{\theta^2}{2}=\frac{\mu^2}{2}$$
+$$c(y,\phi)=-\frac{y^2}{2\phi^2}-log(\sqrt{2\pi}\phi)=-\frac{y^2}{2\sigma^2}-log(\sqrt{2\pi}\sigma)$$
+
+Substitute the functions into f(y), we have 
+\begin{align*}
+{f(y)}
+&=\exp{\left( \frac{y\mu-\frac{\mu^2}{2}}{\sigma^2}-\frac{y^2}{2\sigma^2}-\log(\sqrt{2\pi}\sigma)\right)}\\
+&=\exp{\left( \frac{2y\mu-\frac{2\mu^2}{2}-y^2}{2\sigma^2}-\log(\sqrt{2\pi}\sigma)\right)}\\
+&=\exp{\left( \frac{-(y-\mu)^2}{2\sigma^2}\right)\exp(-\log(\sqrt{2\pi}\sigma))}\\
+&=\frac{1}{\sqrt{2\pi}\sigma}\exp{\left( \frac{-(y-\mu)^2}{2\sigma^2}\right)}
+\end{align*}
+This is exactly the Gaussian distribution with mean $\mu$ and standard deviation $\sigma$
+
+\subsection{Special Case: Bernoulli Distribution}
+Alternatively, if we set the parameters and the functions to be the followings
+\begin{align*}
+&\theta=\log(p)-\log(1-p)\\
+&a(\phi)=1\\
+&b(\theta)=\log(1+e^\theta)=-\log(1-p)\\
+&c(y,\phi)=0
+\end{align*}
+
+We have the PDF function as
+\begin{align*}
+{f(y)}&=\exp{\left( \frac{y(\log(p)-\log(1-p))-(-\log(1-p))}{1}+0\right)}\\
+&=\exp{\left(\log(p^y)+\log(1-p)^{(-y)})+\log(1-p)^{1}\right)}\\
+&=\exp{\left(\log(p^y)+\log(1-p)^{(1-y)})\right)}\\
+&=p^y(1-p)^{(1-y)}\\
+&=\begin{cases}
+p \text{,  } &y=1\\
+1-p \text{,  } &y=0
+\end{cases}
+\end{align*}
+, which is exactly the probability mass of a Bernoulli distribution.
+
+\section{Moments of Exponential Family}
+
+\subsection{Mean}
+If a random variable $Y$'s PDF belongs to the exponential family. We have the mean and variance of Y immediately as
+\begin{align}
+&E(Y)=\frac{d}{d\theta}b(\theta)\\
+&Var(Y)=a(\phi)\frac{d^2}{d\theta^2}b(\theta)
+\end{align}
+
+To derive the equations above, we can simply use the condition that $f(y)$ has to satisfy
+$$\int_{-\infty}^{\infty}f(y)dy=1$$ i.e.
+\begin{equation}
+\int_{-\infty}^{\infty}\exp{\left( \frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=1
+\end{equation}
+
+
+Take the derivative against $\theta$ on both side of the equation, we have
+
+$$\frac{d}{d\theta}\int_{-\infty}^{\infty}\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=0$$
+Without proof, we assume the derivative and integration are interchangeable. We then get
+$$\int_{-\infty}^{\infty}\frac{d}{d\theta}\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=0$$
+The the derivative against the exponential function, we have 
+$$\int_{-\infty}^{\infty}(y-b'(\theta))\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=0$$ 
+Rearrange the equation, we have 
+$$\int_{-\infty}^{\infty}y\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=b'(\theta)\int_{-\infty}^{\infty}\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy$$
+This is pretty nice. Because the left hand side is simply the definition of the expectation of y. On the right side, we can simplify the term using equation (3). We therefore end up having
+$$E(Y)=\int_{-\infty}^{\infty}y\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=b'(\theta)1=b'(\theta)$$
+
+\subsection{Variance}
+To get the variance of $Y$, we can use the same trick of taking derivative but against equation (1) or its equivalence
+
+$$\int_{-\infty}^{\infty}y\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=b'(\theta)$$
+
+i.e.
+
+$$\frac{d}{d\theta}\int_{-\infty}^{\infty}y\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=b''(\theta)$$
+
+Again, assuming the derivative and integration is interchangeable, we have
+
+$$\int_{-\infty}^{\infty}\frac{y(y-b'(\theta))}{a(\phi)}\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=b''(\theta)$$
+
+We therefore have 
+$$E(Y^2)-(b'(\theta))^2=a(\phi)b''(\theta)$$ 
+or equivalently
+$$Var(Y)=E(Y^2)-E(Y)^2=a(\phi)b''(\theta)$$ 
+
+\section{Generalized Linear Model (GLM)}
+In logistic regression, the model assume the observed outcomes or values of the target variable follow binomial distribution with  parameter $p$. The parameter $p$ or the expectation of the distribution is modeled as a logistic function of a series of predictors $\vec{x}$ i.e. $p=\frac{1}{1+\exp(-\vec{\beta}\cdot\vec{x})}$. 
+
+\subsection{Link Function}
+In general, our target variable could follow different types of distribution e.g. Poisson, Gaussian etc. The generalized linear model tries can be used when the target variable y follows a distribution that belongs to the exponential family. 
+
+The expectation of Y is modeled using a link function $g^{-1}(\cdot)$ 
+$$E(Y)=b'(\theta)=g(\vec{x}\cdot\vec{\beta})$$
+For simplicity, we denote $\eta=\vec{x}\cdot\vec{\beta}$ and thus 
+\begin{equation}
+E(Y)=b'(\theta)=g(\eta)
+\end{equation}
+
+
+If we want to estimate the parameter $\theta$, we can solve the equation (4) by taking the inverse of the function $b'(\cdot)$. If we choose the link function $g^{-1}(\cdot)$ carefully and set
+\begin{equation}
+g^{-1}(\cdot)=b'(\cdot)
+\end{equation}
+we get a model with nice property where $\eta=\theta$. A link function chosen this way is called a Canonical link function.
+
+
+\end{document}
+
