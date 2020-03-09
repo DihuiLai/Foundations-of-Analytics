@@ -1,0 +1,89 @@
+\documentclass[12pt, oneside]{article} 
+\usepackage{amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry}
+
+\geometry{tmargin=.75in, bmargin=.75in, lmargin=.75in, rmargin = .75in}  
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Cdot}{\boldsymbol{\cdot}}
+\newcommand{\block}[1]{
+  \underbrace{\begin{matrix}1 & \cdots & 1\end{matrix}}_{#1}
+}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{conv}{Convention}
+\newtheorem{rem}{Remark}
+\newtheorem{lem}{Lemma}
+\newtheorem{cor}{Corollary}
+\setlength{\parindent}{0in}
+
+
+
+\title{Lecture Notes - 04: Logistic Regression}
+\author{Dihui Lai}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\vspace{.25in}
+
+\section{Likelihood Function}
+
+If a set of random variables $Y_1$, $Y_2$ ... $Y_n$ has a joint probability distribution density/mass $f(y_1, y_2, ...y_n;\theta)$, where $\theta$ is a set of parameters, the likelihood function is defined as 
+\begin{equation}
+L(\theta)=f(y_1, y_2, ...y_n; \theta)
+\end{equation}
+
+\section{Likelihood Function of Logistic Regression}
+
+Assuming an event has two possible outcomes $y=1$ or $y=0$, with probability $p$ of being $1$, i.e. the outcome follows a Bernoulli distribution. As we learned in lecture 2, the probability mass function is 
+\begin{align*}
+\begin{cases}
+p, &y=1\\
+1-p,  &y=0
+\end{cases}
+\end{align*}
+Alternatively, we can write this in a more condensed format
+\begin{equation}
+f(y;p)=p^y(1-p)^y
+\end{equation}
+
+Assuming we have a set of $n$ events that are independent of each other, the probability mass distribution can be written as 
+$$f(y_1, y_2, ...y_n; p_1, p_2, ..., p_n)=\prod_{i=1}^{n}p_{i}^{y^i}(1-p_{i})^{1-y^{i}}$$
+By definition (1), this is also the likelihood function,
+\begin{align*}
+L(p_1, p_2,...p_n)&={\prod_{i=1}^{n}p_{i}^{y^i}(1-p_{i})^{1-y^{i}}}
+\end{align*}
+
+
+To interpreting the likelihood function, let us consider the underlying parameters are the same i.e. $p=p_1=p_2...=p_n$ for all the data entries observed. And we have the likelihood function as
+$$L(p)={\prod_{i=1}^{n}p^{y^i}(1-p)^{1-y^{i}}}$$
+
+Let us consider two very special cases where $n=1$ and $n=2$
+\begin{itemize}
+\item $n=1$: we only have 1 observation, we have $L(p)=p^{y}(1-p)^{1-y}$
+\end{itemize}
+
+
+The corresponding log-likelihood is 
+\begin{align*}
+\ell(p_1, p_2,...p_n)&=\sum\limits_{i=1}^{n}\left(y^i \log(p_i)+(1-y^i)\log(1-p_i)\right)
+\end{align*}
+the probability of being 1 is modeled as 
+$$\mathnormal{p_i}=\frac{1}{1+\mathnormal{\exp(-\vec{\beta}\cdot\vec{x}^i)}}$$
+
+
+
+
+The log-likelihood function is the defined as the log transformation of the likelihood function
+\begin{align*}
+\mathnormal{\ell}=\mathnormal{\log(Likelihood)}
+&=\mathnormal{\sum_{i=1}^{n}y^i\log(p_i)+(1-y^i)\log(1-p_i)}\\
+\end{align*}
+
+\end{document}

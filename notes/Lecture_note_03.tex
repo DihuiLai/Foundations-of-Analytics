@@ -1,0 +1,170 @@
+\documentclass[12pt, oneside]{article} 
+\usepackage{amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry}
+
+\geometry{tmargin=.75in, bmargin=.75in, lmargin=.75in, rmargin = .75in}  
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Cdot}{\boldsymbol{\cdot}}
+\newcommand{\block}[1]{
+  \underbrace{\begin{matrix}1 & \cdots & 1\end{matrix}}_{#1}
+}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{conv}{Convention}
+\newtheorem{rem}{Remark}
+\newtheorem{lem}{Lemma}
+\newtheorem{cor}{Corollary}
+\setlength{\parindent}{0in}
+
+
+
+\title{Lecture Notes - 03: Linear Regression}
+\author{Dihui Lai}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\vspace{.25in}
+
+\section{Single Variate Linear Regression}
+A simple linear model can be formulated by assuming the target variable is dependent only on one predictor i.e.
+
+$$\hat{y}=\beta_0+\beta_1 x$$
+
+In order to have our estimate as close as to the actual value of $y$, we want to find the $\beta$s that minimize the sum squared error function
+\begin{equation}
+\epsilon=\sum_{i=1}^n(y^i-\hat{y}^i)^2=\sum_{i=1}^n(y^i-\beta_0-\beta_1 x^i)^2
+\end{equation}
+i.e.
+\begin{equation}
+\begin{cases}
+\frac{\partial \epsilon}{\partial {\beta}_1}=0\\
+\frac{\partial \epsilon}{\partial {\beta}_0}=0
+
+\end{cases}
+\end{equation}
+
+\begin{equation}
+\Rightarrow
+\begin{cases}
+\sum\limits_{i=1}^{n}(y^{i}-{\beta_0}-{\beta_1} x^{i})x^{i}=0\\
+\sum\limits_{i=1}^{n}(y^{i}-{\beta_0}-{\beta_1} x^{i})=0
+\end{cases}
+\end{equation}
+
+Sorting the equations to get the solution for $\beta_0$ and $\beta_1$
+\begin{equation*}
+\Rightarrow
+\begin{cases}
+{\beta_0}\sum\limits_{i=1}^{n}x^{i}=\sum\limits_{i=1}^{n}y^{i}x^{i}-{\beta_1}\sum\limits_{i=1}^{n} x^{i}x^{i}\\
+\sum\limits_{i=1}^{n}{\beta_0}=\sum\limits_{i=1}^{n}y^{i}-{\beta_1}\sum\limits_{i=1}^{n} x^{i}
+\end{cases}
+\end{equation*}
+
+\begin{equation}
+\Rightarrow
+\begin{cases}
+{\beta_1}=\frac{\sum\limits_{i=1}^{n}y^{i}x^{i}-{\beta_0}\sum\limits_{i=1}^{n}x^{i}}{\sum\limits_{i=1}^{n}x^{i}x^{i}}=\frac{\frac{1}{n}\sum\limits_{i=1}^{n}y^{i}x^{i}-{\beta_0}\bar{x}}{\frac{1}{n}\sum\limits_{i=1}^{n}x^{i}x^{i}}\\
+{\beta_0}=\frac{1}{n}(\sum\limits_{i=1}^{n}y^{i}-{\beta_1}\sum\limits_{i=1}^{n} x^{i})=(\bar{y}-\beta_1\bar{x})
+\end{cases}
+\end{equation}
+
+Substitute $\beta_0$ in to the first equation in equation set (4). We have 
+\begin{align*}
+{\beta_1}&=\frac{\frac{1}{n}\sum\limits_{i=1}^{n}y^{i}x^{i}-(\bar{y}\bar{x}-\beta_1\bar{x}\bar{x})}{\frac{1}{n}\sum\limits_{i=1}^{n}x^{i}x^{i}}\\
+\end{align*}
+
+Solving for $\beta_1$ we have
+\begin{equation*}
+\beta_1{\frac{1}{n}\sum\limits_{i=1}^{n}x^{i}x^{i}}=\frac{1}{n}\sum\limits_{i=1}^{n}y^{i}x^{i}-\bar{y}\bar{x}+\beta_1\bar{x}\bar{x}
+\end{equation*}
+\begin{equation*}
+\Rightarrow
+\beta_1{\frac{1}{n}\sum\limits_{i=1}^{n}x^{i}x^{i}}=\frac{1}{n}\sum\limits_{i=1}^{n}y^{i}x^{i}-\bar{y}\bar{x}+\beta_1\bar{x}\bar{x}
+\end{equation*}
+\begin{equation*}
+\Rightarrow
+\beta_1({\frac{1}{n}\sum\limits_{i=1}^{n}x^{i}x^{i}}-\bar{x}\bar{x})=\frac{1}{n}\sum\limits_{i=1}^{n}y^{i}x^{i}-\bar{y}\bar{x}
+\end{equation*}
+Thus we get the solution of $\beta_1$
+\begin{equation}
+\beta_1=\frac{\frac{1}{n}\sum\limits_{i=1}^{n}y^{i}x^{i}-\bar{y}\bar{x}}{{\frac{1}{n}\sum\limits_{i=1}^{n}x^{i}x^{i}}-\bar{x}\bar{x}}
+\end{equation}
+Take a close look it is not hard to find that the numerator is the co-variance of $X$ and $Y$. The denominator is the variance of $X$.
+
+Therefore $\beta_1$ can also be written as 
+\begin{equation}
+\beta_1=\frac{Cov(X,Y)}{Var(X)}=\rho_{XY}\frac{\sigma_X}{\sigma_Y}
+\end{equation}
+
+\section{Multivariate Linear Regression}
+
+Assume $y$ is a linear superposition of multiple $x$s, the model for y is then formulated as 
+$$\hat{y}=\beta_{0}+\beta_{1}x_1+\beta_{2}x_2+\hdots+\beta_{m}x_m$$
+or simply
+$$
+\hat{y}=\sum\limits_{j=1}^{m}\beta_j x_j=\vec{\beta}\cdot\vec{x}
+$$
+To estimate $\beta$s that best fit the data, we need to minimize the error
+\begin{align}
+\epsilon&={\sum\limits_{i=1}^{n}(y^{i}-\hat{y}^{i})^2}\\
+&={\sum\limits_{i=1}^{n}(y^{i}-\vec{x}^i\cdot\vec{\beta})^2}
+\end{align}
+Writing in matrix notation, we have
+\begin{align*}
+\epsilon&={(y-\hat{y})^T(y-\hat{y})}\\
+&=(y-X\beta)^T(y-X\beta)
+\end{align*}
+here $\beta$ is a $m\times1$ matrix defined as 
+$$
+\beta=\begin{bmatrix}
+    \beta_1\\
+    \beta_2\\
+	\vdots\\
+    \beta_m
+\end{bmatrix}
+$$
+
+To minimize the error $\epsilon$ we want to the ${\beta}$s satisfy the following equation set:
+$$
+\frac{\partial \epsilon}{\partial \beta_j}=0, j=1, 2, 3, 4 ... m
+$$
+Using equation (7), we have 
+$$
+{\sum\limits_{i=1}^{n}\frac{\partial}{\partial \beta_j}(y^{i}-\hat{y}^{i})=0}
+$$
+\begin{align}
+\sum\limits_{i=1}^{n}(y^{i}-\hat{y}^{i})\frac{\partial\hat{y}^{i}}{\partial \beta_j}=0\\
+\Rightarrow
+\sum\limits_{i=1}^{n}(y^{i}-\hat{y}^{i})x^{i}_{j}=0
+\end{align}
+
+Going from equation (9) to equation (10), we use the fact that $\hat{y}=\vec{x}\cdot\vec{\beta}=\sum\limits_{l=1}^{n}x_l^i\beta_l$ and
+\begin{equation}
+\frac{\partial{\hat{y}^i}}{\partial{\beta_j}}=\frac{\partial}{\partial \beta_j}\sum\limits_{l=1}^{n}x_l^i\beta_l=x_j^i
+\end{equation}
+
+Write equation (10) in matrix format we have
+
+$$
+\mathnormal{(y-X \beta)}^{T}\mathnormal{X}=0
+$$
+or after transposing
+$$
+\mathnormal{X^{T}}\mathnormal{y}-\mathnormal{X^T}\mathnormal{X}\beta=0
+$$
+
+Therefore the $\beta$ that minimize $\epsilon$ has to satisfy the following equation
+
+\begin{equation}
+\beta=({X^T}{X})^{-1}{X^{T}}{y}
+\end{equation}
+
+Loosely speaking, we can interpreting equation (12) as composed two components the covariance related term $X^{T}y$ and a term that is related to the variance of $X$ i.e. ${X^T}{X}$
+\end{document}
