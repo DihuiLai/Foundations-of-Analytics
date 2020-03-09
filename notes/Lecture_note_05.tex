@@ -148,20 +148,98 @@ If we want to estimate the parameter $\theta$, we can solve the equation (4) by 
 \begin{equation}
 g(\cdot)=b'(\cdot)
 \end{equation}
-we get a model with nice property where $\eta=\theta$. A link function chosen this way is called a Canonical link function.
+we get a model with nice property where $\eta=\theta$. A link function chosen this way is called a canonical link function.
 
-\subsection{Canonical Link Function of Bernouli Distributioin}
-Use Bernouli distribution as an example, we have $b'(\theta)=\frac{e^\theta}{1+e^\theta}$. The inverse canonical link function is 
+\subsection{Canonical Link Function}
+\textbf{Bernoulli Distribution} Use Bernoulli distribution as an example, we have $b'(\theta)=\frac{e^\theta}{1+e^\theta}$. The inverse canonical link function is 
 
-$$g(\eta)=\frac{e^{\eta}}{1+e^{\eta}}=\frac{1}{1+e^{-\eta}}$$. As we known,  $$p=b'(\theta)=\frac{1}{1+e^{-\eta}}$$. The equation looks a lot like the probability model in the logistic regression model. In fact, as we will learn in the following section, GLM in the special caes of Bernouli distribution is equivalent to logistic regression.
+$$g(\eta)=\frac{e^{\eta}}{1+e^{\eta}}=\frac{1}{1+e^{-\eta}}$$
+As we known,  $$p=b'(\theta)=\frac{1}{1+e^{-\eta}}$$ The equation looks a lot like the probability model in the logistic regression model. In fact, as we will learn in the following section, GLM in the special case of a Bernoulli distribution is equivalent to a logistic regression.
 
-\subsection{Canonical Link Function of Gaussian Distribution}
-In the case of a Gaussian distribution, $b'(\theta)=\theta$, which is an identity function. Choose the link function as the identify function, we have 
+\textbf{Gaussian Distribution}: in the case of a Gaussian distribution, $b'(\theta)=\theta$, which is an identity function. Choose the link function as the identify function, we have 
 $$g(\eta)=\eta$$
 Since we have $\mu=\theta$, the canonical link function of a Gaussian distribution models the expectation of the target variable as of the following
 $$\mu=\eta=\vec{x}\cdot\vec{\beta}$$ 
 
-This looks a lot like the linear regression model, except that we don not know how GLM estimates the error function yet. In the following sections, we are goingn to discuss how to use MLE to optimize the a GLM.
+This looks a lot like the linear regression model, except that we don not know how GLM estimates the error function yet. In the following sections, we are going to discuss how to use MLE to optimize the a GLM.
+
+\subsection{Maximum Likelihood Estimation}
+
+\subsubsection{Likelihood Function}
+A good model represent a dataset as close as it can.
+We can uses maximum likelihood estimation to optimize the $\vec{\beta}$ in GLM. 
+
+Considering one data entry ($\vec{x}^i$, $y^i$), the corresponding log-likelihood function is $$\ell^i=\frac{y^i\theta^i-b(\theta^i)}{a(\phi)}+c^i(y^i, \phi)$$
+
+Since only $\theta^i$ is dependent on $\vec{\beta}$, to maximize the function is equivalent to minimize the function $\ell^i=-2 \left[y^i\theta^i-b(\theta^i)\right]$. The log-likelihood for the whole data set is a summation of each individual $\ell^i$. Overall, we need to minimize the following log-likelihood.
+
+\begin{equation}
+\ell=-2\sum_{i=1}^{N} \left[y^i\theta^i-b(\theta^i)\right]
+\end{equation}
+
+In the case of Bernoulli distribution we have 
+$\ell=y^i\theta^i-\log\left(1+\exp(\theta^i)\right)$
+
+\subsubsection{Gradient}
+To maximize the likelihood $\ell$, we need to have
+$$\frac{\partial \ell}{\partial \beta^j}=0$$ 
+By using equation (6), we end up having
+\begin{align}
+\frac{\partial \ell}{\partial \beta^j}&=-2\sum_{i=1}^{N}\frac{\partial }{\partial \beta^j} \left[y^i\theta^i-b(\theta^i)\right]\\
+&=-2\sum_{i=1}^{N}\left[y^i-b'(\theta^i)\right]\frac{\partial \theta^i}{\partial\beta^j}=0
+\end{align}
+
+If we use canonical link function, we know $\eta=\theta$, the equation can be simplified as below
+\begin{align}
+\frac{\partial \ell}{\partial \beta^j}&=-2\sum_{i=1}^{N}\left[y^i-b'(\theta^i)\right]\frac{\partial \eta^i}{\partial\beta^j}\\
+&=-2\sum_{i=1}^{N}\left[y^i-b'(\theta^i)\right]x^i_j=0
+\end{align}
+
+In the case of a Bernoulli distribution, we have $b'(\theta)=p$
+
+\begin{align*}
+\frac{\partial \ell}{\partial \beta^j}=\sum\limits_{i=1}^N[y^ix^i_j-p^ix^i_j]
+\end{align*}
+This is equivalent to the corresponding equation using MLE in logistic regression. In another word, GLM is equivalent to logistic regression when we assume Bernoulli/binomial distribution of the target variable and use canonical link function.
+
+In general, $\eta\neq\theta$ and we will not have an estimator as simple as equation (10). We need to solve equation (8) instead. In order to do this numerically, we need to figure out the value of $\frac{\partial \theta^i}{\partial\beta^j}$ using $\beta$s and $x$s, or $\eta$ equivalently. 
+
+In order to get the relationship between $\theta$ and $\beta$, we start from the equation (4), where the relationship of the two variables are defined by GLM. By taking the derivative against $\beta$s, we have 
+\begin{align}
+\frac{\partial}{\partial\beta_j}b'(\theta)&=g'(\eta)\frac{\partial \eta}{\partial \beta}\\
+b''(\theta)\frac{\partial \theta}{\partial\beta}&=g'(\eta)\frac{\partial \eta}{\partial \beta_j}
+\end{align}
+
+Therefore we get 
+\begin{equation}
+\frac{\partial \theta}{\partial\beta}=\frac{g'(\eta)}{b''(\theta)}\frac{\partial \eta}{\partial \beta_j}
+\end{equation}
+
+Inserting this back to equation (8), we have 
+
+\begin{equation}
+\frac{\partial \ell}{\partial \beta_j}=-2\sum_{i=1}^{N}\left[y^i-b'(\theta^i)\right]\frac{g'(\eta^i)}{b''(\theta^i)}x^i_j=0
+\end{equation}
+
+Notice that we have an extra weight term $\frac{g'(\eta)}{b''(\theta)}$ comparing to equation (10). To simplify the notation, we denote $b'(\theta)=\mu$ and $b''(\theta)=V(\mu)$. We therefore have 
+\begin{equation}
+\frac{\partial \ell}{\partial \beta_j}=-2\sum_{i=1}^{N}(y^i-\mu^i)\frac{g'(\eta^i)}{V(\mu^i)}x^i_j=0
+\end{equation}
+\subsubsection{Hessian}
+We can use Newton-Raphson method to solve the MLE problem formulated above, however, we need to calculate the Hessian first. 
+
+The Hessian matrix can be estimated by taking the derivative of the gradient, noting here $\mu$ is a function of $\theta$ and therefore dependent on $\beta$.
+\begin{align}
+\frac{\partial^2 \ell}{\partial\beta_k\partial \beta_j}&=-2\sum_{i=1}^{N}\frac{\partial}{\partial \beta_k}\left[(y^i-\mu^i)\frac{g'(\eta^i)}{V(\mu^i)}x^i_j\right]\\
+&=-2\sum_{i=1}^{N}\left[-\frac{\partial \mu^i}{\partial \beta_k}\frac{g'(\eta^i)}{V(\mu^i)}
++(y^i-\mu^i)\frac{g''(\eta^i)V(\mu^i)\frac{\partial \eta^i}{\partial \beta_k}-g'(\eta^i)V'(\mu^i)\frac{\partial \mu^i}{\partial \beta_k}}{V(\mu^i)^2}\right]x^i_j\\ 
+&=2\sum_{i=1}^{N}\left[g'(\eta^i)\frac{g'(\eta^i)}{V(\mu^i)}
+-(y^i-\mu^i)\frac{g''(\eta^i)V(\mu^i)-g'(\eta^i)^2V'(\mu^i)}{V(\mu^i)^2}\right]\frac{\partial \eta^i}{\partial \beta_k}x^i_j\\
+&=2\sum_{i=1}^{N}\left[g'(\eta^i)\frac{g'(\eta^i)}{V(\mu^i)}
+-(y^i-\mu^i)\frac{g''(\eta^i)V(\mu^i)-g'(\eta^i)^2V'(\mu^i)}{V(\mu^i)^2}\right]x^i_k x^i_j
+\end{align}
+Going from equation (17) to (18), we have used the fact that $\frac{\partial\mu}{\partial\beta_j}=\frac{\partial}{\partial\beta_j}b'(\theta)=g'(\eta)\frac{\partial \eta}{\partial \beta}$
+
 
 \end{document}
 
