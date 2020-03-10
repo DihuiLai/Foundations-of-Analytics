@@ -20,16 +20,12 @@
 \newtheorem{cor}{Corollary}
 \setlength{\parindent}{0in}
 
-
-
 \title{Lecture Notes - 04: Logistic Regression}
 \author{Dihui Lai}
 
 \begin{document}
-
 \maketitle
 \tableofcontents
-
 \vspace{.25in}
 
 \section{Likelihood Function}
@@ -39,51 +35,219 @@ If a set of random variables $Y_1$, $Y_2$ ... $Y_n$ has a joint probability dist
 L(\theta)=f(y_1, y_2, ...y_n; \theta)
 \end{equation}
 
-\section{Likelihood Function of Logistic Regression}
-
 Assuming an event has two possible outcomes $y=1$ or $y=0$, with probability $p$ of being $1$, i.e. the outcome follows a Bernoulli distribution. As we learned in lecture 2, the probability mass function is 
 \begin{align*}
+f(y; p)=
 \begin{cases}
 p, &y=1\\
 1-p,  &y=0
 \end{cases}
 \end{align*}
-Alternatively, we can write this in a more condensed format
-\begin{equation}
-f(y;p)=p^y(1-p)^y
-\end{equation}
+Or 
+$$f(y;p)=p^y(1-p)^y$$
 
-Assuming we have a set of $n$ events that are independent of each other, the probability mass distribution can be written as 
-$$f(y_1, y_2, ...y_n; p_1, p_2, ..., p_n)=\prod_{i=1}^{n}p_{i}^{y^i}(1-p_{i})^{1-y^{i}}$$
-By definition (1), this is also the likelihood function,
-\begin{align*}
-L(p_1, p_2,...p_n)&={\prod_{i=1}^{n}p_{i}^{y^i}(1-p_{i})^{1-y^{i}}}
-\end{align*}
-
+The probability mass distribution (or the likelihood function by definition) for $n$ independent events is
+$$L(p_1, p_2,...p_n)=f(y_1, y_2, ...y_n; p_1, p_2, ..., p_n)=\prod_{i=1}^{n}p_{i}^{y^i}(1-p_{i})^{1-y^{i}}$$
 
 To interpreting the likelihood function, let us consider the underlying parameters are the same i.e. $p=p_1=p_2...=p_n$ for all the data entries observed. And we have the likelihood function as
 $$L(p)={\prod_{i=1}^{n}p^{y^i}(1-p)^{1-y^{i}}}$$
 
-Let us consider two very special cases where $n=1$ and $n=2$
+Let us consider the following cases $n=1$, $n=2$ and any $n$. What kind of $p$ that can maximize the likelihood function $L(p)$?
 \begin{itemize}
-\item $n=1$: we only have 1 observation, we have $L(p)=p^{y}(1-p)^{1-y}$
+\item $n=1$ (1 observation): The likelihood function is $L(p)=p^{y}(1-p)^{1-y}$. 
+\begin{center}
+\begin{tabular}{c|c|c} 
+Observations & $L(p)$ &$ L_{max}(p)$\\
+\hline
+$y=0$ & $L(p)=1-p$ &$L_{max}=1$ at $p=0$\\
+$y=1$ & $L(p)=p$     &$L_{max}=1$ at $p=1$\\
+\end{tabular}
+\end{center}
+\item $n=2$ (2 observations): The likelihood function is $L(p)=p^{y^1+y^2}(1-p)^{(1-y^1)+(1-y2)}$. Given the 
+\begin{center}
+\begin{tabular}{c|c|c} 
+Observations & $L(p)$ &$ L_{max}(p)$\\
+\hline
+$y^1=0, y^2=0$ & $L(p)=(1-p)^2$ &$L_{max}=1$ at $p=0$\\
+$y^1=1, y^2=1$ & $L(p)=p^2$     &$L_{max}=1$ at $p=0$\\
+$y^1=0, y^2=1$ & $L(p)=p(1-p)$  &$L_{max}=0.25$ at $p=0.5$
+\end{tabular}
+\end{center}
+\item $n=n_1+n_0$ ($n$ observations with $n_1$ 1s and $n_0$ 0s): The likelihood function is $L(p)=p^{n_1}(1-p)^{n_0}$. The likelihood function is maximized when 
+\begin{equation}
+\frac{\partial \ell}{\partial p}=0 \text{, where }\ell=\log(L(p))=n_1 \log(p)+n_0 \log(1-p)
+\end{equation}
+Solve equation (3) for $p$, we have 
+$$\frac{\partial \ell}{\partial p}=\frac{n_1}{p}-\frac{n_0}{1-p}=0$$
+$$\Rightarrow n_1-n_1 p-n_0 p=0$$
+$$\Rightarrow p=\frac{n_1}{n_1+n_0}$$
 \end{itemize}
 
+Overall, $p$ maximize the likelihood function when it takes the value of the mean of observed $y$s
 
-The corresponding log-likelihood is 
-\begin{align*}
+\section{Logistic Regression}
+\subsection{Likelihood Function}
+In general, every events could have its own underlying parameter $p$. For n-independent events, let us assume the parameters are $p_1$, $p_2$, ..., $p_n$ respectively. The corresponding log-likelihood function is thus
+\begin{align}
 \ell(p_1, p_2,...p_n)&=\sum\limits_{i=1}^{n}\left(y^i \log(p_i)+(1-y^i)\log(1-p_i)\right)
-\end{align*}
-the probability of being 1 is modeled as 
-$$\mathnormal{p_i}=\frac{1}{1+\mathnormal{\exp(-\vec{\beta}\cdot\vec{x}^i)}}$$
-
-
-
+\end{align}
 
 The log-likelihood function is the defined as the log transformation of the likelihood function
+\begin{align}
+\ell=\log(L)&={\sum_{i=1}^{n}y^i\log(p_i)+(1-y^i)\log(1-p_i)}
+\end{align}
+
+\subsection{Parameter Model}
+The parameter $p_i$ is modeled as a logistic function of a set of $m$ predictors $x_1^i$, $x_2^i$, ...$x_m^i$ or $\vec{x}^i$ in vector notation.
+\begin{equation}
+\mathnormal{p_i}=\frac{1}{1+\mathnormal{\exp(-\vec{\beta}\cdot\vec{x}^i)}}
+\end{equation}
+
+\subsection{Maximum Likelihood Estimation}
+The optimal model chooses $\beta$s that maximize the likelihood function $\ell$, at the optimal point $\beta$s satisfy the following equations.
+\begin{equation}
+\frac{\partial \ell}{\partial \beta_j}=0 \text{ , }j = 1, 2, ..., m
+\end{equation}
+
+Use $\ell$'s definition in equation (4) and formula (5), we have 
 \begin{align*}
-\mathnormal{\ell}=\mathnormal{\log(Likelihood)}
-&=\mathnormal{\sum_{i=1}^{n}y^i\log(p_i)+(1-y^i)\log(1-p_i)}\\
+{\ell}&=\sum_{i=1}^{n}y^i\log\frac{p_i}{1-p_i}+\log(1-p_i)\\
+&=\sum_{i=1}^{n}y^i(\vec{\beta}\cdot\vec{x}^i)-\log(1+\exp(\vec{\beta}\cdot\vec{x}^i)))
 \end{align*}
+Insert it into equation (6), we have
+\begin{align*}
+{\frac{\partial\ell}{\partial\beta_j}}
+&={\sum_{i=1}^{n}\left (y^i-\frac{1}{1+\exp(-\vec{\beta}\cdot\vec{x}^i)} \right) x_{j}^{i}}=0 \text{ , } {j=1, 2, 3, ...,m}
+\end{align*}
+To get the optimal $\beta$s, we need to solve the equation set. However, it is hard to do analytically, because of the nonlinear terms that contain 
+$\beta$ $\frac{1}{1+\exp(-\vec{\beta}\cdot\vec{x}^i)}$. However, we can solve the problem numerically, using Newton-Raphson method.
+
+\section{Newton-Raphson Method}
+\subsection{Single Variable}
+Consider a log-likelihood function of one parameter ${\ell(\beta)}$. In general, $\ell$ can be of any function and complex. With the hope that its derivative $\ell'$ is simpler, we use Taylor expansion for approximation around some point $\beta_0$
+\begin{equation}
+\ell(\beta)\sim\ell(\beta_0)+\ell'(\beta_0)(\beta-\beta_0)+\frac{1}{2}\ell''(\beta_0)(\beta-\beta_0)^2
+\end{equation}
+
+The derivative of equation (7) is thus
+\begin{equation}
+\ell'(\beta)\sim0+\ell'(\beta_0)+\ell''(\beta_0)(\beta-\beta_0)
+\end{equation}
+
+
+The $\beta^*$ that minimizes the log-likelihood function have $\ell'(\beta)=0$ at the point i.e. ${\ell'(\beta)|_{\beta=\beta^*}=0}$. Using equation (8), we have
+\begin{equation}
+\ell'(\beta_0)+\ell''(\beta_0)(\beta^*-\beta_0)=0
+\end{equation}
+\begin{equation}
+\Rightarrow\beta^*=\beta_0-\frac{\ell'(\beta_0)}{\ell''(\beta_0)}
+\end{equation}
+
+Recall that this is only an approximation solution and $\beta^*$ is not exactly the optimal point with an arbitrarily chosen $\beta_0$. However, we can hope that equation (10) brings us a little closer to the optimal point. To get a more accurate solution, we will need to use equation (10) iteratively i.e.
+$$
+\beta_{k+1}=\beta_k-\frac{\ell'(\beta_k)}{\ell''(\beta_k)}, \text { until } |\beta_{k+1}-\beta_{k}|<\delta
+$$
+Here, $|\beta_{k+1}-\beta_{k}|<\delta$ is the convergence condition and $\delta$ is tolerance level. $\delta$ is usually set as a small number. The algorithms says that we can stop the iteration if we are very close to the optimal point.
+\subsection{Multiple Variable}
+In the case where the log-likelihood function is dependent on multiple parameters $\ell({\beta})$, the Taylor expansion is
+\begin{equation}
+\ell({\beta})\sim \ell( {\beta_0} )+\nabla\ell(\beta_0)^T({\beta}-{\beta_0})+\frac{1}{2}(\beta-\beta_0)^T\mathbf{H}(\beta_0)(\beta-\beta_0)
+\end{equation}
+Here $\beta$ is a $m\times 1$ column matrix and $\mathbf{H}$ is the $m\times m$ Hessian matrix, defined as
+$$
+\beta=\begin{bmatrix}
+    \beta_1\\[2.2ex]
+    \beta_2\\[2.2ex]
+	\vdots\\[2.2ex]
+    \beta_m
+\end{bmatrix}, 
+\mathbf {H}
+={\begin{bmatrix}
+{\dfrac {\partial^{2}\ell}{\partial \beta_{1}^{2}}}
+&{\dfrac {\partial^{2}\ell}{\partial \beta_{1}\,\partial \beta_{2}}}
+&\cdots 
+&{\dfrac {\partial ^{2}\ell}{\partial \beta_{1}\,\partial \beta_{m}}}
+\\[2.2ex]
+{\dfrac {\partial ^{2}\ell}{\partial \beta_{2}\,\partial \beta_{1}}}
+&{\dfrac {\partial ^{2}\ell}{\partial \beta_{2}^{2}}}
+&\cdots 
+&{\dfrac {\partial ^{2}\ell}{\partial \beta_{2}\,\partial \beta_{m}}}\\[2.2ex]
+\vdots &\vdots &\ddots &\vdots \\[2.2ex]
+{\dfrac {\partial ^{2}\ell}{\partial \beta_{m}\,\partial \beta_{1}}}
+&{\dfrac {\partial ^{2}\ell}{\partial \beta_{m}\,\partial \beta_{2}}}
+&\cdots 
+&{\dfrac {\partial ^{2}\ell}{\partial \beta_{m}^{2}}}
+\end{bmatrix}}
+$$
+
+Apply the gradient against $\beta$ on equation (11), we have 
+$$\nabla{\ell}=\nabla\ell(\beta_0)+\mathbf{H}(\beta-\beta_0) \text{ see Appendix.}$$
+
+At the optimal point we want to have $\nabla{\ell}=0$ i.e.
+\begin{align*}
+&\nabla\ell(\beta_0)+\mathbf{H}(\beta-\beta_0)=0\\
+\Rightarrow
+&\mathbf{H^{-1}}\nabla\ell(\beta_0)+(\beta-\beta_0)=0\\
+\Rightarrow
+&\beta=\beta_0-\mathbf{H^{-1}}\nabla\ell(\beta_0)
+\end{align*}
+
+The Newton-Raphson algorithm for multivariate model is therefore 
+\begin{equation}
+\beta_{k+1}=\beta_{k}-\mathbf{H^{-1}}\nabla\ell(\beta_k), \text { until } |\beta_{k+1}-\beta_{k}|<\delta
+\end{equation}
+
+
+\section{Appendix}
+\subsection{The Gradient of Equation (11)}
+Starting with equation 
+\begin{equation}
+\ell({\beta})=\ell( {\beta_0} )+\nabla\ell(\beta_0)^T({\beta}-{\beta_0})+\frac{1}{2}(\beta-\beta_0)^T\mathbf{H}(\beta_0)(\beta-\beta_0)\\
+\end{equation}
+To simplify the equation, we introduce the notation $\Delta\beta=\beta-\beta_0$. It is easy to see the derivative of each element of 
+$\Delta\beta$ against $\beta_j$ has the following property 
+\begin{equation}
+\frac{\partial}{\partial\beta_j}\Delta\beta_i=\delta_{ij}
+\end{equation}
+Here, $\delta_{ij}$ is the Kronecker delta, having the property $\delta _{{ij}}={\begin{cases}0&{\text{if }}i\neq j,\\1&{\text{if }}i=j.\end{cases}}$
+
+On the other hand, if we write the log likelihood using the elements in the matrices, we have 
+\begin{equation}
+\ell({\beta})=\ell({\beta_0})+\sum\limits_{a=1}^m\frac{\partial{\ell(\beta_0)}}{\partial\beta_a}(\Delta\beta_a)+\sum\limits_{a,b=1}^m\frac{1}{2}\Delta\beta_a{H_{ab}}(\beta_0)\Delta\beta_b
+\end{equation}
+
+Let us look at each term on the R.H.S of the equation when we take the partial derivative of $\ell$ against $\beta_j$. 
+\begin{itemize}
+\item The first term becomes 0 as it is constant $\nabla \ell(\beta_0)=0$.
+\item In the second term, only $\Delta\beta_a$ is dependent on $\beta$ and we have
+\begin{align*}
+&\frac{\partial}{\partial\beta_j}\left(\sum\limits_{a=1}^m\frac{\partial{\ell(\beta_0)}}{\partial\beta_a}(\Delta\beta_a)\right)\\
+&=\sum\limits_{a=1}^m\frac{\partial{\ell(\beta_0)}}{\partial\beta_a}\frac{\partial \Delta\beta_a}{\partial\beta_j}\\
+&=\sum\limits_{a=1}^m\frac{\partial{\ell(\beta_0)}}{\partial\beta_a}\delta_{aj}\\
+&=\frac{\partial{\ell(\beta_0)}}{\partial\beta_j}
+\end{align*}
+In matrix format, we have 
+
+$$\nabla\left(\sum\limits_{a=1}^m\frac{\partial{\ell(\beta_0)}}{\partial\beta_a}(\Delta\beta_a)\right)= \nabla \ell(\beta_0)$$
+
+\item  the third term has two variables dependent on $\beta$ $\Delta\beta_a$ and $\Delta\beta_b$
+\begin{align*}
+&\frac{\partial}{\partial\beta_j}\left(\sum\limits_{a,b=1}^m\frac{1}{2}\Delta\beta_a{H_{ab}}(\beta_0)\Delta\beta_b\right)\\
+&=\sum\limits_{a,b=1}^m\frac{1}{2}\delta_{aj}{H_{ab}}(\beta_0)\Delta\beta_b+\sum\limits_{a,b=1}^m\frac{1}{2}\Delta\beta_a{H_{ab}}(\beta_0)\delta_{bj}\\
+&=\sum\limits_{b=1}^m\frac{1}{2}{H_{jb}}(\beta_0)\Delta\beta_b+\sum\limits_{a=1}^m\frac{1}{2}\Delta\beta_a{H_{aj}}(\beta_0)\\
+&=\sum\limits_{b=1}^m\frac{1}{2}{H_{jb}}(\beta_0)\Delta\beta_b+\sum\limits_{a=1}^m\frac{1}{2}{H_{ja}}(\beta_0)\Delta\beta_a, \text{use the fact that } H_{aj}=H_{ja}\\
+&=\sum\limits_{d=1}^m{H_{jd}}(\beta_0)\Delta\beta_{c}, \text{ (a, b are dummy indices, set them to be c)}
+\end{align*}
+In matrix format we have $$\nabla\left(\sum\limits_{a,b=1}^m\frac{1}{2}\Delta\beta_a{H_{ab}}(\beta_0)\Delta\beta_b\right)=\mathbf{H}\Delta\beta$$
+\end{itemize}
+
+Therefore we have
+\begin{align}
+\nabla \ell(\beta)&=\nabla \ell(\beta_0)+\nabla\left(\sum\limits_{a=1}^m\frac{\partial{\ell(\beta_0)}}{\partial\beta_a}(\Delta\beta_a)\right)+\nabla\left(\sum\limits_{a,b=1}^m\frac{1}{2}\Delta\beta_a{H_{ab}}(\beta_0)\Delta\beta_b\right)\\
+& =0+\nabla \ell(\beta_0)+\mathbf{H}\Delta\beta
+\end{align}
+
+
+
 
 \end{document}
