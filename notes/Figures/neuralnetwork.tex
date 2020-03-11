@@ -17,9 +17,10 @@
 
 \begin{document}
 \begin{tikzpicture}[x=1.5cm, y=1.1cm, >=stealth]
-
+  
 \foreach \m/\l [count=\y] in {1,2,3,missing,4}
   \node [every neuron/.try, neuron \m/.try] (input-\m) at (0, 2-\y*0.8) {};
+  
 
 \foreach \m [count=\y] in {1, 2, 3, 4, missing, 5}
   \node [every neuron/.try, neuron \m/.try ] (hiddenl-\m) at (1.5, 2.5-\y*0.8) {};
@@ -32,7 +33,7 @@
 
 \foreach \l [count=\i] in {1,2,3, n}
   \draw [<-] (input-\i) -- ++(-1,0)
-    node [above, midway] {$I_\l$};
+    node [above, midway] {$x_\l$};
 
 \foreach \l [count=\i] in {1, 2, 3, 4, n}
   \node [above] at (hiddenl-\i.south) {$z^{l-1}_\l$};
@@ -47,7 +48,6 @@
 \foreach \i in {1,...,4}
   \foreach \j in {1,...,5}
     \draw [->] (input-\i) -- (hiddenl-\j);
-    
 \foreach \i in {1,...,5}
   \foreach \j in {1,...,3}
     \draw [->] (hiddenl-\i) -- (hidden-\j);
@@ -56,8 +56,11 @@
   \foreach \j in {1,...,3}
     \draw [->] (hidden-\i) -- (output-\j);
 
-\foreach \l [count=\x from 0] in {Input, $l-1$, $l$, output}
+\foreach \l [count=\x from 0] in {Input, Layer \\$l-1$,  Layer \\$l$, Output}
   \node [align=center, above] at (\x*1.5,2) {\l};
+  
+\foreach \l [count=\x from 0] in { $w_{kj}^{l-2}$,$w_{kj}^{l-1}$, $w_{kj}^{l}$, }
+  \node [align=center, above] at (\x*1.5+0.75,1.4) {\l};
 
 \end{tikzpicture}
 
