@@ -1,0 +1,29 @@
+digraph singleneuron { rankdir=LR
+splines=line
+margin=0;
+node [shape=plaintext fixedsize=false]
+x1[label=<x<sub>1</sub>>];
+x2[label=<x<sub>2</sub>>];
+x3[label=".\n.\n." ];
+xn[label=<x<sub>n</sub>>];
+
+subgraph cluster_1 {
+color=white;
+node [shape=circle];
+neuron[ label = <&sigma;(&Sigma;)>];
+label = "Neuron";
+}
+
+
+node [shape=plaintext]
+output [label="Output"];
+
+
+
+x1 -> neuron[label = <w<sub>1</sub>> ];
+x2 -> neuron[label = <w<sub>2</sub>> ];
+x3 -> neuron[label = <w<sub>3</sub>> ];
+xn -> neuron[label = <w<sub>n</sub>> ];
+neuron->output;
+}
+
