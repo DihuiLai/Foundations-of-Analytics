@@ -1,5 +1,6 @@
 \documentclass[12pt, oneside]{article} 
 \usepackage{amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry}
+\usepackage{mathtools}
 
 \geometry{tmargin=.75in, bmargin=.75in, lmargin=.75in, rmargin = .75in}  
 \setlength{\parindent}{0in}
@@ -81,7 +82,7 @@ z=\sum\limits_{i=1}^{n}w_i x_i+w_0
 
 \textbf{Output}: The weighted sum is further transferred via an activation function $\sigma$ and becomes the final output of the neuron
 \begin{equation}
-o=\sigma(z)=\sigma(\sum\limits_{i=1}^{n}w_i x_i+w_0)
+a=\sigma(z)=\sigma(\sum\limits_{i=1}^{n}w_i x_i+w_0)
 \end{equation}
 
 \textbf{Activation}: The activation function can of different types.  Below is a list of common activation functions. Almost all activation functions have an S-shape except for the ReLu function.
@@ -104,13 +105,75 @@ ReLU & $\sigma(z)=\begin{cases}0&{\text{for }}z\leq 0\\z&{\text{for }}z>0\end{ca
 
 
 \section{Neural Network}
+Each neuron at layer ${l}$ receives inputs from all neuron from the previous layer ${l-1}$,
+\begin{equation}
+{z_k^l=\sum_jw^{l-1}_{kj}a_j^{l-1}}
+\end{equation}
+Here, $a_j^{l-1}$ is the input from $jth$ neuron from $l-1$ layer. The neurons transfer the input signal $z_k^l$ via a transfer function $\sigma$ and send as input to to the next layer
+\begin{equation}
+a_k^l=\sigma(z_k^l)
+\end{equation}
+
+Inserting equation (4) to (5), we have 
+\begin{equation}
+z_k^l=\sum_jw^{l-1}_{kj}\sigma(z_j^{l-1})=\sum_jw^{l-1}_{kj}a_j^{l-1}
+\end{equation}
+    
+\section{SGD and Backpropagation}
+Consider neural network that has N layers, the cost function is dependent on all the $z$s of neurons in all layers
+\begin{equation}
+C\left(\vec{z}^N(\vec{z}^{N-1}(...\vec{z}^{l}(\vec{z}^{l-1})...) ...\vec{z}^1)\right)
+\end{equation}
+
+\begin{enumerate}
+\item Update the weights by changing it along the gradient to reduce the cost function
+\item do one data point at a time
+\end{enumerate}
+\begin{equation}
+{w_{kj}^L \leftarrow w_{kj}^L-\eta \frac{\partial C}{\partial w_{kj}^L}}, L=1, 2, ...l-1, l, ...N
+\end{equation}
 \begin{figure}
 \includestandalone[width=.8\textwidth]{Figures/neuralnetwork}
 \caption{A neural network of multiple layer structures. The hidden layers before layer $l-1$ and after layer $l$ are not shown. }
 \end{figure}
 
+Now let us figure out what $\frac{\partial C}{\partial w_{kj}^L}$ is. Without losing generality, let us consider how the derivative looks like when we consider how signals passes from layer $l-1$ to layer $l$. By using the chain rule, we have 
+\begin{equation}
+\frac{\partial C(...(z^l_k(w_{kj}^{l-1},...)))}{\partial w_{kj}^{l-1}}
+=\frac{\partial C}{\partial z_k^l}\frac{\partial z_k^l}{\partial w_{kj}^{l-1}}
+\end{equation}
+
+There are two terms that we need to understand from the R.H.S. of equation (8).
+
+\begin{itemize}
+\item The second term is simply the output from $jth$ neuron in layer $l-1$ since we have from equation (6)
+\begin{equation}
+\frac{\partial z_k^l}{\partial w_{kj}^{l-1}}=\sigma({z^{l-1}_j})=a^{l-1}_j
+\end{equation}
+
+\item The first term after applying two sets of chain rules, we have
+\begin{align*}
+{\delta^l_k=\frac{\partial C}{\partial z_k^l}}&={\sum_m \frac{\partial C}{\partial z_m^{l+1}}\frac{\partial z_m^{l+1}}{\partial z_k^l}} \text{	(chain rule w.r.t. the composite }z_m^{l+1}(z_m^l))\\
+&={\left(\sum_m \frac{\partial C}{\partial z_m^{l+1}}\frac{\partial z_m^{l+1}}{\partial a_k^l}\right)\frac{d a_k^l}{d z_k^l}} \text{	(chain rule w.r.t. the composite }z_m^{l+1}(a_m^l))\\
+&={\sum_m \delta^{l+1}_m w^l_{mk}\sigma'(z_k^l)} \text{ (noting } \frac{\partial z_k^{l+1}}{\partial a_{j}^{l}}=w^{l}_{kj} \text{ and } \frac{d a_k^l}{d z_k^l}=\sigma'(z_k^l))
+\end{align*}
+Use notation $\delta^l_k=\frac{\partial C}{\partial z_k^l}$ for short, we have
+\begin{equation}
+\delta^l_k=\sum_m \delta^{l+1}_m w^l_{mk}\sigma'(z_k^l)
+\end{equation}
 
 
+\end{itemize}
+
+
+Finally, we get our iteration methods for calculating the gradient of the cost function i.e.
+
+\begin{equation}
+\begin{dcases}
+\frac{\partial C}{\partial w_{kj}^{l-1}}=\delta_k^{l}a_j^{l-1}\\[10pt]
+\delta_k^{l}={\sum_m \delta^{l+1}_m w^l_{mk}\sigma'(z_k^l)}
+\end{dcases}
+\end{equation}
 
 \end{document}
 
