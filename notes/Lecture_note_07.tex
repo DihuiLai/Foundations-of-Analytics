@@ -104,7 +104,7 @@ ReLU & $\sigma(z)=\begin{cases}0&{\text{for }}z\leq 0\\z&{\text{for }}z>0\end{ca
 \end{center}
 
 
-\section{Neural Network}
+\section{Neural Network: Forward Path}
 Each neuron at layer ${l}$ receives inputs from all neuron from the previous layer ${l-1}$,
 \begin{equation}
 {z_k^l=\sum_jw^{l-1}_{kj}a_j^{l-1}}
@@ -153,8 +153,8 @@ There are two terms that we need to understand from the R.H.S. of equation (8).
 
 \item The first term after applying two sets of chain rules, we have
 \begin{align*}
-{\delta^l_k=\frac{\partial C}{\partial z_k^l}}&={\sum_m \frac{\partial C}{\partial z_m^{l+1}}\frac{\partial z_m^{l+1}}{\partial z_k^l}} \text{	(chain rule w.r.t. the composite }z_m^{l+1}(z_m^l))\\
-&={\left(\sum_m \frac{\partial C}{\partial z_m^{l+1}}\frac{\partial z_m^{l+1}}{\partial a_k^l}\right)\frac{d a_k^l}{d z_k^l}} \text{	(chain rule w.r.t. the composite }z_m^{l+1}(a_m^l))\\
+{\delta^l_k=\frac{\partial C}{\partial z_k^l}}&={\sum_m \frac{\partial C}{\partial z_m^{l+1}}\frac{\partial z_m^{l+1}}{\partial z_k^l}} \text{	(since all } z^{l+1}_m, m=1,2 ... \text{ are dependent on } z^l_k )\\
+&={\left(\sum_m \frac{\partial C}{\partial z_m^{l+1}}\frac{\partial z_m^{l+1}}{\partial a_k^l}\right)\frac{d a_k^l}{d z_k^l}} \text{	(since }z_m^{l+1}=z_m^{l+1}(a_m^l(z_m^l))\\
 &={\sum_m \delta^{l+1}_m w^l_{mk}\sigma'(z_k^l)} \text{ (noting } \frac{\partial z_k^{l+1}}{\partial a_{j}^{l}}=w^{l}_{kj} \text{ and } \frac{d a_k^l}{d z_k^l}=\sigma'(z_k^l))
 \end{align*}
 Use notation $\delta^l_k=\frac{\partial C}{\partial z_k^l}$ for short, we have
