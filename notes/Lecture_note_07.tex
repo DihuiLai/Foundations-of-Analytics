@@ -118,7 +118,34 @@ Inserting equation (4) to (5), we have
 \begin{equation}
 z_k^l=\sum_jw^{l-1}_{kj}\sigma(z_j^{l-1})=\sum_jw^{l-1}_{kj}a_j^{l-1}
 \end{equation}
-    
+
+\section{The Derivatives of Neural Network}
+In order to calculate the neural network properly we need to understand a few derivatives.
+
+\begin{itemize}
+\item The partial derivatives of $z^{l}_k$ against $z^{l-1}_j$
+\begin{equation}
+\frac{\partial z^{l}_k}{\partial z_j^{l-1}}=w^{l-1}_{kj}\sigma'(z^{l-1}_j)
+\end{equation}
+
+\item The partial derivatives of $z^{l}_k$ against a weight element $w_{kj}^{l-1}$
+\begin{equation}
+\frac{\partial z^{l}_k}{\partial w_{kj}^{l-1}}=\sigma(z^{l-1}_j)
+\end{equation}
+
+\item Given a function of $f(z^{l-1}_j)$, we can explicitly express it in terms of $z^{l}$s,
+$$
+f(z^{l-1}_j)=f(z^l_1(z^{l-1}_j), z^l_2(z^{l-1}_j)...z^l_m(z^{l-1}_j)...)
+$$
+its derivative w.r.t $z^{l-1}_j$ is
+\begin{equation}
+\frac{\partial f}{\partial z^{l-1}_j}=\sum\limits_m \frac{\partial f}{\partial z^{l}_m}\frac{\partial z^l_m}{\partial z^{l-1}_j}=\sum\limits_m \frac{\partial f}{\partial z^{l}_m}w^{l-1}_{mj}\sigma'(z^{l-1}_j)
+\end{equation}
+
+\end{itemize}
+
+
+
 \section{SGD and Backpropagation}
 Consider neural network that has N layers, the cost function is dependent on all the $z$s of neurons in all layers
 \begin{equation}
@@ -151,11 +178,9 @@ There are two terms that we need to understand from the R.H.S. of equation (8).
 \frac{\partial z_k^l}{\partial w_{kj}^{l-1}}=\sigma({z^{l-1}_j})=a^{l-1}_j
 \end{equation}
 
-\item The first term after applying two sets of chain rules, we have
+\item Using equation (8), the first term becomes 
 \begin{align*}
-{\delta^l_k=\frac{\partial C}{\partial z_k^l}}&={\sum_m \frac{\partial C}{\partial z_m^{l+1}}\frac{\partial z_m^{l+1}}{\partial z_k^l}} \text{	(since all } z^{l+1}_m, m=1,2 ... \text{ are dependent on } z^l_k )\\
-&={\left(\sum_m \frac{\partial C}{\partial z_m^{l+1}}\frac{\partial z_m^{l+1}}{\partial a_k^l}\right)\frac{d a_k^l}{d z_k^l}} \text{	(since }z_m^{l+1}=z_m^{l+1}(a_m^l(z_m^l))\\
-&={\sum_m \delta^{l+1}_m w^l_{mk}\sigma'(z_k^l)} \text{ (noting } \frac{\partial z_k^{l+1}}{\partial a_{j}^{l}}=w^{l}_{kj} \text{ and } \frac{d a_k^l}{d z_k^l}=\sigma'(z_k^l))
+\frac{\partial C}{\partial z_k^l}=\sum_m \frac{\partial C}{\partial z_m^{l+1}} w^l_{mk}\sigma'(z_k^l)
 \end{align*}
 Use notation $\delta^l_k=\frac{\partial C}{\partial z_k^l}$ for short, we have
 \begin{equation}
