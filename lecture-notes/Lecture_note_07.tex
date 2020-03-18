@@ -119,6 +119,14 @@ Inserting equation (4) to (5), we have
 z_k^l=\sum_jw^{l-1}_{kj}\sigma(z_j^{l-1})=\sum_jw^{l-1}_{kj}a_j^{l-1}
 \end{equation}
 
+\begin{center}
+\begin{figure}
+\includestandalone[width=.8\textwidth]{Figures/neuralnetwork}
+\caption{A neural network of multiple layer structures. The hidden layers before layer $l-1$ and after layer $l$ are not shown. }
+\end{figure}
+\end{center}
+
+
 \section{The Derivatives of Neural Network}
 In order to calculate the neural network properly we need to understand a few derivatives.
 
@@ -146,39 +154,30 @@ its derivative w.r.t $z^{l-1}_j$ is
 
 
 
-\section{SGD and Backpropagation}
+\section{Backpropagation}
 Consider neural network that has N layers, the cost function is dependent on all the $z$s of neurons in all layers
 \begin{equation}
 C\left(\vec{z}^N(\vec{z}^{N-1}(...\vec{z}^{l}(\vec{z}^{l-1})...) ...\vec{z}^1)\right)
 \end{equation}
 
-\begin{enumerate}
-\item Update the weights by changing it along the gradient to reduce the cost function
-\item do one data point at a time
-\end{enumerate}
-\begin{equation}
-{w_{kj}^L \leftarrow w_{kj}^L-\eta \frac{\partial C}{\partial w_{kj}^L}}, L=1, 2, ...l-1, l, ...N
-\end{equation}
-\begin{figure}
-\includestandalone[width=.8\textwidth]{Figures/neuralnetwork}
-\caption{A neural network of multiple layer structures. The hidden layers before layer $l-1$ and after layer $l$ are not shown. }
-\end{figure}
+In order to find the weights that optimiaze the cost function, we can use gradient descent. Recall the gradient descent methods updates weights of layer $l-1$ as of the following
 
-Now let us figure out what $\frac{\partial C}{\partial w_{kj}^L}$ is. Without losing generality, let us consider how the derivative looks like when we consider how signals passes from layer $l-1$ to layer $l$. By using the chain rule, we have 
 \begin{equation}
-\frac{\partial C(...(z^l_k(w_{kj}^{l-1},...)))}{\partial w_{kj}^{l-1}}
+w_{kj}^{l-1} \leftarrow w_{kj}^{l-1}-\eta \frac{\partial C}{\partial w_{kj}^{l-1}}
+\end{equation}
+
+By using the chain rule, we have 
+\begin{equation}
+\frac{\partial C}{\partial w_{kj}^{l-1}}
+=\frac{\partial C(...(z^l_k(w_{kj}^{l-1},...)))}{\partial w_{kj}^{l-1}}
 =\frac{\partial C}{\partial z_k^l}\frac{\partial z_k^l}{\partial w_{kj}^{l-1}}
 \end{equation}
 
-There are two terms that we need to understand from the R.H.S. of equation (8).
+There are two terms on the R.H.S. of the equation, 
 
 \begin{itemize}
-\item The second term is simply the output from $jth$ neuron in layer $l-1$ since we have from equation (6)
-\begin{equation}
-\frac{\partial z_k^l}{\partial w_{kj}^{l-1}}=\sigma({z^{l-1}_j})=a^{l-1}_j
-\end{equation}
 
-\item Using equation (8), the first term becomes 
+\item Using equation (9), the first term becomes 
 \begin{align*}
 \frac{\partial C}{\partial z_k^l}=\sum_m \frac{\partial C}{\partial z_m^{l+1}} w^l_{mk}\sigma'(z_k^l)
 \end{align*}
@@ -187,18 +186,32 @@ Use notation $\delta^l_k=\frac{\partial C}{\partial z_k^l}$ for short, we have
 \delta^l_k=\sum_m \delta^{l+1}_m w^l_{mk}\sigma'(z_k^l)
 \end{equation}
 
+\item Using what we calculated in equation (8), the second term is simply the output from $jth$ neuron in layer $l-1$ 
+\begin{equation}
+\frac{\partial z_k^l}{\partial w_{kj}^{l-1}}=\sigma({z^{l-1}_j})=a^{l-1}_j
+\end{equation}
 
 \end{itemize}
 
 
-Finally, we get our iteration methods for calculating the gradient of the cost function i.e.
+Finally, we get our iteration methods for calculating the gradient of the cost function w.r.t the weights i.e.
 
 \begin{equation}
-\begin{dcases}
-\frac{\partial C}{\partial w_{kj}^{l-1}}=\delta_k^{l}a_j^{l-1}\\[10pt]
-\delta_k^{l}={\sum_m \delta^{l+1}_m w^l_{mk}\sigma'(z_k^l)}
-\end{dcases}
+\frac{\partial C}{\partial w_{kj}^{l-1}}=\delta_k^{l}a_j^{l-1}
 \end{equation}
+
+\section{Neural Network Training Algorithm}
+So the overall backpropagation algorithm works as the following:
+
+\begin{itemize}
+\item Initialize all weights $w_{mk}^l$ in every layer of the neural network
+\item Feedfoward: use formula (6) to caculate the quantities $z_k^l$, $a_k^l$ for each neuron in all layers. Note in the input layer $a_k=x_k$, $x_k$ are he inputs to the $1st$ layer neurons
+\item Backpropagation: after calculating the feedforward path, we use the backpropagation to figure out all the $\delta_k^l$ and update the weights. In contrast to the forward path. The back propagation starts by calculating the $\delta_k^L$ of the last layer $L$. The $\delta_k^l$ is then iteratively calculated using equation (13).
+\item Calculate the gradient of the cost function w.r.t to all weights $w_{kj}^{l-1}$
+\item updates the weights using equation (11)
+
+\end{itemize}
+
 
 \end{document}
 

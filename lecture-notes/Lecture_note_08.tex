@@ -1,0 +1,172 @@
+\documentclass[12pt, oneside]{article} 
+\usepackage{amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry}
+\usepackage{mathtools}
+
+\geometry{tmargin=.75in, bmargin=.75in, lmargin=.75in, rmargin = .75in}  
+\setlength{\parindent}{0in}
+\setlength{\parskip}{\baselineskip}%
+\setlength{\parindent}{1.5pt}%
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Cdot}{\boldsymbol{\cdot}}
+\newcommand{\block}[1]{
+  \underbrace{\begin{matrix}1 & \cdots & 1\end{matrix}}_{#1}
+}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{conv}{Convention}
+\newtheorem{rem}{Remark}
+\newtheorem{lem}{Lemma}
+\newtheorem{cor}{Corollary}
+\usepackage{tikz}  %TikZ central library is called.
+\usetikzlibrary{automata,positioning} 
+\usepackage{standalone}
+\usepackage{pdfpages}
+
+\tikzset{%
+  every neuron/.style={
+    circle,
+    draw,
+    minimum size=0.8cm
+  },
+  neuron missing/.style={
+    draw=none, 
+    scale=2,
+    text height=0.2cm,
+    execute at begin node=\color{black}$\vdots$
+  },
+  arro/.style={
+    ->,
+    >=latex
+  },
+  bloque/.style={
+    draw,
+    minimum height=1cm,
+    minimum width=0.5cm
+  }  
+}
+
+
+\title{Lecture Note - 08: NLP, Word Representation, Language Model, Bigram, MLE}
+\author{Dihui Lai}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\vspace{.25in}
+
+
+\section{Word Semantics and Vector Representations}
+\begin{itemize} 
+\item Homonymous: a word can have multiple definitions e.g. mouse could mean small rodents or it could mean computer devices. 
+\item Synonyms/antonym (words' relations): couch/sofa, vomit/throw up, filbert/hazelnut; long/short, big/little
+\item Word sentiments
+\item Can we represent a word using vectors and quantify those measures?
+\end{itemize}
+
+
+Term-term matrix or word-word matrix: count the number of times a word occurs in a context window around the target word (e.g. $\pm 7$)
+
+sugar, a sliced lemon, a tablespoonful of, {\bfseries apricot} jam, a pinch each of,
+
+\begin{center}
+ \begin{tabular}{c c c c c c c c c} 
+ \hline
+   & aardvark &...& computer & data & pinch & result & sugar & ...\\ [0.5ex] 
+ \hline\hline
+ apricot & 0 &...& 0 & 0 & 1 & 0 & 1 & ...\\ 
+ \hline
+ pineapple & 0 &...& 0 & 0 & 1 & 0 & 1 & ...\\
+ \hline
+ digital  & 0 &...& 2 & 1 & 0 & 1 & 0 & ...\\
+ \hline
+ information  & 0 &...& 1 & 6 & 0 & 4 & 0 & ... \\
+ \hline
+\end{tabular}
+\end{center}
+
+It can be inferred from the word-word matrxi that apricot and pineapple are more simliar to each other. 
+
+
+
+
+
+\section{Cosine Similarity}
+
+The similarity of two words could be measured by dot-products of their vector representation
+
+$$
+\vec{v}\cdot\vec{w}=\sum_{i=1}^N v_i w_i
+$$
+
+The dot-product favors vectors of higher frequency to normalize the similarity without considering word frequency, we use cosine similarity meature 
+
+$$
+cosine(\vec{v}, \vec{w})=\frac{\vec{v}\cdot\vec{w}}{|\vec{v}||\vec{w}|}=\frac{\sum_{i=1}^N v_i w_i}{\sqrt{\sum_1^N v_i^2}\sqrt{\sum_1^N w_i^2}}
+$$
+
+
+\section{Language Model}
+
+\subsection{N-gram Language Models}
+\begin{itemize}
+\item Models that assign probabilities to sequences of words are called language models or LM.
+\item An n-gram is a sequence of N words e.g. 2-gram (or bigram) "Good Morning", 3-gram "Turn it on"
+\item N-gram lanuage models estimate the probability of the last word of an n-gram given the previous words
+\end{itemize}
+
+LM: What is the probability of having a sentence that consists a sequence of words: $w_1$, $w_2$, $w_3$ ... $w_N$, i.e. $P(w_1, w_2, w_3...w_N)$. 
+
+Recall the chain rule:
+\begin{align*}
+&P(w_1, w_2, w_3...w_N)\\
+&=P(w_1)P(w_2|w_1)P(w_3|w_1, w_2)P(w_4|w_1, w_2, w_3)...P(w_N|w_1, w_2, ...w_{N-1})
+\end{align*}
+In the case of bigram, we assume $P(w_N|w_1,...,w_{N-1})=P(w_N|w_{N-1})$, since the word is only dependent on the previous word, it is also called Markov assumption.
+\vspace{0.2cm}
+In general case of an n-gram, we assume $P(w_N|w_1, w_2, ...w_{N-1})=P(w_N|w_{N-1}, w_{N-2}, ...w_{N-n+1})$
+
+\subsection{MLE Estimation for bigram }
+In the case of bigram, the MLE estimation can be formulated as 
+$$
+P(w_N|w_{N-1})=\frac{C(w_{N-1}w_N)}{\sum_{w}C(w_{N-1}w)}=\frac{C(w_{N-1}w_N)}{C(w_{N-1})}
+$$
+Here, C is the count of the words' occurence
+\subsection{Example: MLE Estimation for bigram }
+Estimate the bigram for the following corpus, here $\langle s \rangle$ and $\langle /s\rangle$ are introduced as the symbols that represents the begining and  end of a setence.
+
+$\langle s \rangle$ I am Sam $\langle /s\rangle$\\
+$\langle s \rangle$ Sam I am $\langle /s\rangle$\\
+$\langle s \rangle$ I do not like green eggs and ham $\langle /s \rangle$
+
+We begin buy counting the words occurence and have $C(I)=3$, $C(Sam)=2$, $C(\langle /s\rangle)=3$, $C(\langle s\rangle)=3$ ...$C(\langle s \rangle I)=2$, $C(\langle s \rangle Sam)=1$
+
+\vspace{0.2cm}
+
+So we have $P(I|\langle s \rangle)=\frac{2}{3}$, $P(Sam|\langle s \rangle)=\frac{1}{3}$, $P(do|I)=\frac{1}{3}$, $P(am|I)=\frac{2}{3}$, $P(Sam|am)=\frac{1}{2}$, $P(\langle /s\rangle | Sam)=\frac{1}{2}$
+
+\vspace{0.2cm}
+
+The in-sample probability of $P(\langle s \rangle \textit{I am Sam}\langle /s\rangle)=P(I|\langle s \rangle)P(am|I)P(Sam|am)P(\langle /s\rangle | Sam)=2/3x2/3x1/2x1/2$
+
+
+How do we compare two LM?
+\begin{itemize}
+\item A test data/hold out data set can be used to evaluate a LM. Apply the estiamated conditional probability to the test data set and compare the resulting probability.
+\item Perplexity is used instead of the raw probability. 
+\begin{align*}
+	PP(W)&=P(w_1, w_2, ...w_N)^{-\frac{1}{N}}\\
+	&=\sqrt[N]{\frac{1}{P(w_1, w_2, ...w_N)}}
+\end{align*}
+\item Maximize probability is equivalent to minimize perplexity
+
+\end{itemize}
+
+\end{document}
+

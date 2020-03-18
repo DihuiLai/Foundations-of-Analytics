@@ -1,0 +1,114 @@
+\documentclass[12pt, oneside]{article} 
+\usepackage{amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry}
+\usepackage{mathtools}
+
+\geometry{tmargin=.75in, bmargin=.75in, lmargin=.75in, rmargin = .75in}  
+\setlength{\parindent}{0in}
+\setlength{\parskip}{\baselineskip}%
+\setlength{\parindent}{1.5pt}%
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Cdot}{\boldsymbol{\cdot}}
+\newcommand{\block}[1]{
+  \underbrace{\begin{matrix}1 & \cdots & 1\end{matrix}}_{#1}
+}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{conv}{Convention}
+\newtheorem{rem}{Remark}
+\newtheorem{lem}{Lemma}
+\newtheorem{cor}{Corollary}
+\usepackage{tikz}  %TikZ central library is called.
+\usetikzlibrary{automata,positioning} 
+\usepackage{standalone}
+\usepackage{pdfpages}
+
+\tikzset{%
+  every neuron/.style={
+    circle,
+    draw,
+    minimum size=0.8cm
+  },
+  neuron missing/.style={
+    draw=none, 
+    scale=2,
+    text height=0.2cm,
+    execute at begin node=\color{black}$\vdots$
+  },
+  arro/.style={
+    ->,
+    >=latex
+  },
+  bloque/.style={
+    draw,
+    minimum height=1cm,
+    minimum width=0.5cm
+  }  
+}
+
+
+\title{Lecture Note - 09: POS Tagging, HMM, NER}
+\author{Dihui Lai}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\vspace{.25in}
+
+\section{Part-of-Speech (POS) Tagging}
+
+
+An important tagset for English is the 45-tag Penn Treebank tagset. 
+
+\begin{itemize}
+\item Label the words in a document using POS tags, e.g. 
+
+The[DT] Itek[NNP] Air[NNP] Boeing[NNP] 737[CD] took[VBD] off[RP] bound[VBN] for[IN] Mashhad[NNP] in[IN] north-eastern[JJ] Iran[NNP].
+
+\item If a word $w$ that could be tagged as $\mathnormal{t_1}$, $\mathnormal{t_2}$, ... $\mathnormal{t_k}$, the probabilities the word has tagged  $\mathnormal{t_i}$ is calculated as
+$${p(t_i|w) = \frac{c(w,t_i)}{\sum\limits_{i=1}^{k}c(w, t_i)}}$$
+
+\textbf{This approach does not take the order of the word into consideration!}
+\end{itemize}
+
+Provided that we have a sequence of words $\mathnormal{W=w_1, w_2,  ...w_i, ...w_n}$ and we want to figure out the their POS tags $\mathnormal{T= t_1, t_2, ... t_i ...t_n}$
+
+Using Bayes' theorem
+$$\mathnormal{P(T | W) = P(W|T) P(T) / P(W) = const \times P(W|T) P(T)}$$
+
+Assume that ${t_i}$ is only dependent on ${t_{i-1}}$ and ${w_{i}}$, we have
+\begin{align*}
+P(T)&= P(t_1) P(t_2 | t_1) P(t_3 | t_1, t_2) P(t_4 | t_1, t_2, t_3)  ...P(t_n | t_{1}, t_{2}, ... t_{n-1})\\
+&=P(t_1) P(t_2 | t_1) P(t_3 | t_2) P(t_4 |  t_3)  ...P(t_n | t_{n-1})
+\end{align*}
+On the other hand, the conditional probability of seeing a word sequence W given a tag sequence T is 
+\begin{align*}
+P(W|T) = P(w_1 | t_1) P(w_2 | t_2) P(w_3 | t_3)  ...P(w_n | t_{n})
+\end{align*}
+
+In summary, we have 
+$$\mathnormal{P(T|W) \approx P(t_1) P(t_2|t_1) ... P(t_{n}|t_{n-1}) P(w_1|t_1) P(w_2|t_2) ... P(w_n|t_n)}$$
+Each term on the right hand side of the equation can be calculated as 
+$$\mathnormal{P(t_{i}|t_{i-1}) = \frac{c(t_{i-1},t_{i})}{c(t_{i-1})}} \text{ (transition probability)}$$ , 
+$$\mathnormal{P(w_i|t_i) = \frac{c(w_i,t_i)}{c(t_i)}} \text{ (emission probability)}$$
+
+where 
+
+$\mathnormal{c(t_i)} = \text{count of } \mathnormal{t_i} \text{ in the corpus}$,  
+
+$ \mathnormal{c(w_i,t_i)} = \text{count of }  \mathnormal{(w_i, t_i)} \text{ in the corpus}$,
+
+$ \mathnormal{c(t_{i-1},t_{i})} = \text{count of }  \mathnormal{(t_{i-1}, t_i)} \text{ in the corpus}$
+
+\section{Hidden Markove Model}
+
+\section{Named Entity Recognition}
+
+\end{document}
+
