@@ -1,6 +1,6 @@
 #!/bin/bash
 
 cd demo/JupyterNotebook
-source foundationvenv/bin/activate
+source analyticvenv/bin/activate
 jupyter notebook
 

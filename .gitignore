@@ -24,6 +24,7 @@ demo/Homework_Solution
 demo/pythoncode
 demo/**.py
 demo/JupyterNotebook/Data
+demo/JupyterNotebook/analyticvenv
 demo/JupyterNotebook/.idea
 demo/JupyterNotebook/.ipynb_checkpoints/
 demo/JupyterNotebook/venv.zip
