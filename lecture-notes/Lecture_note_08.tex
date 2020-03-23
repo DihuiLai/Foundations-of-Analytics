@@ -70,46 +70,98 @@
 \item Can we represent a word using vectors and quantify those measures?
 \end{itemize}
 
+\subsection{Term-term matrix/Word-word matrix}
+Count the number of times ($n$) a word occurs in a context window ($w$) around the target word ($t$). Let's consider the following setence as an example:
 
-Term-term matrix or word-word matrix: count the number of times a word occurs in a context window around the target word (e.g. $\pm 7$)
+\textit{Data scientists are big data wranglers, gathering and analyzing large sets of structured and unstructured data}
 
-sugar, a sliced lemon, a tablespoonful of, {\bfseries apricot} jam, a pinch each of,
+In the setence, the words 'are', 'and', 'of' are stop words and serve as building blocks to form a setence. While constructing a word representation, let us ignore them for the moment and consider the words in their base format. Thus we end up with a sentence as of the following 
+
+\textit{data scientist big data wrangler gather analyze large set structure unstructure data}
+
+The unique words appeared in the sentence form a dictionary: \{\textit{data, scientist big wrangler, gather, analyze, large, set, structure, unstructure}\}. 
+
+As a first step to construct a term-term matrix, we use the words from the dictionary as columns and the each word in the setence as rows. For simplicity, we consider the terms appear in a context - window of size 2, i.e. $w=\pm 1$. Check the first word in the setence \textit{data}, the words appear within the context-window are \textit{scientist} and \textit{big}. We then fill the corresponding cells $M_{12} = 1$, $M_{13} = 1$ in the term-term matrix. Similarly, the second word \textit{scientist}, has non-zero cell in the matrix $M_{21}=1$ and $M_{23}=1$. We repeat this practice and get the term-term matrix below
 
 \begin{center}
- \begin{tabular}{c c c c c c c c c} 
+ \begin{tabular}{c c c c c c c c c c c} 
  \hline
-   & aardvark &...& computer & data & pinch & result & sugar & ...\\ [0.5ex] 
+   & data &scientist &big &wrangler &gather &analyze &large &set &structure &unstructure\\ [0.5ex] 
  \hline\hline
- apricot & 0 &...& 0 & 0 & 1 & 0 & 1 & ...\\ 
+ data & 0 &1 &1 &0 &0 &0 &0 &0 &0 &0\\ 
  \hline
- pineapple & 0 &...& 0 & 0 & 1 & 0 & 1 & ...\\
+ scientist & 1 &0 &1 &0 &0 &0 &0 &0 &0 &0\\
  \hline
- digital  & 0 &...& 2 & 1 & 0 & 1 & 0 & ...\\
+ big  & 1 &1 &0 &0 &0 &0 &0 &0 &0 &0\\
  \hline
- information  & 0 &...& 1 & 6 & 0 & 4 & 0 & ... \\
+ data& 0 &0 &1 &1 &0 &0 &0 &0 &0 &0\\
+ \hline
+ wrangler & 1 &0 &0 &0 &1 &0 &0 &0 &0 &0\\
+ \hline
+ gather& 0 &0 &0 &1 &0 &1 &0 &0 &0 &0\\
+ \hline
+ analyze& 0 &0 &0 &0 &1 &0 &1 &0 &0 &0\\
+ \hline
+ large& 0 &0 &0 &0 &0 &1 &0 &1 &0 &0\\
+ \hline
+ set& 0 &0 &0 &0 &0 &0 &1 &0 &1 &0\\
+ \hline
+ structured& 0 &0 &0 &0 &0 &0 &0 &1 &0 &1\\
+ \hline
+ unstructured& 1 &0 &0 &0 &0 &0 &0 &0 &1 &0\\
+ \hline 
+ data& 0 &0 &0 &0 &0 &0 &0 &0 &0 &1 \\
  \hline
 \end{tabular}
 \end{center}
 
-It can be inferred from the word-word matrxi that apricot and pineapple are more simliar to each other. 
+To construct the term-term matrix we aggregate the rows of the above matrix according to the row keys
 
+\begin{table}
+\caption{Term-term matrix: the cells in the matrix indicate the word count, appearing in a context window of size 2}
+ \begin{tabular}{c c c c c c c c c c c} 
+ \hline
+   & data &scientist &big &wrangler &gather &analyze &large &set &structure &unstructure\\ [0.5ex] 
+ \hline\hline
+ data & 0 &1 &2 &1 &0 &0 &0 &0 &0 &1\\ 
+ \hline
+ scientist & 1 &0 &1 &0 &0 &0 &0 &0 &0 &0\\
+ \hline
+ big  & 1 &1 &0 &0 &0 &0 &0 &0 &0 &0\\
+ \hline
+ wrangler & 1 &0 &0 &0 &1 &0 &0 &0 &0 &0\\
+ \hline
+ gather& 0 &0 &0 &1 &0 &1 &0 &0 &0 &0\\
+ \hline
+ analyze& 0 &0 &0 &0 &1 &0 &1 &0 &0 &0\\
+ \hline
+ large& 0 &0 &0 &0 &0 &1 &0 &1 &0 &0\\
+ \hline
+ set& 0 &0 &0 &0 &0 &0 &1 &0 &1 &0\\
+ \hline
+ structured& 0 &0 &0 &0 &0 &0 &0 &1 &0 &1\\
+ \hline
+ unstructured& 1 &0 &0 &0 &0 &0 &0 &0 &1 &0\\
+ \hline 
+ \hline
+\end{tabular}
+\end{table}
 
-
-
+\subsection{Word Representation using Neural Network}
 
 \section{Cosine Similarity}
 
-The similarity of two words could be measured by dot-products of their vector representation
-
+By looking at the Term-term matrix in Table. 1, we can see that data and scientist seems to have a common context word \textit{big} and could be close in their meanings. How can we quantify this? One possibility is using the dot-product of their vector representation.
 $$
 \vec{v}\cdot\vec{w}=\sum_{i=1}^N v_i w_i
 $$
 
-The dot-product favors vectors of higher frequency to normalize the similarity without considering word frequency, we use cosine similarity meature 
-
+However, the dot-product favors vectors of higher frequency. Words that appears often are likely to have higher dot-product value than word of low occurence. To normalize the frequency, we can use cosine similarity meature, which is defined as below 
 $$
 cosine(\vec{v}, \vec{w})=\frac{\vec{v}\cdot\vec{w}}{|\vec{v}||\vec{w}|}=\frac{\sum_{i=1}^N v_i w_i}{\sqrt{\sum_1^N v_i^2}\sqrt{\sum_1^N w_i^2}}
 $$
+
+
 
 
 \section{Language Model}
