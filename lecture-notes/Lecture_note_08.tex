@@ -51,7 +51,7 @@
 }
 
 
-\title{Lecture Note - 08: NLP, Word Representation, Language Model, Bigram, MLE}
+\title{Lecture Note - 08: NLP, Word Representation, Language Model, N-gram, MLE}
 \author{Dihui Lai}
 
 \begin{document}
@@ -83,8 +83,7 @@ The unique words appeared in the sentence form a dictionary: \{\textit{data, sci
 
 As a first step to construct a term-term matrix, we use the words from the dictionary as columns and the each word in the setence as rows. For simplicity, we consider the terms appear in a context - window of size 2, i.e. $w=\pm 1$. Check the first word in the setence \textit{data}, the words appear within the context-window are \textit{scientist} and \textit{big}. We then fill the corresponding cells $M_{12} = 1$, $M_{13} = 1$ in the term-term matrix. Similarly, the second word \textit{scientist}, has non-zero cell in the matrix $M_{21}=1$ and $M_{23}=1$. We repeat this practice and get the term-term matrix below
 
-\begin{center}
- \begin{tabular}{c c c c c c c c c c c} 
+\begin{tabular}{c c c c c c c c c c c} 
  \hline
    & data &scientist &big &wrangler &gather &analyze &large &set &structure &unstructure\\ [0.5ex] 
  \hline\hline
@@ -113,13 +112,10 @@ As a first step to construct a term-term matrix, we use the words from the dicti
  data& 0 &0 &0 &0 &0 &0 &0 &0 &0 &1 \\
  \hline
 \end{tabular}
-\end{center}
 
-To construct the term-term matrix we aggregate the rows of the above matrix according to the row keys
+To construct the term-term matrix, we aggregate the rows of in the matrix above by the row keys (see below). Each row in the term-term matrix is a representaiton of the word appeared in a document.
 
-\begin{table}
-\caption{Term-term matrix: the cells in the matrix indicate the word count, appearing in a context window of size 2}
- \begin{tabular}{c c c c c c c c c c c} 
+\begin{tabular}{c c c c c c c c c c c} 
  \hline
    & data &scientist &big &wrangler &gather &analyze &large &set &structure &unstructure\\ [0.5ex] 
  \hline\hline
@@ -145,7 +141,40 @@ To construct the term-term matrix we aggregate the rows of the above matrix acco
  \hline 
  \hline
 \end{tabular}
-\end{table}
+
+For example, $data$ and $scientist$ have vector represetations as of the followings: $data=(0, 1, 2, 1, 0, 0, 0, 0, 0, 1)$, $scientist=(1, 0, 1, 0, 0, 0, 0, 0, 0, 0)$
+
+
+\subsection{Neural Network Based Word Representation}
+
+Use neural network to learn word representation is a hot topics in recent years. One simple method is described as below
+
+\begin{itemize}
+
+\item The input variable is a one-hot encoding vector. If the vocabulary is of size V, an input vector is has V components $\mathnormal{\vec{x}=[0, 0, 0 ...1, ...0]}$ 
+\item The hidden layer has $n$ neurons. The input weights matrix $\mathnormal{W}$ is of size $\mathnormal{V\times n}$
+\item The output layer weights $\mathnormal{W}'$ matrix is of size $\mathnormal{n\times V}$
+\item CBOW: take $2m$ words ( i.e. $\mathnormal{w_{c-m}}$, ...$\mathnormal{w_{c-1}}$, $\mathnormal{w_{c+1}}$, $\mathnormal{w_{c+m}}$) around the center word $\mathnormal{w_c}$ as input  $\mathnormal{w_c}$ is the target.
+\item Skip-gram: take the center word $\mathnormal{w_c}$ as the input and the $2m$ words ( i.e. $\mathnormal{w_{c-m}}$, ...$\mathnormal{w_{c-1}}$, $\mathnormal{w_{c+1}}$, $\mathnormal{w_{c+m}}$) around it as the target.
+
+\end{itemize}
+
+
+\begin{center}
+\begin{figure}
+\includestandalone[width=.8\textwidth]{Figures/wordembedding}
+\caption{Neural network architecture for learnign COBW and skip-gram embeddings. A vocabulary is fed into the neural network using one-hot encoding methods. For a vocabulary of size V, the input vector is of size 1xV
+ }
+\end{figure}
+\end{center}
+
+The word representation/embedding can be calculated as 
+
+$$\mathnormal{w_i=x_iW}$$
+
+$\mathnormal{x_i}$ is the $\mathnormal{i^th}$ word in the dictionary, $\mathnormal{w_i}$ is the $\mathnormal{i^th}$ row in the input matrix $\mathnormal{W}$
+
+
 
 \subsection{Word Representation using Neural Network}
 
@@ -189,15 +218,16 @@ In the case of bigram, the MLE estimation can be formulated as
 $$
 P(w_N|w_{N-1})=\frac{C(w_{N-1}w_N)}{\sum_{w}C(w_{N-1}w)}=\frac{C(w_{N-1}w_N)}{C(w_{N-1})}
 $$
-Here, C is the count of the words' occurence
+Here, $C(w_{N-1})$ is the count of a word's occurence in a document. $C(w_{N-1}w_N)$ is the number of co-occurence of the word pair $w_{N-1}~w_{N}$, where $w_{N}$ appears after $w_{N-1}$ . For example, if we are interested in knowing the probabily that "$house$" occurs after "$white$", $P(house|white)$ we can do the followings: count the total occurence of the word "$white$" in a document and then count the co-occurence of the word pair "$white$ $house$"
+ 
 \subsection{Example: MLE Estimation for bigram }
 Estimate the bigram for the following corpus, here $\langle s \rangle$ and $\langle /s\rangle$ are introduced as the symbols that represents the begining and  end of a setence.
 
-$\langle s \rangle$ I am Sam $\langle /s\rangle$\\
-$\langle s \rangle$ Sam I am $\langle /s\rangle$\\
-$\langle s \rangle$ I do not like green eggs and ham $\langle /s \rangle$
+$\langle s \rangle$ \textit{I am Sam} $\langle /s\rangle$\\
+$\langle s \rangle$ \textit{Sam I am} $\langle /s\rangle$\\
+$\langle s \rangle$ \textit{I do not like green eggs and ham} $\langle /s \rangle$
 
-We begin buy counting the words occurence and have $C(I)=3$, $C(Sam)=2$, $C(\langle /s\rangle)=3$, $C(\langle s\rangle)=3$ ...$C(\langle s \rangle I)=2$, $C(\langle s \rangle Sam)=1$
+We begin buy counting the words occurence and have $C(I)=3$, $C(Sam)=2$, $C(\langle /s\rangle)=3$, $C(\langle s\rangle)=3$, $C(\langle s \rangle I)=2$, $C(\langle s \rangle Sam)=1$
 
 \vspace{0.2cm}
 
@@ -205,13 +235,13 @@ So we have $P(I|\langle s \rangle)=\frac{2}{3}$, $P(Sam|\langle s \rangle)=\frac
 
 \vspace{0.2cm}
 
-The in-sample probability of $P(\langle s \rangle \textit{I am Sam}\langle /s\rangle)=P(I|\langle s \rangle)P(am|I)P(Sam|am)P(\langle /s\rangle | Sam)=2/3x2/3x1/2x1/2$
+The in-sample probability of $P(\langle s \rangle \textit{I am Sam}\langle /s\rangle)=P(I|\langle s \rangle)P(am|I)P(Sam|am)P(\langle /s\rangle | Sam)=\frac{2}{3} \times \frac{2}{3} \times \frac{1}{2} \times \frac{1}{2}=\frac{1}{9}$
 
-
+\subsection{Compare LMs}
 How do we compare two LM?
 \begin{itemize}
 \item A test data/hold out data set can be used to evaluate a LM. Apply the estiamated conditional probability to the test data set and compare the resulting probability.
-\item Perplexity is used instead of the raw probability. 
+\item More often than not, perplexity is used as a preferred metric, instead of the raw probability. Perplexity is defined as 
 \begin{align*}
 	PP(W)&=P(w_1, w_2, ...w_N)^{-\frac{1}{N}}\\
 	&=\sqrt[N]{\frac{1}{P(w_1, w_2, ...w_N)}}
