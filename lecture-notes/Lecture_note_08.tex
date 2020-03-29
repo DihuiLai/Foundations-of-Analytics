@@ -1,6 +1,7 @@
 \documentclass[12pt, oneside]{article} 
 \usepackage{amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry}
 \usepackage{mathtools}
+\usepackage{hyperref}
 
 \geometry{tmargin=.75in, bmargin=.75in, lmargin=.75in, rmargin = .75in}  
 \setlength{\parindent}{0in}
@@ -142,7 +143,7 @@ To construct the term-term matrix, we aggregate the rows of in the matrix above 
  \hline
 \end{tabular}
 
-For example, $data$ and $scientist$ have vector represetations as of the followings: $data=(0, 1, 2, 1, 0, 0, 0, 0, 0, 1)$, $scientist=(1, 0, 1, 0, 0, 0, 0, 0, 0, 0)$
+For example, $data$ and $scientist$ have vector represetations $data=[0, 1, 2, 1, 0, 0, 0, 0, 0, 1]$, $scientist=[1, 0, 1, 0, 0, 0, 0, 0, 0, 0]$, respectively.
 
 
 \subsection{Neural Network Based Word Representation}
@@ -151,11 +152,11 @@ Use neural network to learn word representation is a hot topics in recent years.
 
 \begin{itemize}
 
-\item The input variable is a one-hot encoding vector. If the vocabulary is of size V, an input vector is has V components $\mathnormal{\vec{x}=[0, 0, 0 ...1, ...0]}$ 
-\item The hidden layer has $n$ neurons. The input weights matrix $\mathnormal{W}$ is of size $\mathnormal{V\times n}$
-\item The output layer weights $\mathnormal{W}'$ matrix is of size $\mathnormal{n\times V}$
-\item CBOW: take $2m$ words ( i.e. $\mathnormal{w_{c-m}}$, ...$\mathnormal{w_{c-1}}$, $\mathnormal{w_{c+1}}$, $\mathnormal{w_{c+m}}$) around the center word $\mathnormal{w_c}$ as input  $\mathnormal{w_c}$ is the target.
-\item Skip-gram: take the center word $\mathnormal{w_c}$ as the input and the $2m$ words ( i.e. $\mathnormal{w_{c-m}}$, ...$\mathnormal{w_{c-1}}$, $\mathnormal{w_{c+1}}$, $\mathnormal{w_{c+m}}$) around it as the target.
+\item The input variable is a one-hot encoding vector. If the vocabulary is of size V, an input vector is has V components ${\vec{x}=[0, 0, 0 ...1, ...0]}$ 
+\item The hidden layer has $n$ neurons. The input weights matrix ${W}$ is of size ${V\times n}$
+\item The output layer weights ${W}'$ matrix is of size ${n\times V}$
+\item CBOW: take $2m$ words ( i.e. ${w_{c-m}}$, ...${w_{c-1}}$, ${w_{c+1}}$, ${w_{c+m}}$) around the center word ${w_c}$ as input  ${w_c}$ is the target.
+\item Skip-gram: take the center word ${w_c}$ as the input and the $2m$ words ( i.e. ${w_{c-m}}$, ...${w_{c-1}}$, ${w_{c+1}}$, ${w_{c+m}}$) around it as the target.
 
 \end{itemize}
 
@@ -170,9 +171,9 @@ Use neural network to learn word representation is a hot topics in recent years.
 
 The word representation/embedding can be calculated as 
 
-$$\mathnormal{w_i=x_iW}$$
+$${w_i=x_iW}$$
 
-$\mathnormal{x_i}$ is the $\mathnormal{i^th}$ word in the dictionary, $\mathnormal{w_i}$ is the $\mathnormal{i^th}$ row in the input matrix $\mathnormal{W}$
+${x_i}$ is the ${i^{th}}$ word in the dictionary, ${w_i}$ is the ${i^{th}}$ row in the input matrix ${W}$
 
 
 

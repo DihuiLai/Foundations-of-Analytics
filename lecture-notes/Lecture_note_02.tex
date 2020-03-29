@@ -1,7 +1,11 @@
 \documentclass[12pt, oneside]{article} 
 \usepackage{amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry}
+\usepackage{hyperref}
 
 \geometry{tmargin=.75in, bmargin=.75in, lmargin=.75in, rmargin = .75in}  
+\setlength{\parindent}{0in}
+\setlength{\parskip}{\baselineskip}%
+\setlength{\parindent}{1.5pt}%
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\C}{\mathbb{C}}
@@ -18,11 +22,10 @@
 \newtheorem{rem}{Remark}
 \newtheorem{lem}{Lemma}
 \newtheorem{cor}{Corollary}
-\setlength{\parindent}{0in}
 
 
 
-\title{Lecture Note - 02}
+\title{Lecture Note - 02: Random Variable, Statistic Distribution}
 \author{Dihui Lai}
 
 \begin{document}
@@ -205,7 +208,7 @@ $$E(g(x))=\int\limits_{-\infty}^{\infty}g(x)f(x)dx$$
 \textbf{Variacne}: the variance of a continous random variable is defined as 
 $$Var(X)=\int\limits_{-\infty}^{\infty}(x-\bar{x})^2f(x)dx$$
 
-\section{Gaussian Distribution}
+\subsection{Gaussian Distribution}
 The probability density function of a standard Gaussian function is defined as 
 $$f(x)=\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}{2}}$$
 $$E(X)==\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}xe^{-\frac{x^2}{2}}dx=0$$

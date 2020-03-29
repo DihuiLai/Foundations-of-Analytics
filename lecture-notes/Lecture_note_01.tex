@@ -1,9 +1,12 @@
 \documentclass[12pt, oneside]{article} 
 \usepackage{amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry}
-
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{epstopdf}
 \geometry{tmargin=.75in, bmargin=.75in, lmargin=.75in, rmargin = .75in}  
 \setlength{\parindent}{0in}
-
+\setlength{\parskip}{\baselineskip}%
+\setlength{\parindent}{1.5pt}%
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\C}{\mathbb{C}}
@@ -11,16 +14,20 @@
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Q}{\mathbb{Q}}
 \newcommand{\Cdot}{\boldsymbol{\cdot}}
-
+\newcommand{\block}[1]{
+  \underbrace{\begin{matrix}1 & \cdots & 1\end{matrix}}_{#1}
+}
 \newtheorem{thm}{Theorem}
 \newtheorem{defn}{Definition}
 \newtheorem{conv}{Convention}
 \newtheorem{rem}{Remark}
 \newtheorem{lem}{Lemma}
 \newtheorem{cor}{Corollary}
+\usepackage{pgfplotstable}
+\usepackage{array}
 
 
-\title{Lecture Note - 01}
+\title{Lecture Note - 01: Introduction to Data Science: Toy Problem, Linear Algerbra, Randomness}
 \author{Dihui Lai}
 
 \begin{document}
@@ -131,17 +138,83 @@ An optimal model should estimate $\hat{\vec{y}}$ as close as $\vec{y}$. e.g.
 How can we solve the problem?
 
 
-\subsection{General Models}
-In general, $\vec{y}$ could be any function of $\vec{x}$s i.e. $\vec{y}=\mathnormal{f}({\vec{x}})$.
+\subsection{Other Models}
+In general, $\vec{y}$ could be any function of $\vec{x}$ i.e. $\vec{y}=\mathnormal{f}({\vec{x}})$.
 
 \begin{itemize}
-\item Kepler's Law: $T^2 \sim r^3$
+\item Kepler's Law: $T^2 \sim r^3$. Note Kepler's law becomes linear if we do a $\log$ transformation on both side i.e. $2\log T=3\log r$
 \item House price: $P \sim \mathnormal{f}(size, location)$
 \end{itemize}
 
-\section{Geometric Interpretation and Visualization}
-Scatter plot and projection operation
-pick any two columns from matrix $[Y, X]$
+\section{Geometric Interpretation, Visualization and Randomness}
+\subsection{Pants, Socks and Cost from 100 Friends}
+
+Suppose now you collect data from 100 friends. Everyone of them has bought a few pants and some socks from the same store. In a perfect world, everyone remember the number of pants/socks they bought and the corresponding cost. You end up having a perfect data like this:
+
+\vspace{.1in}
+\begin{tabular}{llll}
+ &Socks  &Pants &Cost  \\
+Person1 &3	&6	&129\\
+Person2 &8	&6	&144\\
+Person3 &8	&5	&124\\
+Person4 &8	&3	&84\\
+Person5 &3	&6	&129\\
+... & ... &... &...\\
+Person100 & ...&...&...
+\end{tabular}
+\vspace{.1in}
+
+By looking at the number closely, you figured out that the price of a pant is 20 dollars and the price is a sock is 3 dollars. And it is consistent across the whole data set.
+
+\subsection{Incomplete Data and Visualization }
+In reality it is very hard to get all information you need to build a pricing model for pants and socks, some people will not tell you the cost and some people can not tell you the number of pants/socks that they bought. Let us assume that all your friends can only tell you the number of pants that they bought and the total cost of their purchase. So you end up having a data set like this:
+
+\vspace{.1in}
+\begin{tabular}{llll}
+ &Pants   &Cost  \\
+Person1 &6	&129\\
+Person2 &6	&144\\
+Person3 &5	&124\\
+Person4 &3	&84\\
+Person5 &6	&129\\
+... & ... &...\\
+Person100 &...&...
+\end{tabular}
+\vspace{.1in}
+
+If you do not know that your friends actually bought things other than pants, the data looks a bit puzzeling. Because some data points imply that the price of a pant is \$21.5 and some imply \$24. If you can not have a bettter guess, you would assume the price of pants varies in the market and the fluctuation looks a lot like some sourt of noise. You can confirm your guess by making a scatter plot (Figure 1).
+
+\begin{figure}
+\center
+\includegraphics[width=100mm]{Figures/Lecture1-100Pants-Cost.eps}
+\caption{Scatter plot of total cost against the number of pants bought}
+\end{figure}
+
+On the other hand, if all your friends only tells you the number of socks that they bought and you have a data set. 
+
+\vspace{.1in}
+\begin{tabular}{llll}
+ &Socks   &Cost  \\
+Person1 &3 &129\\
+Person2 &8	&144\\
+Person3 &8	&124\\
+Person4 &8	&84\\
+Person5 &3	&129\\
+... & ... &... &...\\
+Person100 & ...&...&...
+\end{tabular}
+\vspace{.1in}
+
+The scatter plot looks even more puzzeling (Figure 2). The cost looks as if it is not dependent on the number of socks bought at all. In this case you might guess that the cost of buying socks is totally random.
+\begin{figure}
+\center
+\includegraphics[width=100mm]{Figures/Lecture1-100Socks-Cost.eps}
+\caption{Scatter plot of total cost against the number of socks bought}
+\end{figure}
+\subsection{High Dimension Space Projection and Randomness}
+In our toy model, we are considering the cost of buying two types of item. Mathematically, the total cost is a perfectly linear function of the number of pants/socks bought i.e. $cost_{total}=price_{pants} \times pants+ price_{socks} \times socks$. Moreove, the price of pants/socks are deterministic. However, the total cost appears as if the there are some randomness if we miss the information of socks or pants bought.
+
+While dealing with real world data problem, missing information is almost garanteed. For example, while modeling the house price, it is unlikely that we will know the price that the buyers are willing to pay; while modeling a public compnay's stock price, it is almost impossible to know all information related to the company. \textbf{Therefore, we have to make good assumptions about the information that we do not have a.k.a noise}. 
 
 
 \end{document}

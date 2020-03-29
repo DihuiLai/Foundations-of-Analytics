@@ -1,7 +1,11 @@
 \documentclass[12pt, oneside]{article} 
 \usepackage{amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry}
+\usepackage{hyperref}
 
 \geometry{tmargin=.75in, bmargin=.75in, lmargin=.75in, rmargin = .75in}  
+\setlength{\parindent}{0in}
+\setlength{\parskip}{\baselineskip}%
+\setlength{\parindent}{1.5pt}%
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\C}{\mathbb{C}}
@@ -18,7 +22,6 @@
 \newtheorem{rem}{Remark}
 \newtheorem{lem}{Lemma}
 \newtheorem{cor}{Corollary}
-\setlength{\parindent}{0in}
 
 
 
@@ -31,8 +34,9 @@
 \tableofcontents
 
 \vspace{.25in}
+\section{Linear Regression}
 
-\section{Single Variate Linear Regression}
+\subsection{Single Variate Linear Regression}
 A simple linear model can be formulated by assuming the target variable is dependent only on one predictor i.e.
 
 $$\hat{y}=\beta_0+\beta_1 x$$
@@ -103,7 +107,7 @@ Therefore $\beta_1$ can also be written as
 \beta_1=\frac{Cov(X,Y)}{Var(X)}=\rho_{XY}\frac{\sigma_X}{\sigma_Y}
 \end{equation}
 
-\section{Multivariate Linear Regression}
+\subsection{Multivariate Linear Regression}
 
 Assume $y$ is a linear superposition of multiple $x$s, the model for y is then formulated as 
 $$\hat{y}=\beta_{0}+\beta_{1}x_1+\beta_{2}x_2+\hdots+\beta_{m}x_m$$
