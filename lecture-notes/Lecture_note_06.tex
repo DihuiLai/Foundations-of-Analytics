@@ -1,6 +1,8 @@
 \documentclass[12pt, oneside]{article} 
 \usepackage{amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry}
 \usepackage{hyperref}
+\usepackage{standalone}
+
 \geometry{tmargin=.75in, bmargin=.75in, lmargin=.75in, rmargin = .75in}  
 \setlength{\parindent}{0in}
 \setlength{\parskip}{\baselineskip}%
@@ -21,9 +23,10 @@
 \newtheorem{rem}{Remark}
 \newtheorem{lem}{Lemma}
 \newtheorem{cor}{Corollary}
+\usepackage{tikz}  %TikZ central library is called.
 
 
-\title{Lecture Note - 06: Exponential Family, Generalize Linear Model (GLM)}
+\title{Lecture Note - 06: Tree, CART, Random Forest, Gradient Boosting Machine}
 \author{Dihui Lai}
 
 \begin{document}
@@ -33,213 +36,130 @@
 
 \vspace{.25in}
 
-\section{Exponential Family }
 
-\subsection{Probability Density Function}
-The probability density function (PDF) of an exponential family can be written in a unified format
+%% normal frame
+\section{Classification and Regression Tree (CART)}
+
+\subsection{Impurity Measurement}
+At node $\mathnormal{t}$, the fraction of class $\mathnormal{i}$ is denoted as $\mathnormal{p(i|t)}$
+    
+Entropy: $H(t)=-\sum\limits_{i=1}^{C}p(i|t)\log(p(i|t))$
+    
+Gini-Index: $Gini(t)=\sum\limits_{i=1}^{C}[p(i|t)]^2$
+    
+Classification Error: $Error(t)=1-\max\limits_{i}p(i|t)$
+
+Considering the entropy of a data set that contains two types of outcomes: {0, 1}. Running 10 experiments, we get the following out comes (0, 0, 1, 0, 1, 0, 1, 1, 0, 1). The entropy is 
 $$
-{f(y)}=\exp{\left( \frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}
+\mathnormal{ H(t)}=-\sum\limits_{i=1}^{2}\frac{1}{2}\log_2(\frac{1}{2})=1
+$$
+    
+What if we have out come of (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)? The entropy is 
+$$
+\mathnormal{H(t)}=1\log_2(1)+0\log_2(0)=0
 $$
 
-There are two parameters in the function: $\theta$ and $\phi$. Probability distributions like normal, Poisson or binomial can all be written in this format when we choose the right functions $a(\cdot)$, $b(\cdot)$, and $c(y, \cdot)$ and parameter $\theta$,  $\phi$. 
+The less variance in the data, the smaller the entropy is. For binary outcome, a probability of 1/2 leads to the largest uncertainty/entropy.
 
-\subsection{Special Case: Gaussian Distribution}
-For example, if we set $\theta$ as the mean and $\phi$ as the standard deviation:
-$$\theta=\mu$$
-$$\phi=\sigma$$
-Make the three functions $a$, $b$, $c$, to be the followings:
-$$a(\phi)=\phi^2=\sigma^2$$
-$$b(\theta)=\frac{\theta^2}{2}=\frac{\mu^2}{2}$$
-$$c(y,\phi)=-\frac{y^2}{2\phi^2}-log(\sqrt{2\pi}\phi)=-\frac{y^2}{2\sigma^2}-log(\sqrt{2\pi}\sigma)$$
+\subsection{Model}
+John likes playing tennis on Saturday, The liklihood of John playing tennis depends on the weather. John has never played on a rainy. He may or may not play on a windy day. Given the weather, can you predict if John will play tennis this weekend?
 
-Substitute the functions into f(y), we have 
-\begin{align*}
-{f(y)}
-&=\exp{\left( \frac{y\mu-\frac{\mu^2}{2}}{\sigma^2}-\frac{y^2}{2\sigma^2}-\log(\sqrt{2\pi}\sigma)\right)}\\
-&=\exp{\left( \frac{2y\mu-\frac{2\mu^2}{2}-y^2}{2\sigma^2}-\log(\sqrt{2\pi}\sigma)\right)}\\
-&=\exp{\left( \frac{-(y-\mu)^2}{2\sigma^2}\right)\exp(-\log(\sqrt{2\pi}\sigma))}\\
-&=\frac{1}{\sqrt{2\pi}\sigma}\exp{\left( \frac{-(y-\mu)^2}{2\sigma^2}\right)}
-\end{align*}
-This is exactly the Gaussian distribution with mean $\mu$ and standard deviation $\sigma$
+\begin{figure}
+\center
+\includegraphics[scale=1.2,page=1]{Figures/CART.pdf}
+\end{figure}
 
-\subsection{Special Case: Bernoulli Distribution}
-Alternatively, if we set the parameters and the functions to be the followings
-\begin{align*}
-&\theta=\log(p)-\log(1-p)\\
-&a(\phi)=1\\
-&b(\theta)=\log(1+e^\theta)=-\log(1-p)\\
-&c(y,\phi)=0
-\end{align*}
+\subsection{Model: How to Grow a Tree?}
+\begin{itemize}
+\item At each node, the tree algorithm will check every variable for a possible split. 
+\item A variable is selected for the split if it maximally reduces the impurity in the child nodes (e.g. the largest reduction of entroy, the largest reduction of variance etc.)
+\item Pruning: a tree can grow till each leave only contains one data point. Pruning the tree is needed to avoid overfitting.
+\end{itemize}
 
-We have the PDF function as
-\begin{align*}
-{f(y)}&=\exp{\left( \frac{y(\log(p)-\log(1-p))-(-\log(1-p))}{1}+0\right)}\\
-&=\exp{\left(\log(p^y)+\log(1-p)^{(-y)})+\log(1-p)^{1}\right)}\\
-&=\exp{\left(\log(p^y)+\log(1-p)^{(1-y)})\right)}\\
-&=p^y(1-p)^{(1-y)}\\
-&=\begin{cases}
-p \text{,  } &y=1\\
-1-p \text{,  } &y=0
-\end{cases}
-\end{align*}
-, which is exactly the probability mass of a Bernoulli distribution.
+Stopping criterion
+\begin{itemize}
+\item[-] The number of training sample after split is less than certain number 'min\_ samples\_ split'.
+\item[-] When the depth of the tree reaches to certain threshold 'max\_ depth'.
+\end{itemize}
 
-\section{Moments of Exponential Family}
+\subsection{ Gain at a Split Node}
+Assuming we collect John's tennis activities for 20 weeks. Out of the 20 weekends, we have 8 sunny day and John plays tennis on all of them. Out of the rest 12 days, John played tennis on 7 days. 
+Before any split, we have the entropy calculated as 
+$$
+\mathnormal{H(root)}=-\frac{15}{20}\log(\frac{15}{20})-\frac{5}{20}\log(\frac{5}{20})=0.562
+$$
 
-\subsection{Mean}
-If a random variable $Y$'s PDF belongs to the exponential family. We have the mean and variance of Y immediately as
-\begin{align}
-&E(Y)=\frac{d}{d\theta}b(\theta)\\
-&Var(Y)=a(\phi)\frac{d^2}{d\theta^2}b(\theta)
-\end{align}
+Split based on the weather, we have on sunny days
+$
+ \mathnormal{H(sunny)=0}
+$
+and on other days
+$
+\mathnormal{H(!sunny)}=-\frac{7}{12}\log(\frac{7}{12})-\frac{5}{12}\log(\frac{5}{12})=0.679
+$
+Therefore the child nodes have average entropy of 
+$$
+\mathnormal{H(childs)}=\frac{8}{20}\cdot 0+\frac{12}{20}\cdot 0.679=0.407
+$$
+We have entropy reduced by $\mathnormal{\Delta H}=0.562-0.390=0.154$
 
-To derive the equations above, we can simply use the condition that $f(y)$ has to satisfy
-$$\int_{-\infty}^{\infty}f(y)dy=1$$ i.e.
-\begin{equation}
-\int_{-\infty}^{\infty}\exp{\left( \frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=1
-\end{equation}
+Instead of splitting by forcast, we look at the wind speed. Out of the 20 weekends, 10 days are windy and 10 days are not windy. Out of the windy day, John played 6 times and 9 times for the non-windy days.
 
+Split based on the wind condition, we have on windy days
+$
+\mathnormal{H(!windy)}=-\frac{6}{10}\log(\frac{6}{10})-\frac{4}{10}\log(\frac{4}{10})=0.673
+$
+and on other days
+$
+\mathnormal{H(windy)}=\frac{9}{10} \log(\frac{9}{10})+\frac{1}{10} \log(\frac{1}{10})=0.325
+$
 
-Take the derivative against $\theta$ on both side of the equation, we have
-
-$$\frac{d}{d\theta}\int_{-\infty}^{\infty}\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=0$$
-Without proof, we assume the derivative and integration are interchangeable. We then get
-$$\int_{-\infty}^{\infty}\frac{d}{d\theta}\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=0$$
-The the derivative against the exponential function, we have 
-$$\int_{-\infty}^{\infty}(y-b'(\theta))\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=0$$ 
-Rearrange the equation, we have 
-$$\int_{-\infty}^{\infty}y\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=b'(\theta)\int_{-\infty}^{\infty}\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy$$
-This is pretty nice. Because the left hand side is simply the definition of the expectation of y. On the right side, we can simplify the term using equation (3). We therefore end up having
-$$E(Y)=\int_{-\infty}^{\infty}y\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=b'(\theta)1=b'(\theta)$$
-
-\subsection{Variance}
-To get the variance of $Y$, we can use the same trick of taking derivative but against equation (1) or its equivalence
-
-$$\int_{-\infty}^{\infty}y\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=b'(\theta)$$
-
-i.e.
-
-$$\frac{d}{d\theta}\int_{-\infty}^{\infty}y\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=b''(\theta)$$
-
-Again, assuming the derivative and integration is interchangeable, we have
-
-$$\int_{-\infty}^{\infty}\frac{y(y-b'(\theta))}{a(\phi)}\exp{\left(\frac{y\theta-b(\theta)}{a(\phi)}+c(y, \phi)\right)}dy=b''(\theta)$$
-
-We therefore have 
-$$E(Y^2)-(b'(\theta))^2=a(\phi)b''(\theta)$$ 
-or equivalently
-$$Var(Y)=E(Y^2)-E(Y)^2=a(\phi)b''(\theta)$$ 
-
-\section{Generalized Linear Model (GLM)}
-In logistic regression, the model assume the observed outcomes or values of the target variable follow binomial distribution with  parameter $p$. The parameter $p$ or the expectation of the distribution is modeled as a logistic function of a series of predictors $\vec{x}$ i.e. $p=\frac{1}{1+\exp(-\vec{\beta}\cdot\vec{x})}$. 
-
-\subsection{Link Function}
-In general, our target variable could follow different types of distribution e.g. Poisson, Gaussian etc. The generalized linear model tries can be used when the target variable y follows a distribution that belongs to the exponential family. 
-
-The expectation of Y is modeled using a link function $g^{-1}(\cdot)$ 
-$$E(Y)=b'(\theta)=g(\vec{x}\cdot\vec{\beta})$$
-For simplicity, we denote $\eta=\vec{x}\cdot\vec{\beta}$ and thus 
-\begin{equation}
-E(Y)=b'(\theta)=g(\eta)
-\end{equation}
+Therefore the child nodes have average entropy of 
+$$
+\mathnormal{H(childs)}=\frac{1}{2} 0.673+\frac{1}{2} 0.325=0.499
+$$
+We have entropy reduced by $\mathnormal{\Delta H}=0.562-0.5=0.063$
 
 
-If we want to estimate the parameter $\theta$, we can solve the equation (4) by taking the inverse of the function $b'(\cdot)$. If we choose the inverse link function $g(\cdot)$ to be the same as $b'(\cdot)$
-\begin{equation}
-g(\cdot)=b'(\cdot)
-\end{equation}
-we get a model with nice property where $\eta=\theta$. A link function chosen this way is called a canonical link function.
 
-\subsection{Canonical Link Function}
-\textbf{Bernoulli Distribution} Use Bernoulli distribution as an example, we have $b'(\theta)=\frac{e^\theta}{1+e^\theta}$. The inverse canonical link function is 
 
-$$g(\eta)=\frac{e^{\eta}}{1+e^{\eta}}=\frac{1}{1+e^{-\eta}}$$
-As we known,  $$p=b'(\theta)=\frac{1}{1+e^{-\eta}}$$ The equation looks a lot like the probability model in the logistic regression model. In fact, as we will learn in the following section, GLM in the special case of a Bernoulli distribution is equivalent to a logistic regression.
+\section{Random Forest}
 
-\textbf{Gaussian Distribution}: in the case of a Gaussian distribution, $b'(\theta)=\theta$, which is an identity function. Choose the link function as the identify function, we have 
-$$g(\eta)=\eta$$
-Since we have $\mu=\theta$, the canonical link function of a Gaussian distribution models the expectation of the target variable as of the following
-$$\mu=\eta=\vec{x}\cdot\vec{\beta}$$ 
+It terms out that multiple trees together can produce better model than a single tree. 
 
-This looks a lot like the linear regression model, except that we don not know how GLM estimates the error function yet. In the following sections, we are going to discuss how to use MLE to optimize the a GLM.
+In order to build a random forest, do the following to grow each individual tree.
+\begin{itemize}
+\item  use a random sub-sample with replacement, to grow each individual tree.
+\item  At each node,  $\mathnormal{M<<m}$ columns are randomly selected, out of all m predictors. Usually, the default choice of $\mathnormal{M=m/3}$ for regression tree and $\mathnormal{M=\sqrt{m}}$ for classification tree.
+\item Each tree is grown to the largest extent possible (one sample in the leaves)
 
-\subsection{Maximum Likelihood Estimation}
+\end{itemize}
 
-\subsubsection{Likelihood Function}
-A good model represent a dataset as close as it can.
-We can uses maximum likelihood estimation to optimize the $\vec{\beta}$ in GLM. 
+\section{GBM}
 
-Considering one data entry ($\vec{x}^i$, $y^i$), the corresponding log-likelihood function is $$\ell^i=\frac{y^i\theta^i-b(\theta^i)}{a(\phi)}+c^i(y^i, \phi)$$
+The Gradient boosting tree is a collection of trees, where each individual tree is constructed to predict the 'residuals'.
+$\mathnormal{\hat{y}(x_i)=\sum\limits_{k=1}^K \gamma_k h_k(x_i)}$, where $\mathnormal{h_k(x)}$ is a tree. 
 
-Since only $\theta^i$ is dependent on $\vec{\beta}$, to maximize the function is equivalent to minimize the function $\ell^i=-2 \left[y^i\theta^i-b(\theta^i)\right]$. The log-likelihood for the whole data set is a summation of each individual $\ell^i$. Overall, we need to minimize the following log-likelihood.
+The $\mathnormal{k^{th}}$ tree is built to fit the 'residuals' from the precedent $\mathnormal{k-1}$ trees  
 
-\begin{equation}
-\ell=-2\sum_{i=1}^{N} \left[y^i\theta^i-b(\theta^i)\right]
-\end{equation}
+The algorithm in a nutshell
 
-In the case of Bernoulli distribution we have 
-$\ell=y^i\theta^i-\log\left(1+\exp(\theta^i)\right)$
+Step 1: 
+$$\mathnormal{\hat{y}_0(x) = \underset{\gamma}{\arg\min} \sum_{i=1}^n L(y^i, \gamma)}$$
 
-\subsubsection{Gradient}
-To maximize the likelihood $\ell$, we need to have
-$$\frac{\partial \ell}{\partial \beta^j}=0$$ 
-By using equation (6), we end up having
-\begin{align}
-\frac{\partial \ell}{\partial \beta^j}&=-2\sum_{i=1}^{N}\frac{\partial }{\partial \beta^j} \left[y^i\theta^i-b(\theta^i)\right]\\
-&=-2\sum_{i=1}^{N}\left[y^i-b'(\theta^i)\right]\frac{\partial \theta^i}{\partial\beta^j}=0
-\end{align}
+Step 2: Fit a tree model $\mathnormal{h_{k}}$ by training it on the dataset $\mathnormal{[\vec{x}^i, r^{i}_{k}]}$
 
-If we use canonical link function, we know $\eta=\theta$, the equation can be simplified as below
-\begin{align}
-\frac{\partial \ell}{\partial \beta^j}&=-2\sum_{i=1}^{N}\left[y^i-b'(\theta^i)\right]\frac{\partial \eta^i}{\partial\beta^j}\\
-&=-2\sum_{i=1}^{N}\left[y^i-b'(\theta^i)\right]x^i_j=0
-\end{align}
+Here,
+$$\mathnormal{r^{i}_{k} = -\left[\frac{\partial L(y^i, {y}(x^i))}{\partial y(x^i)}\right]_{{y}(x)=\hat{y}_{k-1}(x)} \quad \mbox{for } i=1,\ldots,n.}$$
 
-In the case of a Bernoulli distribution, we have $b'(\theta)=p$
+Step 3: Update the estimator $\mathnormal{\hat{y}_{k}(x)=\hat{y}_{{k-1}}(x)+\gamma _{k}h_{k}(x)}$ 
 
-\begin{align*}
-\frac{\partial \ell}{\partial \beta^j}=\sum\limits_{i=1}^N[y^ix^i_j-p^ix^i_j]
-\end{align*}
-This is equivalent to the corresponding equation using MLE in logistic regression. In another word, GLM is equivalent to logistic regression when we assume Bernoulli/binomial distribution of the target variable and use canonical link function.
+Here, 
+$\mathnormal{\gamma_k = \underset{\gamma}{\operatorname{arg\,min}} \sum_{i=1}^n L\left(y^i, \hat{y}_{k-1}(x^i) + \gamma h_k(x^i)\right)}$
 
-In general, $\eta\neq\theta$ and we will not have an estimator as simple as equation (10). We need to solve equation (8) instead. In order to do this numerically, we need to figure out the value of $\frac{\partial \theta^i}{\partial\beta^j}$ using $\beta$s and $x$s, or $\eta$ equivalently. 
+Reference: 
 
-In order to get the relationship between $\theta$ and $\beta$, we start from the equation (4), where the relationship of the two variables are defined by GLM. By taking the derivative against $\beta$s, we have 
-\begin{align}
-\frac{\partial}{\partial\beta_j}b'(\theta)&=g'(\eta)\frac{\partial \eta}{\partial \beta}\\
-b''(\theta)\frac{\partial \theta}{\partial\beta}&=g'(\eta)\frac{\partial \eta}{\partial \beta_j}
-\end{align}
-
-Therefore we get 
-\begin{equation}
-\frac{\partial \theta}{\partial\beta}=\frac{g'(\eta)}{b''(\theta)}\frac{\partial \eta}{\partial \beta_j}
-\end{equation}
-
-Inserting this back to equation (8), we have 
-
-\begin{equation}
-\frac{\partial \ell}{\partial \beta_j}=-2\sum_{i=1}^{N}\left[y^i-b'(\theta^i)\right]\frac{g'(\eta^i)}{b''(\theta^i)}x^i_j=0
-\end{equation}
-
-Notice that we have an extra weight term $\frac{g'(\eta)}{b''(\theta)}$ comparing to equation (10). To simplify the notation, we denote $b'(\theta)=\mu$ and $b''(\theta)=V(\mu)$. We therefore have 
-\begin{equation}
-\frac{\partial \ell}{\partial \beta_j}=-2\sum_{i=1}^{N}(y^i-\mu^i)\frac{g'(\eta^i)}{V(\mu^i)}x^i_j=0
-\end{equation}
-\subsubsection{Hessian}
-We can use Newton-Raphson method to solve the MLE problem formulated above, however, we need to calculate the Hessian first. 
-
-The Hessian matrix can be estimated by taking the derivative of the gradient, noting here $\mu$ is a function of $\theta$ and therefore dependent on $\beta$.
-\begin{align}
-\frac{\partial^2 \ell}{\partial\beta_k\partial \beta_j}&=-2\sum_{i=1}^{N}\frac{\partial}{\partial \beta_k}\left[(y^i-\mu^i)\frac{g'(\eta^i)}{V(\mu^i)}x^i_j\right]\\
-&=-2\sum_{i=1}^{N}\left[-\frac{\partial \mu^i}{\partial \beta_k}\frac{g'(\eta^i)}{V(\mu^i)}
-+(y^i-\mu^i)\frac{g''(\eta^i)V(\mu^i)\frac{\partial \eta^i}{\partial \beta_k}-g'(\eta^i)V'(\mu^i)\frac{\partial \mu^i}{\partial \beta_k}}{V(\mu^i)^2}\right]x^i_j\\ 
-&=2\sum_{i=1}^{N}\left[g'(\eta^i)\frac{g'(\eta^i)}{V(\mu^i)}
--(y^i-\mu^i)\frac{g''(\eta^i)V(\mu^i)-g'(\eta^i)^2V'(\mu^i)}{V(\mu^i)^2}\right]\frac{\partial \eta^i}{\partial \beta_k}x^i_j\\
-&=2\sum_{i=1}^{N}\left[g'(\eta^i)\frac{g'(\eta^i)}{V(\mu^i)}
--(y^i-\mu^i)\frac{g''(\eta^i)V(\mu^i)-g'(\eta^i)^2V'(\mu^i)}{V(\mu^i)^2}\right]x^i_k x^i_j
-\end{align}
-Going from equation (17) to (18), we have used the fact that $\frac{\partial\mu}{\partial\beta_j}=\frac{\partial}{\partial\beta_j}b'(\theta)=g'(\eta)\frac{\partial \eta}{\partial \beta}$
-
+\href{https://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf}{Xgboost}
 
 \end{document}
 

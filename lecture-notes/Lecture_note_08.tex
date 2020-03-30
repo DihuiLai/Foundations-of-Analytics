@@ -28,29 +28,6 @@
 \usepackage{standalone}
 \usepackage{pdfpages}
 
-\tikzset{%
-  every neuron/.style={
-    circle,
-    draw,
-    minimum size=0.8cm
-  },
-  neuron missing/.style={
-    draw=none, 
-    scale=2,
-    text height=0.2cm,
-    execute at begin node=\color{black}$\vdots$
-  },
-  arro/.style={
-    ->,
-    >=latex
-  },
-  bloque/.style={
-    draw,
-    minimum height=1cm,
-    minimum width=0.5cm
-  }  
-}
-
 
 \title{Lecture Note - 08: NLP, Word Representation, Language Model, N-gram, MLE}
 \author{Dihui Lai}
@@ -161,13 +138,12 @@ Use neural network to learn word representation is a hot topics in recent years.
 \end{itemize}
 
 
-\begin{center}
 \begin{figure}
-\includestandalone[width=.8\textwidth]{Figures/wordembedding}
+\center
+\includegraphics[scale=1,page=1]{Figures/wordembedding.pdf}
 \caption{Neural network architecture for learnign COBW and skip-gram embeddings. A vocabulary is fed into the neural network using one-hot encoding methods. For a vocabulary of size V, the input vector is of size 1xV
  }
 \end{figure}
-\end{center}
 
 The word representation/embedding can be calculated as 
 

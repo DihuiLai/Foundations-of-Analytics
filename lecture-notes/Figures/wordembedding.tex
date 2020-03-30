@@ -1,6 +1,7 @@
 \documentclass{standalone}
 \usepackage{tikz}  %TikZ central library is called.
 \usetikzlibrary{automata,positioning} 
+
 \tikzset{%
   every neuron/.style={
     circle,
@@ -12,9 +13,17 @@
     scale=2,
     text height=0.2cm,
     execute at begin node=\color{black}$\vdots$
-  }
- }
-
+  },
+  arro/.style={
+    ->,
+    >=latex
+  },
+  bloque/.style={
+    draw,
+    minimum height=1cm,
+    minimum width=0.5cm
+  }  
+}
 \begin{document}
 \begin{tikzpicture}[x=1.8cm, y=1.2cm, >=stealth]
 

@@ -23,7 +23,7 @@
 \newtheorem{lem}{Lemma}
 \newtheorem{cor}{Corollary}
 
-\title{Lecture Notes - 04: Logistic Regression}
+\title{Lecture Notes - 04: Likelihood Function, Logistic Regression, Newton-Raphson Method}
 \author{Dihui Lai}
 
 \begin{document}
@@ -250,6 +250,35 @@ The Newton-Raphson algorithm for multivariate model is therefore
 \begin{equation}
 \beta_{k+1}=\beta_{k}-\mathbf{H^{-1}}\nabla\ell(\beta_k), \text { until } |\beta_{k+1}-\beta_{k}|<\delta
 \end{equation}
+
+\section{Iteration Method for Logistic Regression}
+Apply Newton-Raphson methods to optimize the logistic regression, we calculate the Hessian of the log-likelihood function
+\begin{align*}
+\mathnormal{\frac{\partial^2\ell}{\partial\beta_a\partial\beta_b}}
+&=\mathnormal{-\sum_{i=1}^{n}x_b^i\frac{\exp(-\vec{\beta}\cdot\vec{x}^i)}{(1+\exp(-\vec{\beta}\cdot\vec{x}^i))^2}x_a^i}\\
+&=\mathnormal{-\sum_{i=1}^{n}x_b^i p_i (1-p_i)x_a^i}\\
+\end{align*}
+written in matrix formula, the Hessian of the loglikelihood function is
+\begin{align*}
+\mathbf{H}&={-X^TWX}\text{, } 
+{W}=  \begin{bmatrix}
+    {p_1 (1-p_1)} & & \\
+    & \ddots & \\
+    & & {p_n (1-p_n)}
+  \end{bmatrix}
+\end{align*}
+
+Use Newton Raphson Methods, we have
+\begin{align*}
+{\vec{\beta}^{(k+1)}} &\leftarrow {\vec{\beta}^{(k)}-{\mathbf{H}}^{-1}\nabla\ell}\\
+{\vec{\beta}^{(k+1)}} &\leftarrow {\vec{\beta}^{(k)}+({X}^T{W}{X})^{-1}{X}^T({y}-{p})}
+\end{align*}
+
+Recall in linear regression case
+$$
+\beta=(\mathnormal{X^T}\mathnormal{X})^{-1}\mathnormal{X^{T}}\mathnormal{y}
+$$
+
 
 
 \section{Appendix}
