@@ -1,6 +1,7 @@
 \documentclass[12pt, oneside]{article} 
 \usepackage{amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry}
 \usepackage{mathtools}
+\usepackage{hyperref}
 
 \geometry{tmargin=.75in, bmargin=.75in, lmargin=.75in, rmargin = .75in}  
 \setlength{\parindent}{0in}
@@ -56,6 +57,7 @@
 
 \begin{document}
 
+
 \maketitle
 \tableofcontents
 
@@ -70,7 +72,8 @@ An artificial neuron is the basic computing unit in an artificial neural network
 \caption{Schema: a single neuron with activation function $\sigma$}
 \end{figure}
 
-\textbf{Input}: A neuron receives multiple inputs $x_1$, $x_2$, ..., $x_n$. The signals are summed up after modulated by a set of weights $w_1$, $w_2$, ... $w_n$. Let us denote the weighted sum $z$
+\subsection{Input}
+A neuron receives multiple inputs $x_1$, $x_2$, ..., $x_n$. The signals are summed up after modulated by a set of weights $w_1$, $w_2$, ... $w_n$. Let us denote the weighted sum $z$
 \begin{equation}
 z=\sum\limits_{i=1}^{n}w_i x_i
 \end{equation}
@@ -80,12 +83,14 @@ Usually a biased term $w_0$ is added to the summation and we have
 z=\sum\limits_{i=1}^{n}w_i x_i+w_0
 \end{equation}
 
-\textbf{Output}: The weighted sum is further transferred via an activation function $\sigma$ and becomes the final output of the neuron
+\subsection{Output}
+The weighted sum is further transferred via an activation function $\sigma$ and becomes the final output of the neuron
 \begin{equation}
 a=\sigma(z)=\sigma(\sum\limits_{i=1}^{n}w_i x_i+w_0)
 \end{equation}
 
-\textbf{Activation}: The activation function can of different types.  Below is a list of common activation functions. Almost all activation functions have an S-shape except for the ReLu function.
+\subsection{Activation Function}
+The activation function can of different types.  Below is a list of common activation functions. Almost all activation functions have an S-shape except for the ReLu function.
 \begin{center}
 \bgroup
 \def\arraystretch{2.5}% 
@@ -104,7 +109,8 @@ ReLU & $\sigma(z)=\begin{cases}0&{\text{for }}z\leq 0\\z&{\text{for }}z>0\end{ca
 \end{center}
 
 
-\section{Neural Network: Forward Path}
+\section{Neural Network}
+\subsection{Forward Path}
 Each neuron at layer ${l}$ receives inputs from all neuron from the previous layer ${l-1}$,
 \begin{equation}
 {z_k^l=\sum_jw^{l-1}_{kj}a_j^{l-1}}
@@ -119,15 +125,14 @@ Inserting equation (4) to (5), we have
 z_k^l=\sum_jw^{l-1}_{kj}\sigma(z_j^{l-1})=\sum_jw^{l-1}_{kj}a_j^{l-1}
 \end{equation}
 
-\begin{center}
 \begin{figure}
-\includestandalone[width=.8\textwidth]{Figures/neuralnetwork}
+\center
+\includestandalone[width=.6\textwidth]{Figures/neuralnetwork}
 \caption{A neural network of multiple layer structures. The hidden layers before layer $l-1$ and after layer $l$ are not shown. }
 \end{figure}
-\end{center}
 
 
-\section{The Derivatives of Neural Network}
+\subsection{The Derivatives of Neural Network}
 In order to calculate the neural network properly we need to understand a few derivatives.
 
 \begin{itemize}
@@ -154,7 +159,7 @@ its derivative w.r.t $z^{l-1}_j$ is
 
 
 
-\section{Backpropagation}
+\subsection{Backpropagation}
 Consider neural network that has N layers, the cost function is dependent on all the $z$s of neurons in all layers
 \begin{equation}
 C\left(\vec{z}^N(\vec{z}^{N-1}(...\vec{z}^{l}(\vec{z}^{l-1})...) ...\vec{z}^1)\right)

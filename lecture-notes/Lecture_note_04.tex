@@ -1,7 +1,11 @@
 \documentclass[12pt, oneside]{article} 
 \usepackage{amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry}
+\usepackage{hyperref}
 
 \geometry{tmargin=.75in, bmargin=.75in, lmargin=.75in, rmargin = .75in}  
+\setlength{\parindent}{0in}
+\setlength{\parskip}{\baselineskip}%
+\setlength{\parindent}{1.5pt}%
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\C}{\mathbb{C}}
@@ -18,23 +22,24 @@
 \newtheorem{rem}{Remark}
 \newtheorem{lem}{Lemma}
 \newtheorem{cor}{Corollary}
-\setlength{\parindent}{0in}
 
-\title{Lecture Notes - 04: Logistic Regression}
+\title{Lecture Notes - 04: Likelihood Function, Logistic Regression, Newton-Raphson Method}
 \author{Dihui Lai}
 
 \begin{document}
 \maketitle
 \tableofcontents
+
 \vspace{.25in}
 
 \section{Likelihood Function}
-
+\subsection{Definition}
 If a set of random variables $Y_1$, $Y_2$ ... $Y_n$ has a joint probability distribution density/mass $f(y_1, y_2, ...y_n;\theta)$, where $\theta$ is a set of parameters, the likelihood function is defined as 
 \begin{equation}
 L(\theta)=f(y_1, y_2, ...y_n; \theta)
 \end{equation}
 
+\subsection{Example: Bernoulli/Binomial Distribution}
 Assuming an event has two possible outcomes $y=1$ or $y=0$, with probability $p$ of being $1$, i.e. the outcome follows a Bernoulli distribution. As we learned in lecture 2, the probability mass function is 
 \begin{align*}
 f(y; p)=
@@ -84,6 +89,55 @@ $$\Rightarrow p=\frac{n_1}{n_1+n_0}$$
 \end{itemize}
 
 Overall, $p$ maximize the likelihood function when it takes the value of the mean of observed $y$s
+\subsection{Example: Multinomial Distribution}
+
+The multinomial distribution has density function
+$${f(x_1, x_2, x_3, ... x_c)=\frac{N!}{x_1! x_2! ... x_c!} p_1^{x_1} p_2^{x_2} ... p_c^{x_c}}$$
+
+If we perform one experiemnts (N=1), the likelihood function is accordingly, 
+$\mathnormal{L_i= \prod \limits_{j=1}^c p_{j}^{x^i_j}}$
+the likelihood function of n experiments is then 
+$\mathnormal{L= \prod \limits_{i=1}^n\prod \limits_{j=1}^c p_{j}^{ x^i_j}}$. Note $x_j^i$ is either 1 or 0
+
+The log-likelihood function (a.k.a log-loss) is
+$$\mathnormal{\ell=\log(L)=\sum\limits_{i=1}^n \sum\limits_{j=1}^c x_j^i \log(p_j)}$$
+
+The $p_k$ that maximize the log-likelihood function that subject to the constraint $\sum\limits_{j=1}^c p_j=1$ has to satisfy the following condition
+\begin{align*}
+\begin{cases}
+\dfrac{\partial}{\partial p_k} \left(\ell-\lambda \sum\limits_{i=1}^n(1-\sum\limits_{j=1}^c p_j)\right)=0\\
+\dfrac{\partial}{\partial \lambda} \left(\ell-\lambda \sum\limits_{i=1}^n(1-\sum\limits_{j=1}^c p_j)\right)=0
+\end{cases}
+\end{align*}
+ 
+\begin{align*}
+\Rightarrow
+\begin{cases}
+\sum\limits_{i=1}^n\dfrac{\partial}{\partial p_k} \left(\sum\limits_{j=1}^c x_j^i \log(p_j)-\lambda (1-\sum\limits_{j=1}^c p_j)\right)=0\\
+\sum\limits_{i=1}^n\dfrac{\partial}{\partial \lambda} \left(\sum\limits_{j=1}^c x_j^i \log(p_j)-\lambda (1-\sum\limits_{j=1}^c p_j)\right)=0
+\end{cases}
+\end{align*}
+
+
+\begin{align*}
+\Rightarrow
+\lambda=-\frac{x_k}{p_k}
+\end{align*}
+
+where $x_k$ is the total number of outcome $k$. Because
+\begin{equation*}
+\sum\limits_{k=1}^c x_k=n
+\end{equation*}
+
+We have 
+\begin{equation*}
+-\sum\limits_{k=1}^c\lambda p_k=n \Rightarrow \lambda=-n
+\end{equation*}
+
+Therefore
+\begin{equation}
+p_k=\frac{x_k}{n}
+\end{equation}
 
 \section{Logistic Regression}
 \subsection{Likelihood Function}
@@ -196,6 +250,35 @@ The Newton-Raphson algorithm for multivariate model is therefore
 \begin{equation}
 \beta_{k+1}=\beta_{k}-\mathbf{H^{-1}}\nabla\ell(\beta_k), \text { until } |\beta_{k+1}-\beta_{k}|<\delta
 \end{equation}
+
+\section{Iteration Method for Logistic Regression}
+Apply Newton-Raphson methods to optimize the logistic regression, we calculate the Hessian of the log-likelihood function
+\begin{align*}
+\mathnormal{\frac{\partial^2\ell}{\partial\beta_a\partial\beta_b}}
+&=\mathnormal{-\sum_{i=1}^{n}x_b^i\frac{\exp(-\vec{\beta}\cdot\vec{x}^i)}{(1+\exp(-\vec{\beta}\cdot\vec{x}^i))^2}x_a^i}\\
+&=\mathnormal{-\sum_{i=1}^{n}x_b^i p_i (1-p_i)x_a^i}\\
+\end{align*}
+written in matrix formula, the Hessian of the loglikelihood function is
+\begin{align*}
+\mathbf{H}&={-X^TWX}\text{, } 
+{W}=  \begin{bmatrix}
+    {p_1 (1-p_1)} & & \\
+    & \ddots & \\
+    & & {p_n (1-p_n)}
+  \end{bmatrix}
+\end{align*}
+
+Use Newton Raphson Methods, we have
+\begin{align*}
+{\vec{\beta}^{(k+1)}} &\leftarrow {\vec{\beta}^{(k)}-{\mathbf{H}}^{-1}\nabla\ell}\\
+{\vec{\beta}^{(k+1)}} &\leftarrow {\vec{\beta}^{(k)}+({X}^T{W}{X})^{-1}{X}^T({y}-{p})}
+\end{align*}
+
+Recall in linear regression case
+$$
+\beta=(\mathnormal{X^T}\mathnormal{X})^{-1}\mathnormal{X^{T}}\mathnormal{y}
+$$
+
 
 
 \section{Appendix}
