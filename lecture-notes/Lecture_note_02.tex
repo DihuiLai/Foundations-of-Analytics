@@ -133,6 +133,13 @@ E(X)&=\sum\limits_{k=0}^{n}kp(k)\\
 &=np\sum\limits_{k=0}^{n-1}\frac{(n-1)!}{(k-1)!(n-k-1)!}p^{k}(1-p)^{n-k-1}, \text{ substitute }k\leftarrow k+1 \text{ and reindex k from 0}\\
 &=np
 \end{align*}
+\subsection{Multinomial Distribution}
+
+More often than not, an experiment could have $\mathnormal{c}>1$ outcome. For example, throwing a dice might have 6 outcomes, the weather condition next day could be sunny, cloudy or rainy etc. 
+
+Of each experiment, each outcome has different probabilities ${p_1}$, ${p_2}$, ${p_3}$, ..., ${p_c}$. The total probability has to satisfy the condition ${\sum\limits_{j=1}^c p_j=1}$. If we perform $\mathnormal{N}$ experiments, the probability distirbution function can be written as 
+$${f(x_1, x_2, x_3, ... x_c)=\frac{N!}{x_1! x_2! ... x_c!} p_1^{x_1} p_2^{x_2} ... p_c^{x_c}}$$
+Here, $x_1$ is the number of times outcome is $1$, $x_2$ is the number of times that we get outcome $2$ etc. The summation of the $x$s has to be N, i.e. $\sum\limits_{j=1}^{c}x_j=N$
 
 \subsection{Poisson Distribution}
 \textbf{Probability distribution}: consider a random event, the probability of 1 occurrence within a unit time is $p$. What is the probability distribution of events occurrence within a time interval of $\tau$ (e.g. No. of car accidents occurs in a day in MO). 
