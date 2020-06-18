@@ -1,0 +1,108 @@
+\documentclass[12pt, oneside]{article} 
+\usepackage{amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry}
+\usepackage{mathtools}
+\usepackage{hyperref}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\geometry{tmargin=.75in, bmargin=.75in, lmargin=.75in, rmargin = .75in}  
+\setlength{\parindent}{0in}
+\setlength{\parskip}{\baselineskip}%
+\setlength{\parindent}{1.5pt}%
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Cdot}{\boldsymbol{\cdot}}
+\newcommand{\block}[1]{
+  \underbrace{\begin{matrix}1 & \cdots & 1\end{matrix}}_{#1}
+}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{conv}{Convention}
+\newtheorem{rem}{Remark}
+\newtheorem{lem}{Lemma}
+\newtheorem{cor}{Corollary}
+\usepackage{tikz}  %TikZ central library is called.
+\usetikzlibrary{automata,positioning} 
+\usepackage{standalone}
+\usepackage{pdfpages}
+
+\tikzset{%
+  every neuron/.style={
+    circle,
+    draw,
+    minimum size=0.8cm
+  },
+  neuron missing/.style={
+    draw=none, 
+    scale=2,
+    text height=0.2cm,
+    execute at begin node=\color{black}$\vdots$
+  },
+  arro/.style={
+    ->,
+    >=latex
+  },
+  bloque/.style={
+    draw,
+    minimum height=1cm,
+    minimum width=0.5cm
+  }  
+}
+
+
+\title{Lecture Note - Support Vector Machine}
+\author{Dihui Lai}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\vspace{.25in}
+
+\section{Loss Function of Support Vector Machine}
+\begin{equation}
+L=\frac{1}{2}|w|^2-\sum\limits_{i=1}^{N}\alpha_i\left[y^i(\vec{w}\cdot \vec{x}^i+b)-1\right]
+\end{equation}
+
+The optimal condition is when $\vec{w}$ is chosen at the point where
+\begin{align*}
+\frac{\partial L}{\partial w_j}&=\frac{1}{2}\frac{\partial}{\partial w_j}|w|^2-\frac{\partial}{\partial w_j}\sum\limits_{i}^N\alpha_i\left[y^i(\vec{w}\cdot \vec{x}^i+b)-1\right]\\
+&=w_j-\sum\limits_{i=1}^N \alpha_i y^i x_j^i\\
+&=0
+\end{align*}
+\begin{align*}
+\frac{\partial L}{\partial b}&=\frac{1}{2}\frac{\partial}{\partial b}|w|^2-\frac{\partial}{\partial b}\sum\limits_{i}^N\alpha_i\left[y^i(\vec{w}\cdot \vec{x}^i+b)-1\right]\\
+&=-\sum\limits_{i=1}^N \alpha_i y^i\\
+&=0
+\end{align*}
+
+Or equivalently 
+\begin{equation}
+\begin{cases}
+\vec{w}=\sum\limits_{i=1}^N \alpha_i y^i \vec{x}^i\\
+\sum\limits_{i=1}^N \alpha_i y^i=0
+\end{cases}
+\end{equation}
+
+Insert equation (2) back into equation (1)
+
+We have
+
+\begin{align*}
+L&=\sum_{i,j}^{N}\frac{1}{2}\alpha_i\alpha_j y^i y^j \vec{x}^i\cdot\vec{x}^j-\sum\limits_{i=1}^{N}\alpha_i y^i(\sum_{k}\alpha_j y^j\vec{x}^i\cdot\vec{x}^j)-\sum\limits_{i=1}^{N}\alpha_i y^i b+\sum\limits_{i=1}^{N} \alpha_i\\
+&=\sum\limits_{i=1}^{N} \alpha_i-\sum_{i,j}^{N}\frac{1}{2}\alpha_i\alpha_j y^i y^j \vec{x}^i\cdot\vec{x}^j
+\end{align*}
+
+The optimal problem is now
+\begin{equation}
+L=\sum\limits_{i=1}^{N} \alpha_i-\sum_{i,j}^{N}\frac{1}{2}\alpha_i\alpha_j y^i y^j \vec{x}^i\cdot\vec{x}^j, \text{ s.t. } \sum\limits_{i=1}^N \alpha_i y^i=0
+\end{equation}
+
+\end{document}
+
