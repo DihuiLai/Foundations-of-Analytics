@@ -7,6 +7,7 @@
 \setlength{\parindent}{0in}
 \setlength{\parskip}{\baselineskip}%
 \setlength{\parindent}{1.5pt}%
+\DeclareMathOperator*{\argmax}{argmax} % thin space, limits underneath in displays
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\C}{\mathbb{C}}
@@ -38,6 +39,60 @@
 \tableofcontents
 
 \vspace{.25in}
+
+\section{Naive Bayes Classifier}
+
+\subsection{Joint Probability }
+The joint probability of two random variable $X$, $Y$ can be calculated using conditional probability 
+\begin{equation}
+P(X, Y)=P(X|Y)P(Y)=P(Y)P(Y|X)
+\end{equation}
+
+\subsection{Baye's Theorem}
+Using equation (1) it is not hard to prove the following equation
+
+\begin{equation}
+P(Y\mid X)=\frac {P(X\mid Y)P(Y)}{P(X)}
+\end{equation}
+
+a.k.a. Baye's theorem. Here $P(Y)$ is called prior, which is the probability of that Y occurs without any other knowledge. $P(Y\mid X)$ is the posterior taking into consideration of X. $P(X\mid Y)$ is the likelihood.
+
+\subsection{Chain Rule}
+Apply Baye's theorem, the joint probability distribution of a set of predictor $x_1$, $x_2$, ...$x_n$ and target variable $y$ can be expressed as 
+\begin{align*}
+&p(x_1, x_2, ...x_n, y)\\
+&=p(x_1|x_2, x_3, ..., y)p(x_2, x_3, ..., y)\\
+&=p(x_1|x_2, x_3, ..., y)p(x_2|x_3, x_4, ..., y)p(x_3, x_4, ..., y)\\
+&=p(x_1|x_2, x_3, ..., y)p(x_2|x_3, x_4, ..., y)...p(x_{n-1}|x_n, y)p(x_n|y)p(y)
+\end{align*}
+
+\subsection{Naive Bayes Classifier}
+
+Assuming predictors $x_1$, $x_2$ ... $x_m$ are independent of each other and are only dependent on the target variable, then we can simplify the joint probability above as
+
+\begin{equation}
+p(x_1, x_2, ...x_m, y)=p(y)\prod\limits_{j=1}^{m}p(x_j|y)
+\end{equation}
+
+If $y$ has $c$ possible outcomes, the marginal probability of $p(x_1, x_2, ...x_m)$ can be calculated as 
+\begin{equation}
+p(x_1, x_2, ...,x_m)=\sum\limits_{k}^{c}p(y_k)\prod\limits_{j=1}^{m}p(x_i|y_k)
+\end{equation}
+
+Using Bayes' theorem, $p(Y|X)=\frac{p(X,Y)}{p(X)}$, we can get the conditional probability of $y$ given $x$s as
+
+\begin{equation}
+p(y_k|x_1, x_2, ...x_m)=\frac{p(y_k)\prod\limits_{j=1}^{m}p(x_j|y_k)}{\sum\limits_{k=1}^{c}p(y_k)\prod\limits_{j=1}^{m}p(x_j|y_k)}
+\end{equation}
+
+
+The denominator is constant if the features are know. Given a data point $x_1$, $x_2$, ..., $x_m$, we need to find out the outcome $y$ that maximize $p(y|x_1, x_2, ...x_m)$, i.e.
+
+$$
+\hat{y}=\argmax_{k}p(y_k)\prod\limits_{j=1}^{m}p(x_j|y_k)
+$$
+
+Note that the conditional probability $p(x_j|y_k)$ and marginal probability $p(y_k)$ can be calculated from the data set using non-parametric methods.
 
 
 \section{Word Semantics and Vector Representations}
