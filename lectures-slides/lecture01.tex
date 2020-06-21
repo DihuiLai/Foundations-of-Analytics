@@ -253,12 +253,12 @@ CONTENT
 
 \section{Elementary Data Analytics}
 \begin{frame}
-\frametitle{Elementary Data Problem}
+\frametitle{Toy Problem}
 \begin{table}[]
 \begin{tabular}{llll}
 Person &Pants & Socks &Cost\\
 \hline
-John	&1	&1 &\$23\\
+John	&1	&1  &\$23\\
 David	&1	&2  &\$26\\
 Lisa	&1	&1  &\$24\\
 \hline
@@ -268,10 +268,8 @@ What are the price of pants and socks?
 \end{frame}
 
 
-
-\frametitle{Elementary Data Problem}
 \begin{frame}
-\frametitle{Elementary Data Problem}
+\frametitle{Toy Problem}
 \begin{center}
 Solution
 \end{center}
@@ -289,6 +287,77 @@ Solution
 \end{itemize}
 \end{frame}
 
+
+
+\section{Mathematics of Data Analytics}
+
+\begin{frame}
+\frametitle{Modeling of Structured Data}
+Given a set of observations
+\[ \begin{bmatrix}  \mathnormal{y}^1 \\ \mathnormal{y}^2\\\mathnormal{y}^3\\\mathnormal{y}^i \\ \vdots \\\mathnormal{y}^n \end{bmatrix}
+\&
+\begin{bmatrix}
+   \mathnormal{x^1_1} &\mathnormal{x^1_2}  &\mathnormal{x^1_3} & \cdots &\mathnormal{x^1_m}\\
+   \mathnormal{x^2_1} &\mathnormal{x^2_2} &\mathnormal{x^2_3} & \cdots &\mathnormal{x^2_m}\\
+   \mathnormal{x^3_1} &\mathnormal{x^3_2} &\mathnormal{x^3_3} & \cdots &\mathnormal{x^3_m}\\
+   \mathnormal{x^i_1} &\mathnormal{x^i_2} &\mathnormal{x^i_3} & \cdots &\mathnormal{x^i_m}\\
+   \vdots &\vdots &\vdots & \cdots &\vdots\\
+   \mathnormal{x^n_1} &\mathnormal{x^n_2} &\mathnormal{x^n_3} &\cdots &\mathnormal{x^n_m}
+  \end{bmatrix}
+\]
+What is the best model for $\mathnormal{y}=\mathnormal{f(x_1, x_2, x_3,  ... x_m)}$, given $\mathnormal{n}$ data points of $\mathnormal{m}$-dimension?
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Linear Algerbra Review}
+\begin{itemize}
+\item Vectors: $\mathnormal{x=(x_1, x_2, x_3,...x_i, ..., x_m)}$
+\item Dot Product: $\mathnormal{\vec{x}\cdot\vec{y}=x_1 y_1+x_2 y_2+x_3 y_3}$
+\item Matrix Addition, Multiplication, 
+\item Inverse $\mathnormal{{X}X^{-1}=X^{-1}X=I}$, 
+\item Transpose $\mathnormal{M^{T}}$
+\item Linear Combination $\mathnormal{a\vec{x}+b\vec{y}+c\vec{z}}$
+\item Geometric Ineterpretation of Linear Algerbra: Linear Independent, Linearly Dependent
+\end{itemize}
+\end{frame}
+
+\section{Overview of Statistic Models and Machine Learning}
+
+\begin{frame}
+\frametitle{What is $\mathnormal{f}$: Simple Linear models}
+Linear Regression
+\begin{itemize}
+\item $\mathnormal{y=\beta_0+\beta_1 x_1+ \beta_2 x_2 + ... \beta_m x_m}$
+\item using dot product notation $\mathnormal{y=\vec{\beta}\cdot \vec{x}}$
+\item using matrix notation: $\mathnormal{y=\beta^T x}$
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{What is $\mathnormal{f}$: Generalized Linear Models}
+When $\mathnormal{y}$ is observables of a random process and the same $\mathnormal{x_1, x_2 ... x_m}$ will leads to different $\mathnormal{y}$ i.e.
+
+$$\mathnormal{y\sim P(x_1, x_2 ... x_m)}$$
+\vspace{0.2cm}
+For example: 
+Logistic Regression;
+Poisson Regression;
+Generalized Linear Model
+\end{frame}
+
+\begin{frame}
+\frametitle{What is $\mathnormal{f}$: Tree Models, Neural Network}
+When close math formula does not provide good enough approximation for the problem? \\
+
+$$\mathnormal{f}\sim
+Neural network; 
+Tree; 
+Random Forest
+$$ 
+\end{frame}
 
 \section{Data Analytics in Science, Finance, Insurance, Health Care etc.}
 
@@ -343,87 +412,6 @@ No 		&26 	& 1 				& 1				&155	&M		&...\\
 \end{tabular}
 \end{table}
 What is the model for $\text{heart disease}=\mathnormal{f}(age, gender, fbs,  ...)$?
-\end{frame}
-
-\section{Mathematics of Data Analytics}
-
-\begin{frame}
-\frametitle{Modeling of Structured Data}
-Given a set of observations
-\[ \begin{bmatrix}  \mathnormal{y}^1 \\ \mathnormal{y}^2\\\mathnormal{y}^3\\\mathnormal{y}^i \\ \vdots \\\mathnormal{y}^n \end{bmatrix}
-\&
-\begin{bmatrix}
-   \mathnormal{x^1_1} &\mathnormal{x^1_2}  &\mathnormal{x^1_3} & \cdots &\mathnormal{x^1_m}\\
-   \mathnormal{x^2_1} &\mathnormal{x^2_2} &\mathnormal{x^2_3} & \cdots &\mathnormal{x^2_m}\\
-   \mathnormal{x^3_1} &\mathnormal{x^3_2} &\mathnormal{x^3_3} & \cdots &\mathnormal{x^3_m}\\
-   \mathnormal{x^i_1} &\mathnormal{x^i_2} &\mathnormal{x^i_3} & \cdots &\mathnormal{x^i_m}\\
-   \vdots &\vdots &\vdots & \cdots &\vdots\\
-   \mathnormal{x^n_1} &\mathnormal{x^n_2} &\mathnormal{x^n_3} &\cdots &\mathnormal{x^n_m}
-  \end{bmatrix}
-\]
-What is the best model for $\mathnormal{y}=\mathnormal{f(x_1, x_2, x_3,  ... x_m)}$, given $\mathnormal{n}$ data points of $\mathnormal{m}$-dimension?
-\end{frame}
-
-
-\begin{frame}
-\frametitle{Linear Algerbra Review}
-\begin{itemize}
-\item Vectors: $\mathnormal{x=(x_1, x_2, x_3,...x_i, ..., x_m)}$
-\item Dot Product: $\mathnormal{\vec{x}\cdot\vec{y}=x_1 y_1+x_2 y_2+x_3 y_3}$
-\item Matrix Addition, Multiplication, 
-\item Inverse $\mathnormal{{X}X^{-1}=X^{-1}X=I}$, 
-\item Transpose $\mathnormal{M^{T}}$
-\item Linear Combination $\mathnormal{a\vec{x}+b\vec{y}+c\vec{z}}$
-\item Geometric Ineterpretation of Linear Algerbra: Linear Independent, Linearly Dependent
-\end{itemize}
-\end{frame}
-
-\section{Overview of Statistic Models and Machine Learning}
-
-\begin{frame}
-\frametitle{What is $\mathnormal{f}$: Simple Linear models}
-
-Linear Regression
-$$\mathnormal{y=\beta_0+\beta_1 x_1+ \beta_2 x_2 + ... \beta_m x_m}$$
-
-Variation
-$$\mathnormal{ln(y)=\beta_0+\beta_1 x_1+ \beta_2 x_2 + ... \beta_m x_m}$$
-
-\end{frame}
-
-
-\begin{frame}
-\frametitle{What is $\mathnormal{f}$: Generalized Linear Models}
-When $\mathnormal{y}$ is observables of a random process and the same $\mathnormal{x_1, x_2 ... x_m}$ will leads to different $\mathnormal{y}$ i.e.
-
-$$\mathnormal{y\sim P(x_1, x_2 ... x_m)}$$
-\vspace{0.2cm}
-For example: 
-Logistic Regression;
-Poisson Regression;
-Generalized Linear Model
-\end{frame}
-
-\begin{frame}
-\frametitle{What is $\mathnormal{f}$: Tree Models, Neural Network}
-When close math formula does not provide good enough approximation for the problem? \\
-
-$$\mathnormal{f}\sim
-Neural network; 
-Tree; 
-Random Forest
-$$ 
-\end{frame}
-
-
-\begin{frame}
-\frametitle{How to find $\mathnormal{f}$: Optimization}
-Training Algorithms:\\
-\begin{itemize}
-\item Maximum Likelihood Estimation; Entropy Maximization
-\item Gradient Descent; Stochastic Gradient Descent (SGD);
-\item Greedy Seach
-\end{itemize}
 \end{frame}
 
 
