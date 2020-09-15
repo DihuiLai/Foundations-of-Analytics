@@ -31,15 +31,8 @@
 \tableofcontents
 
 \vspace{.25in}
-
-\section{Likelihood Function}
-\subsection{Definition}
-If a set of random variables $Y_1$, $Y_2$ ... $Y_n$ has a joint probability distribution density/mass $f(y_1, y_2, ...y_n;\theta)$, where $\theta$ is a set of parameters, the likelihood function is defined as 
-\begin{equation}
-L(\theta)=f(y_1, y_2, ...y_n; \theta)
-\end{equation}
-
-\subsection{Example: Bernoulli/Binomial Distribution}
+\section{Likelihood function of Bernoulli distribution}
+\subsection{ Bernoulli/Binomial Distribution}
 Assuming an event has two possible outcomes $y=1$ or $y=0$, with probability $p$ of being $1$, i.e. the outcome follows a Bernoulli distribution. As we learned in lecture 2, the probability mass function is 
 \begin{align*}
 f(y; p)=
@@ -89,7 +82,7 @@ $$\Rightarrow p=\frac{n_1}{n_1+n_0}$$
 \end{itemize}
 
 Overall, $p$ maximize the likelihood function when it takes the value of the mean of observed $y$s
-\subsection{Example: Multinomial Distribution}
+\subsection{Optional: Multinomial Distribution}
 
 The multinomial distribution has density function
 $${f(x_1, x_2, x_3, ... x_c)=\frac{N!}{x_1! x_2! ... x_c!} p_1^{x_1} p_2^{x_2} ... p_c^{x_c}}$$

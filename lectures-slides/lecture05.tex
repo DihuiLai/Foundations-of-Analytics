@@ -343,7 +343,7 @@ In GLM this could be one of the followings
 
 \item Deviance $$D=\ell_{max}-\ell(\theta (\hat{\beta}))$$ where $\ell_{max}$ is the log likelihood of the saturated model.
 
-\item AIC: $${\displaystyle \mathrm {AIC} \,=\,2k-2\ln({{\ell}})}$$
+\item AIC: $${\displaystyle \mathrm {AIC} \,=\,2k-2\ell}$$
 Here, k is the number of estimated parameters in the model. Besides maximizing the likelihood, AIC also penalize the complexity of a model.
 
 \end{itemize}
@@ -352,7 +352,7 @@ Here, k is the number of estimated parameters in the model. Besides maximizing t
 \begin{frame}
 \frametitle{Goodness of Fit: Continued}
 \begin{itemize}
-\item BIC: $${\displaystyle \mathrm {BIC} \,=\,\log(n)k-2\ln({{\ell}})}$$
+\item BIC: $${\displaystyle \mathrm {BIC} \,=\,\log(n)k-2{\ell}}$$
 Here, n is the number of data points. Similar to AIC but penalize more on the model compelxity weighted by the amount of data.
 \end{itemize}
 \end{frame}

@@ -2,7 +2,9 @@
 %!TeX program = xelatex
 \documentclass[notheorems, aspectratio=54]{beamer}
 % aspectratio: 1610, 149, 54, 43(default), 32
+\usepackage{hyperref}
 
+ 
 \usepackage{latexsym}
 \usepackage{amsmath,amssymb}
 \usepackage{mathtools}
@@ -10,6 +12,7 @@
 \usepackage{graphicx}
 \usepackage{algorithm}
 \usepackage{amsthm}
+\DeclareMathOperator*{\argmax}{argmax} % thin space, limits underneath in displays
 \usepackage{lmodern} % 解决 font warning
 % \usepackage[UTF8]{ctex}
 \usepackage{animate} % insert gif
@@ -22,6 +25,7 @@
 % ----------------------------------------------
 % tikx
 \usepackage{framed}
+\usepackage{fancybox}
 \usepackage{tikz}
 \usepackage{pgf}
 \usetikzlibrary{automata, calc,trees,positioning,arrows,chains,shapes.geometric,%
@@ -197,7 +201,7 @@
 % ---------------------------------------------------------------------
 
 %% preamble
-\title{Foundation of Analytics: Lecture 3}
+\title{Lecture 10}
 % \subtitle{The subtitle}
 \author{Dihui Lai}
 \institute[WUSTL]{dlai@wustl.edu}
@@ -211,255 +215,140 @@
     \titlepage
 \end{frame}
 
+\section{Document Representation}
+
+
 
 \begin{frame}
-\frametitle{Content}
+\frametitle{Document Representations}
+A document can be represented by the words and the number of their occurence using term-document matrxix
+\begin{center}
+ \begin{tabular}{c c c c c} 
+ \hline
+ Words & As You Like It& Twelfth Night& Ulius Caesar& Henry V\\ [0.5ex] 
+ \hline\hline
+ battle & 1 & 0 & 7 &13 \\ 
+ \hline
+ good & 114 & 80 &62 & 89\\
+ \hline
+ fool & 36 & 58 & 1 & 5 \\
+ \hline
+ wit & 20 & 15 & 2 & 3 \\
+ \hline
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{tf-idf Weighted Measure}
+Certain words are more common in all documents e.g. the, it, they. The less frequent like "litigation" might be more important that the more frequent word "good". The tf-idf algorithms can be used to adjust the intuition.
+$$
+w_{t,d} = tf_{t,d}\times idf_{t}
+$$
+
+Here,
+$$
+tf_{t, d}=1 + log_{10}(count(t, d)) \text{ if } count(t, d) > 0, \text{ else } 0
+$$
+With $count(t, d)$  the number of occurence of the term $t$ in the document $d$
+
+$$
+idf_{t}=log_{10}\left(\frac{N}{df_t}\right)
+$$ 
+N is the total number of documents in the collection, and $df_t$ is the number of documents in which term t occurs. If word good appears in all collected document, $idf_t=0$
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Document/Paragraph to Vector Representation}
 
 \begin{itemize}
-\item Random Variables: Dependent, Independent, Correlation 
-\item Linear Regression of One Variable
-\item Linear Regression of Multiple Variables
-\item Logistic Regression
+\item Average of the word embedding: take the mean of the vector embedding of the words in the document. 
+\item LDA (Latent Dirichlet Allocation) [David Blei, Andrew Ng, and Michael I. Jordan, 2003]
+\item Distributed Memory version of Paragraph Vector (PV-DM)
+\item ...
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Document Classification, Sentiment Analysis}
+\begin{itemize}
+\item Document classification: use machine learning to classify a document type, novel, news, entertainment etc. 
+\item Sentiment Analysis: given a document/paragraph, infer the underlying sentiment (positive/negative, like/dislike)
 \end{itemize}
 \end{frame}
 
+
+\begin{frame}
+\frametitle{Support Vector Machine (SVM)}
+
+\begin{itemize}
+\item SVM is a classification/regression model that use hyperplane to categorize data points in high dimension space. 
+\item Loss function: $\mathnormal{L=\frac{1}{2}|w|^2}$ when $\mathnormal{y^i (\vec{w}\cdot \vec{x}^i+b)\geq 1}$
+\item or equivalently  $\mathnormal{L'=\frac{1}{2}|w|^2-\sum\limits_{i=1}^N \alpha_i (y^i (\vec{w}\cdot \vec{x}^i+b)-1)}$ 
+\item Optimization: $\mathnormal{\frac{\partial L'}{\partial w_i}=0}$
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Other NLP Challenges and Transfer Learning}
+
+\begin{itemize}
+\item Question and answer, e.g. SQuAD (the Stanford Question Answering Dataset)
+\item Machine translation
+\item Multi-lingual NLP
+\item Transfer learning e.g. BERT (\url {https://arxiv.org/abs/1810.04805})
+\end{itemize}
+
+\end{frame}
 
 %% normal frame
-\section{Random Variables: Dependent, Independent, Correlation }
+\section{Regular Expression}
 
 \begin{frame}
-
-\frametitle{Correlations between Random Variables}
-
-Let's look at a few pairs of data  points?
-
+   \frametitle{Regular Expression}
 \begin{itemize}
-\item $\mathnormal{\vec{x}=[0.5, 0.6, 0.1, -0.3, 2.3], \vec{y}=[0.5, 0.6, 0.1, -0.3, 2.3]}$
-\item $\mathnormal{\vec{x}=[0.5, 0.6, 0.1, -0.3, 2.3], \vec{y}=[0.6, 0.6, 0.12, -0.3, 2.3]}$
-\item $\mathnormal{\vec{x}=[0.5, 0.6, 0.1, -0.3, 2.3], \vec{y}=[0.02, -0.2,0.2,2.1, -0.5]}$
+\item Algebraic notation for characterizing a set of strings.
+\item Useful for searching in corpus of texts
+\item Python example: str = "The rain in Spain"; x = re.findall("Spain", str)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Basic Regular Expression}
+\begin{itemize}
+\item[-][]: Used to indicate a set of characters e.g. [abc] will match 'a', 'b', or 'c'.
+\item[-]'\textbackslash d': matches any decimal digit; equivalent to the set [0-9].
+\item[-] '+': match 1 or more repetitions of the preceding RE
+\item[-]'\textbackslash D': anything but a number (a non-digit)	
+\item[-] '\textbackslash s': space (tab,space,newline etc.)
+\item[-] '\textbackslash S': anything but a space e.g. '\textbackslash S+@\textbackslash S+' represents email address
+\item[-]'\textasciicircum': This expression matches the start of a string
 \end{itemize}
 
-What can you tell about the relationship between $\mathnormal{\vec{x}}$ and $\mathnormal{\vec{x}}$?
-
 \end{frame}
+\begin{frame}[fragile]
+\frametitle{Regular Expression in Python}
+re.search(regex, text) returns a match object when the pattern is found or not match if the pattern is not found.
+\begin{lstlisting}
+import re
+m = re.search('hello', 'hello world, hello all, good afternoon')
+print m.group(0)
+#hello
+\end{lstlisting}
 
-\begin{frame}
-\frametitle{Correlations between Random Variables}
-Given two random variables $X$ and $Y$, denote the mean and variance of the two variables as $\mathnormal{E[X]=\mu_X}$, $\mathnormal{E[Y]=\mu_Y}$, $\mathnormal{Var[X]=\sigma^2_X}$, $\mathnormal{Var[Y]=\sigma^2_Y}$.
-
-The covariance of X and Y is the number defined by
-\begin{align*}
-\mathnormal{Cov(X, Y)}&=\mathnormal{E[(X-\mu_X)(Y-\mu_Y)]}\\
-&\mathnormal{=E[XY]-\mu_X \mu_Y}
-\end{align*}
-
-Empricial Estimation of Covariance
-\begin{align*}
-\mathnormal{Cov(X, Y)}&=\mathnormal{\frac{(x-\mu_x)(y^{T}-\mu_y)}{N}} (empirical)\\
-\mathnormal{Cov(X, Y)}&=\frac{\mathnormal{(x-\mu_x)(y^{T}-\mu_y)}}{\mathnormal{N}-1} (unbiased)\\
-\end{align*}
-
-
+re.findall(regex, text) will return a list of all the matches.
+\begin{lstlisting}
+m = re.findall('hello', 'hello world, hello all, good afternoon')
+print m
+#['hello', 'hello']
+\end{lstlisting}
 \end{frame}
-
-
-\begin{frame}
-
-\frametitle{Correlations between Random Variables}
-
-The correlation of the two random variables is the number defined by 
-
-
-\begin{align*}
-\mathnormal{\rho_{XY}=\frac{Cov(X,Y)}{\sigma_X \sigma_Y}}
-\end{align*}
-
-\end{frame}
-\begin{frame}
-\frametitle{Correlations between Random Variables}
-Calculate the covariance/correlation of 
-\begin{itemize}
-\item Example 1:$$\mathnormal{\vec{x}}=[2, -2, -2, 2], \mathnormal{\vec{y}}=[2, -2, -2, 2]$$
-We have
-$\mathnormal{\mu_x}=0$, $\mathnormal{\mu_y}=0$, $\mathnormal{\sigma_x^2=}4$, $\mathnormal{\sigma_y^2=}4$, $\mathnormal{E[XY]=}4$
-Therefore $\mathnormal{Cov(X, Y)}=4-0=4$ and $\mathnormal{\rho_{xy}}=4/(2*2)=1$
-
-\item Example 2: $$\mathnormal{\vec{x}}=[2, -2, -2, 2], \mathnormal{\vec{y}}=[2, 0, -2, 0]$$
-We have
-$\mathnormal{\mu_x}=0$, $\mathnormal{\mu_y}=0$, $\mathnormal{\sigma_x^2=}4$, $\mathnormal{\sigma_y^2=}2$, $\mathnormal{E[XY]=}2$
-Therefore $\mathnormal{Cov(X, Y)}=2-0=2$ and $\mathnormal{\rho_{xy}}=2/(2*\sqrt{2})=1/\sqrt{2}$
-\end{itemize}
-
-
-
-\end{frame}
-
-\section{Univariate LM}
-
-\begin{frame}
-
-\frametitle{Linear Regression with One Variable}
-Data set:
-$$
-\mathnormal{y}=
-\begin{bmatrix}
-    \mathnormal{y^{1}}\\
-    \mathnormal{y^{2}}\\
-	\vdots\\
-    \mathnormal{y^{n}}
-\end{bmatrix}
-,
-\mathnormal{X}=
-\begin{bmatrix}
-    \mathnormal{x^{1}}\\
-    \mathnormal{x^{2}}\\
-	\vdots\\
-    \mathnormal{x^{n}}
-\end{bmatrix}
-$$
-\end{frame}
-
-\begin{frame}
-\frametitle{Linear Regression with One Variable}
-Assume $\mathnormal{y}$ is linearly depending on $\mathnormal{x}$ i.e.
-
-$$
-\mathnormal{\hat{y} =\beta_0 + \beta_1 x}
-$$
-
-Find $\hat{\beta}$ that minimize the estimation error
-
-$$
-\mathnormal{\epsilon=\sum\limits_{i=1}^{n}(y^{i}-\hat{y}^{i})^2 = \sum\limits_{i=1}^{n} (y^{i}-{\beta_0}-{\beta_1} x^{i})^2}
-$$
-
-i.e.
-
-$$
-\mathnormal{\frac{\partial \epsilon}{\partial {\beta}_1}=0
-\rightarrow
-\sum\limits_{i=1}^{n}(y^{i}-{\beta_0}-{\beta_1} x^{i})x^{i}=0}
-$$
-$$
-\mathnormal{
-\frac{\partial \epsilon}{\partial {\beta}_0}=0
-\rightarrow
-\sum\limits_{i=1}^{n}(y^{i}-{\beta_0}-{\beta_1} x^{i})=0
-}
-$$
-
-\end{frame}
-
-\begin{frame}
-
-$$
-\mathnormal{
-\beta_0\sum\limits_{i=1}^{n}x^{i}=\sum\limits_{i=1}^{n}y^{i}x^{i}-\beta_1\sum\limits_{i=1}^{n}x^{i}x^{i}
-}
-$$
-\begin{align*}
-\mathnormal{
-{\beta_0}=\frac{1}{n}\sum\limits_{i=1}^{n}(y^{i}-{\beta_1} x^{i})=\bar{y}-{\beta_1} \bar{x}
-}
-\end{align*}
-
-Insert the second equation to the first, we have
-
-$$\mathnormal{n\bar{x}\bar{y}-{\beta_1}n\bar{x}\bar{x}=\sum\limits_{i=1}^{n}y^{i}x^{i}-{\beta_1}\sum\limits_{i=1}^{n}x^{i}x^{i}}
-$$
-
-Therefore, 
-$$\mathnormal{
-{\beta_1}=\frac{\frac{1}{n}\sum\limits_{i=1}^{n}x^{i}y^{i}-\bar{x}\bar{y}}{\frac{1}{n}\sum\limits_{i=1}^{n}x^{i}x^{i}-\bar{x}^2}=\frac{Cov(X,Y)}{Var(X)}=\rho_{XY}\frac{\sigma_{Y}}{\sigma_{X}}
-}
-$$
-\end{frame}
-
-\section{Multivariate LM}
-\begin{frame}
-\frametitle{Multivariate Linear Regression}
-Data set:
-
-$$
-\begin{bmatrix}
-
-\mathnormal{y, X}
-
-\end{bmatrix}
-=
-\begin{bmatrix}
-    \mathnormal{{y}^{1}}& \mathnormal{x^{1}_{0}}& \mathnormal{x^{1}_{1}} & \mathnormal{x^{1}_{2}} & \dots & \mathnormal{x^{1}_{m}} \\
-    \mathnormal{{y}^{2}}& \mathnormal{x^{2}_{0}}& \mathnormal{x^{2}_{1}} & \mathnormal{x^{2}_{2}} & \dots & \mathnormal{x^{2}_{m}} \\
-    	\vdots & \vdots     & \vdots & \vdots &\ddots &\vdots\\
-    \mathnormal{{y}^{n}}& \mathnormal{x^{n}_{0}}& \mathnormal{x^{n}_{1}} & \mathnormal{x^{n}_{2}} & \dots & \mathnormal{x^{n}_{m}} \\
-\end{bmatrix}
-$$
-\end{frame}
-
-\begin{frame}
-\frametitle{Multivariate Linear Regression}
-Assume $\mathnormal{y}$ is a linear superposition of multiple $\mathnormal{x}$'s
-    $$
-	\mathnormal{\hat{y}=\beta_{0}+\beta_{1}x_1+\beta_{2}x_2+\hdots+\beta_{m}x_m}
-    $$
-    or simply
-    $$
-	\mathnormal{\hat{y}=\sum\limits_{j=1}^{m}\beta_j x_j}     
-	$$
-        
-
-\end{frame}
-
-\begin{frame}
-\frametitle{Multivariate Linear Regression}
-Estimate $\mathnormal{\beta}$'s that best fits the data, we need to minimize the error
-    \begin{align*}
-        \mathnormal{\epsilon}&=\mathnormal{\sum\limits_{i=1}^{n}(y^{i}-\hat{y}^{i})^2}\\
-                &=\mathnormal{(y-\hat{y})^T(y-\hat{y})}
-    \end{align*}
-Use basic calculus we know, we want to have the  $\mathnormal{\beta}$s satisfy the following equation set:
-$$
- \mathnormal{\frac{\partial \epsilon}{\partial \beta_j}=0, j=1, 2, 3, 4 ... m}
-$$
-\end{frame}
-
-\begin{frame}
-i.e.
-$$
-\mathnormal{\sum\limits_{i=1}^{n}\frac{\partial (y^{i}-\hat{y}^{i})^2}{\partial \beta_j}=0}
-$$
-
-$$
-\mathnormal{\sum\limits_{i=1}^{n}(y^{i}-\hat{y}^{i})\frac{\partial\hat{y}^{i}}{\partial \beta_j}=0}
-$$
-
-$$
-\mathnormal{\sum\limits_{i=1}^{n}(y^{i}-\hat{y}^{i})x^{i}_{j}=0}
-$$
-
-\end{frame}
-\begin{frame}
-
-\frametitle{Multivariate Linear Regression}
-
-Written in matrix formula we require
-
-$$
-\mathnormal{(y-X \beta)}^{T}\mathnormal{X}=0
-$$
-or after transposing
-$$
-\mathnormal{X^{T}}\mathnormal{y}-\mathnormal{X^T}\mathnormal{X}\beta=0
-$$
-
-Therefore 
-
-$$
-\beta=(\mathnormal{X^T}\mathnormal{X})^{-1}\mathnormal{X^{T}}\mathnormal{y}
-$$
-
-\end{frame}
-
-
 
 \end{document}

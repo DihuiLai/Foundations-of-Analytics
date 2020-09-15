@@ -133,11 +133,11 @@ E(X)&=\sum\limits_{k=0}^{n}kp(k)\\
 &=np\sum\limits_{k=0}^{n-1}\frac{(n-1)!}{(k-1)!(n-k-1)!}p^{k}(1-p)^{n-k-1}, \text{ substitute }k\leftarrow k+1 \text{ and reindex k from 0}\\
 &=np
 \end{align*}
-\subsection{Multinomial Distribution}
 
+\subsection{Multinomial Distribution}
 More often than not, an experiment could have $\mathnormal{c}>1$ outcome. For example, throwing a dice might have 6 outcomes, the weather condition next day could be sunny, cloudy or rainy etc. 
 
-Of each experiment, each outcome has different probabilities ${p_1}$, ${p_2}$, ${p_3}$, ..., ${p_c}$. The total probability has to satisfy the condition ${\sum\limits_{j=1}^c p_j=1}$. If we perform $\mathnormal{N}$ experiments, the probability distirbution function can be written as 
+Of each experiment, each outcome has different probabilities ${p_1}$, ${p_2}$, ${p_3}$, ..., ${p_c}$. The total probability has to satisfy the condition ${\sum\limits_{j=1}^c p_j=1}$. If we perform $\mathnormal{N}$ experiments, the probability distribution function can be written as 
 $${f(x_1, x_2, x_3, ... x_c)=\frac{N!}{x_1! x_2! ... x_c!} p_1^{x_1} p_2^{x_2} ... p_c^{x_c}}$$
 Here, $x_1$ is the number of times outcome is $1$, $x_2$ is the number of times that we get outcome $2$ etc. The summation of the $x$s has to be N, i.e. $\sum\limits_{j=1}^{c}x_j=N$
 
@@ -153,14 +153,15 @@ pdt, \text{1 event}\\
 \end{cases}
 \end{equation*}
 The event occurred within a time period of $dt$ follows a Bernoulli distribution
-\begin{equation*}
+\begin{equation}
 {\Delta}=
 \begin{cases}
 0, 1-pdt\\
 1, pdt\\
 \end{cases}
-\end{equation*}
-For a period of $\tau$, we can construct a random variable $X$ that is a summation of $N$ random variables $X=\Delta_1+\Delta_2+...\Delta_N$. Each variable on the right hand side follows the Bernoulli distribution described above. In the limit when $dt \rightarrow 0$ we need to have $N\rightarrow \infty$ to have $Ndt=\tau$. In another word, $X$ is the summation of infinite number of Bernoulli distribution or a binomial distribution when $N\rightarrow \infty$
+\end{equation}
+
+For a period of $\tau$, we can construct a random variable $X$ that is a summation of $N$ random variables $X=\Delta_1+\Delta_2+...\Delta_N$. Each variable on the right hand side follows the Bernoulli distribution as described by equation (2). In the limit when $dt \rightarrow 0$ we need to have $N\rightarrow \infty$ to have $Ndt=\tau$. In another word, $X$ is the summation of infinite number of Bernoulli distribution or a binomial distribution when $N\rightarrow \infty$
 $$X=\Delta_1+\Delta_2+...\Delta_i+...$$
 The distribution of X can be derived by taking the limit of a Binomial distribution.
 \begin{align*}
@@ -201,8 +202,8 @@ Var(X)&=\sum\limits_{k=0}^{\infty}(k-\lambda)^2\frac{k\lambda^{k}}{k!}e^{-\lambd
 
 \section{Continous Random Variable}
 \subsection{Probability Density Function}
-A continous variable X can take on real value. The probability that $X$ is between $x_i-\Delta x$ and $x_i+ \Delta x$ can be described by the following probability function
-$$P(x_i-\Delta x<x<x_i+\Delta x)\sim f(x_i)\Delta x$$
+A continuous variable X can take on real value. The probability that $X$ is between $x_i-\Delta x$ and $x_i+ \Delta x$ can be described by the following probability function
+$$P(x_i-\Delta x<x<x_i+\Delta x)\sim f(x_i) 2 \Delta x$$
 where $x_i$ can be any value between $(-\infty, \infty)$. More precisely, we can write the relationship in integral formula
 $$P(x_i-\Delta x<x<x_i+\Delta x)=\int\limits_{x_i-\Delta x}^{x_i+\Delta x}f(x)dx$$
 Here $f(x)$ is called probability density function and has to satisfy the following constraint
@@ -214,6 +215,22 @@ $$\bar{x}=E(X)=\int\limits_{-\infty}^{\infty}xf(x)dx$$
 $$E(g(x))=\int\limits_{-\infty}^{\infty}g(x)f(x)dx$$
 \textbf{Variacne}: the variance of a continous random variable is defined as 
 $$Var(X)=\int\limits_{-\infty}^{\infty}(x-\bar{x})^2f(x)dx$$
+
+\subsection{Uniform Distribution}
+
+
+A uniform distribution is given by
+\begin{align*}
+\mathnormal{f(x)} =
+    \left\{
+        \begin{array}{cc}
+              \mathnormal{0} & \mathrm{if\ } \mathnormal{x<a} \\
+              \frac{1}{\mathnormal{b-a}}  & \mathnormal{\mathrm{if\ } a\leq x \leq b} \\
+              \mathnormal{0} & \mathrm{if\ } \mathnormal{x>b} \\
+        \end{array} 
+    \right.
+\end{align*}
+
 
 \subsection{Gaussian Distribution}
 The probability density function of a standard Gaussian function is defined as 

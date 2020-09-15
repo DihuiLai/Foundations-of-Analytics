@@ -209,6 +209,115 @@
     \titlepage
 \end{frame}
 
+\section{Logistic Regression}
+
+\begin{frame}
+
+\frametitle{Logistic Regression: Likelihood Function}
+Assuming two possible outcomes 1 and 0, the probability of being 1 is modeled as $$\mathnormal{p_i}=\frac{1}{1+\mathnormal{\exp(-\vec{\beta}\cdot\vec{x}^i)}}$$
+
+The likelihood function is defined as 
+\begin{align*}
+\mathnormal{Likelihood}&=\mathnormal{\prod_{i=1}^{n}p_{i}^{y^i}(1-p_{i})^{1-y^{i}}}\\
+\end{align*}
+
+The log-likelihood function is the defined as the log transformation of the likelihood function
+\begin{align*}
+\mathnormal{\ell}=\mathnormal{\log(Likelihood)}
+&=\mathnormal{\sum_{i=1}^{n}y^i\log(p_i)+(1-y^i)\log(1-p_i)}\\
+\end{align*}
+
+\end{frame}
+
+
+\begin{frame}
+
+\frametitle{Logistic Regression: Optimization Attempt}
+It follows that
+\begin{align*}
+\mathnormal{\ell}&=\mathnormal{\sum_{i=1}^{n}y^i\log\frac{p_i}{1-p_i}+\log(1-p_i)}\\
+&=\mathnormal{\sum_{i=1}^{n}y^i(\vec{\beta}\cdot\vec{x}^i)-\log(1+\exp(\vec{\beta}\cdot\vec{x}^i)))}
+\end{align*}
+Take the gradient against $\mathnormal{\beta}$s, we have
+\begin{align*}
+\mathnormal{\frac{\partial\ell}{\partial\beta_j}}
+&=\mathnormal{\sum_{i=1}^{n}\left (y^i-\frac{1}{1+\exp(-\vec{\beta}\cdot\vec{x}^i)} \right) x_{j}^{i}}, \mathnormal{j=1, 2, 3, ...,m}
+\end{align*}
+$\beta$s can NOT be solved by setting $\nabla\ell=0$ because of the nonlinear term of $\mathnormal{x^i}$, which is $\mathnormal{\frac{1}{1+\exp(\vec{x}^i\cdot\vec{\beta})}}$.
+\end{frame}
+
+\begin{frame}
+
+\subsection{Newton-Raphson Method}
+
+\frametitle{Newton-Raphson Method for Optimizing Non-linear Functions}
+Consider a function of one parameter $\mathnormal{\ell(\beta)}$ and assume $\mathnormal{\beta_0}$ is close to the point that minimizes $\mathnormal{\ell(\beta)}$. We can therefore use Talyor expansion for approximation
+
+$$
+\mathnormal{\ell(\beta)=\ell(\beta_0)+\ell'(\beta_0)(\beta-\beta_0)+\frac{1}{2}\ell''(\beta_0)(\beta-\beta_0)^2}
+$$
+
+The $\beta^*$ that minimize the function have derivative at the point 0 i.e. $\mathnormal{\ell'(\beta)|_{\beta=\beta^*}=0}$, by setting $\mathnormal{\ell'(\beta)}=0$, we get an iterative evaluation methods for $\beta^*$
+
+$$
+\mathnormal{\ell'(\beta_0)+\frac{1}{2}2\ell''(\beta_0)(\beta-\beta_0)}=0
+\rightarrow
+\mathnormal{\beta=\beta_0-\frac{\ell'(\beta_0)}{\ell''(\beta_0)}} \text{i.e.}
+$$
+
+$$
+\mathnormal{\beta^{(k+1)}=\beta^{(k)}-\frac{\ell'(\beta^{(k)})}{\ell''(\beta^{(k)})}}
+$$
+\end{frame}
+
+\begin{frame}
+\frametitle{Multivariate Newton-Raphson Method }
+For multivarite function, the iteration formula becomes
+$$
+\mathnormal{\beta^{(k+1)}}=\mathnormal{\beta^{(k)}}-\mathnormal{H}^{-1}\mathnormal{(\beta^{(k)})\nabla \ell(\beta^{(k)})}
+$$
+here $\mathnormal{H(\beta^{(k)})}$ is the Hessian matrix of $\ell(\beta)$ evaluated at $\mathnormal{\beta=\beta^{(k)}}$, defined as
+
+$$
+\mathnormal{H_{ab}}=\mathnormal{\frac{\partial^2\ell}{\partial\beta_a\partial\beta_b}|_{\beta=\beta^{(k)}}}
+$$
+and $\mathnormal{H}^{-1}\mathnormal{(\beta^{(k)})}$ is the inverse of $\mathnormal{H(\beta^{(k)})}$
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Logistic Regression}
+Apply Newton-Raphson methods to optimize the logistic regression, we calculate the Hessian of the log-likelihood function
+\begin{align*}
+\mathnormal{\frac{\partial^2\ell}{\partial\beta_a\partial\beta_b}}
+&=\mathnormal{-\sum_{i=1}^{n}x_b^i\frac{\exp(-\vec{\beta}\cdot\vec{x}^i)}{(1+\exp(-\vec{\beta}\cdot\vec{x}^i))^2}x_a^i}\\
+&=\mathnormal{-\sum_{i=1}^{n}x_b^i p_i (1-p_i)x_a^i}\\
+\end{align*}
+written in matrix formula, the Hessian of the loglikelihood function is
+\begin{align*}
+\mathnormal{{H}}&=\mathnormal{-X^TWX}\text{, } 
+\mathnormal{W}=  \begin{bmatrix}
+    \mathnormal{p_1 (1-p_1)} & & \\
+    & \ddots & \\
+    & & \mathnormal{p_n (1-p_n)}
+  \end{bmatrix}
+\end{align*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Logistic Regression: Optimization Algorithm}
+Use Newton Raphson Methods, we have
+\begin{align*}
+\mathnormal{\vec{\beta}^{(k+1)}} &\leftarrow \mathnormal{\vec{\beta}^{(k)}-{H}^{-1}\nabla\ell}\\
+\mathnormal{\vec{\beta}^{(k+1)}} &\leftarrow \mathnormal{\vec{\beta}^{(k)}+({X}^T{W}{X})^{-1}{X}^T({y}-{p})}
+\end{align*}
+
+Recall in linear regression case
+$$
+\beta=(\mathnormal{X^T}\mathnormal{X})^{-1}\mathnormal{X^{T}}\mathnormal{y}
+$$
+\end{frame}
 
 
 \section{Generalized Linear Model}

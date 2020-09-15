@@ -51,7 +51,7 @@ Suppose you learned from 3 of your friends who went on shopping recently, who bo
 \end{tabular}
 
 \vspace{.1in}
-According to John and Lisa, the prices of a pant and a sock can be calcuated as $P=20$ and $S=3$, respectively. However, David should have paid $23$ dollar given the inferred prices. Why did David pay $24$ dollar instead of $23$? It could be due to price variation.
+According to John and Lisa, the prices of a pant and a sock can be calcuated as $P=20$ and $S=3$, respectively. However, David should have paid $23$ dollar given the inferred prices. Why did David pay $24$ dollar instead of $23$? It could be due to price variation. How can we get a good estimation of the prices?
 
 \subsection{Price Estimation}
 To get a good estimation of the prices of socks and pants, we can use the following error function
@@ -124,18 +124,34 @@ Y=\vec{y}=
   	x_1^n & x_2^n  & x_1^n  & \dots  & x_m^n
 \end{bmatrix}
 \]
+Where $\vec{x}_j$ is a column vector/matrix of size $n\times 1$
+\[
+\vec{x}_j=
+\begin{bmatrix}
+    x_{j}^1      \\
+    x_{j}^2      \\
+    \vdots \\
+    x_{j}^n    
+\end{bmatrix}
+, j=1, 2, 3, ..., m
+\]
+
 The vectors $\vec{x}_i$ are called covariates, or predictors. 
 $\vec{y}$ is normally called  target variable 
 
 \subsection{Linear Model}
 If we assume $\vec{y}$ is linearly dependent on $\vec{x}$s, we have a linear model
 $${\hat{\vec{y}}}=\beta_1\vec{x}_2+\beta_2\vec{x}_2+ \dots +\beta_m\vec{x}_m$$
-An optimal model should estimate $\hat{\vec{y}}$ as close as $\vec{y}$. e.g.
+An optimal model should estimate $\hat{\vec{y}}$ as close as $\vec{y}$.  We can define an error function, for example, using sum square error
 \begin{align*}
-\epsilon&=(\hat{\vec{y}}-\vec{y})\cdot(\hat{\vec{y}}-\vec{y})\\
-\frac{\partial{\epsilon}}{\partial \beta_i}&=0 \text{, i=1, 2, 3,..., m}
+\epsilon&=(\hat{\vec{y}}-\vec{y})\cdot(\hat{\vec{y}}-\vec{y})=\sum_{i=1}^n (\hat{y}^i-y^i)^2\\
 \end{align*}
-How can we solve the problem?
+
+To have the error term to be minimized, we want to have
+\begin{align*}
+\frac{\partial{\epsilon}}{\partial \beta_j}&=0 \text{, j=1, 2, 3,..., m}
+\end{align*}
+This problem is called least square estimation. How can we solve the problem? We are going to solve it in our lecture-3
 
 
 \subsection{Other Models}
@@ -149,7 +165,7 @@ In general, $\vec{y}$ could be any function of $\vec{x}$ i.e. $\vec{y}=\mathnorm
 \section{Geometric Interpretation, Visualization and Randomness}
 \subsection{Pants, Socks and Cost from 100 Friends}
 
-Suppose now you collect data from 100 friends. Everyone of them has bought a few pants and some socks from the same store. In a perfect world, everyone remember the number of pants/socks they bought and the corresponding cost. You end up having a perfect data like this:
+Suppose now you collect data from 100 friends. Everyone of them has bought a few pants and some socks from the same store. In a perfect world, everyone remember the number of pants/socks they bought and the corresponding cost. You end up having the complete data set like this:
 
 \vspace{.1in}
 \begin{tabular}{llll}
@@ -164,10 +180,10 @@ Person100 & ...&...&...
 \end{tabular}
 \vspace{.1in}
 
-By looking at the number closely, you figured out that the price of a pant is 20 dollars and the price is a sock is 3 dollars. And it is consistent across the whole data set.
+By looking at the number closely, you figured out that the price of a pant is 20 dollars and the price of a sock is 3 dollars. And it is consistent across the whole data set.
 
 \subsection{Incomplete Data and Visualization }
-In reality it is very hard to get all information you need to build a pricing model for pants and socks, some people will not tell you the cost and some people can not tell you the number of pants/socks that they bought. Let us assume that all your friends can only tell you the number of pants that they bought and the total cost of their purchase. So you end up having a data set like this:
+In reality it is very hard to get all information you need to build a pricing model for pants and socks, not everyone is going to give you the complete information about their purchase. Let us assume that all your friends only tell you the number of pants that they bought and the total cost of their purchase. So you end up having a data set like this:
 
 \vspace{.1in}
 \begin{tabular}{llll}
@@ -211,10 +227,10 @@ The scatter plot looks even more puzzeling (Figure 2). The cost looks as if it i
 \includegraphics[width=100mm]{Figures/Lecture1-100Socks-Cost.eps}
 \caption{Scatter plot of total cost against the number of socks bought}
 \end{figure}
-\subsection{High Dimension Space Projection and Randomness}
-In our toy model, we are considering the cost of buying two types of item. Mathematically, the total cost is a perfectly linear function of the number of pants/socks bought i.e. $cost_{total}=price_{pants} \times pants+ price_{socks} \times socks$. Moreove, the price of pants/socks are deterministic. However, the total cost appears as if the there are some randomness if we miss the information of socks or pants bought.
+\subsection{Randomness caused by High Dimension Projection }
+In our toy model, we are considering the cost of buying two types of item. Mathematically, the total cost is a perfectly linear function of the number of pants/socks bought i.e. $cost_{total}=price_{pants} \times pants+ price_{socks} \times socks$. The price of pants/socks are deterministic and there is no randomness at all. However, the total cost appears as if the there are some random impact that causes the price os pants/socks to change
 
-While dealing with real world data problem, missing information is almost garanteed. For example, while modeling the house price, it is unlikely that we will know the price that the buyers are willing to pay; while modeling a public compnay's stock price, it is almost impossible to know all information related to the company. \textbf{Therefore, we have to make good assumptions about the information that we do not have a.k.a noise}. 
+While dealing with real world data problem, missing information is almost guaranteed. For example, while modeling the house price, it is unlikely that we will know the price that the buyers are willing to pay; while modeling a public company's stock price, it is almost impossible to know all information related to the company. \textbf{Therefore, we have to make good assumptions about the information that we do not have, a.k.a. noise}. 
 
 
 \end{document}
