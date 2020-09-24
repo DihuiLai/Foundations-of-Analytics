@@ -175,10 +175,73 @@ Loosely speaking, we can interpreting equation (12) as composed two components t
 
 \section{Likelihood Function}
 \subsection{Definition}
-If a set of random variables $Y_1$, $Y_2$ ... $Y_n$ has a joint probability distribution density/mass $f(y_1, y_2, ...y_n;\theta)$, where $\theta$ is a set of parameters, the likelihood function is defined as 
+If a set of random variables $Y_1$, $Y_2$ ... $Y_n$ has a joint probability distribution density/mass $f(y_1, y_2, ...y_n;\vec{\theta})$, where $\vec{\theta}$ is a set of parameters, the likelihood function is defined as 
 \begin{equation}
-L(\theta)=f(y_1, y_2, ...y_n; \theta)
+L(\vec{\theta})=f(y_1, y_2, ...y_n; \vec{\theta})
 \end{equation}
 
+Where $y_1$, $y_2$, ... $y_n$ are values drawn from the random distribution $Y_1$, $Y_2$ ... ,$Y_n$ 
 
+\subsection{Example: Likelihood of Bernoulli Distribution}
+Assuming an event has two possible outcomes $y=1$ or $y=0$, with probability $p$ of being $1$, i.e. the outcome follows a Bernoulli distribution. As we learned in lecture 2, the probability mass function is 
+\begin{align*}
+f(y; p)=
+\begin{cases}
+p, &y=1\\
+1-p,  &y=0
+\end{cases}
+\end{align*}
+Or if you express this in a single formula it is 
+$$f(y;p)=p^y(1-p)^y$$
+you can verify that when $y=1$, $f(y, p)=p$ and when $y=0$, $f(y, p)=1-p$
+
+When you draw a data point from this distribution, the likelihood that the value being 1 is $f(1, p)=p$ and the value being 0 is $f(0, p)=1-p$
+
+\subsection{Example: Likelihood of Gaussian Distribution}
+The probability density function (PDF) for a standard Gaussian distribution is 
+$$f(x)=\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}{2}}$$
+
+
+When you draw a data point from this distribution, the likelihood that the value being 1 is 
+$$f(1, p)=\frac{1}{\sqrt{2\pi}}e^{-\frac{1}{2}}$$
+
+The likelihood that the value being $0.5$ is 
+$$f(1, p)=\frac{1}{\sqrt{2\pi}}e^{-\frac{0.5^2}{2}}$$
+
+
+\section{Maximum Likelihood Estimator of the Multivariate Linear Model}
+Assume the target variable $y$ in a dataset is draw from a Gaussian distribution and for the $i$th data point, the Gaussian distribution has a mean $\mu_i$; the variance for all the data points are the same i.e. $\sigma^2$. The Gaussian distribution is therefore
+$$f(y, \mu_i, \sigma)=\frac{1}{\sqrt{2\pi}}e^{-\frac{(y-\mu_i)^2}{2\sigma^2}}, i=1, 2, 3, ...n $$
+
+Moreover, assume that the parameter $\mu_i$ can be estimated from the predictors of the $i$th data point: $x_j^i$, where $j=1, 2, 3, ...m$  
+\begin{equation}
+\mu_i=\sum\limits_{j=1}^{m}\beta_j x_j^i=\vec{\beta}\cdot\vec{x}^i
+\end{equation}
+
+The likelihood of $i$th data point being $y^i$ is therefore
+$$f(y^i, \mu_i, \sigma)=\frac{1}{\sqrt{2\pi}}e^{-\frac{(y^i-\mu_i)^2}{2\sigma^2}}$$
+Assuming all data points are independent we would end up having the total likelihood to be
+
+$$
+L=\prod_{i=1}^n f(y^i, \mu_i, \sigma)=(\frac{1}{\sqrt{2\pi}})^n e^{-\sum\limits_{i=1}^n\frac{(y^i-\mu_i)^2}{2\sigma^2}}
+$$
+
+The corresponding loglikelihood function is 
+
+$$
+\ell=log(L)=-\frac{n}{2}log(2\pi)-\sum\limits_{i=1}^n\frac{(y^i-\mu_i)^2}{2\sigma^2}
+$$
+
+The $\beta$s that maximize the loglikelihood function need to satisfy the following condtions
+$$
+\frac{\partial \ell}{\partial \beta_j}=0, j=1, 2, ..., m
+$$
+Because $-\frac{n}{2}log(2\pi)$ is constant, subsitute $\mu_i$ with equation (14) we end up having an equation set 
+
+$$\frac{\partial}{\partial \beta_j}\sum\limits_{i=1}^n\frac{(y^i-\vec{\beta}\cdot\vec{x}^i)^2}{2\sigma^2}=0, j=1, 2, ..., m$$
+
+Because $\sigma^2$ is constant and independent of $\beta$, we have 
+$$\frac{\partial}{\partial \beta_j}\sum\limits_{i=1}^n {(y^i-\vec{\beta}\cdot\vec{x}^i)^2}=0, j=1, 2, ..., m$$
+
+Notice the summation term is exactly the same as the sum-square-error $\epsilon$. \bf {Hence, in this case, the maximum likelihood estimator (MLE) is equivalent to the OLS estimator!} 
 \end{document}
