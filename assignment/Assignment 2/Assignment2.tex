@@ -77,7 +77,7 @@ from sklearn.linear_model import LogisticRegression
 logisticRegr = LogisticRegression(C=1e4)
 \end{lstlisting}
 
-\item Calculate $\beta$s using Newton-Raphson method. Hint: initialize $\beta$s with some random values e.g. $0.1$. Update $\beta$s using the formula below until $\vec{\beta}$ converges, i.e. stop updating when the minimum value of $|\Delta \vec{\beta}|$ is less than $\delta=1e^{-15}$. How are your $\beta$s compare to what you get in question (1)?
+\item Calculate $\beta$s using Newton-Raphson method. Hint: initialize $\beta$s with some random values e.g. $0.1$. Update $\beta$s using the formula below until $\vec{\beta}$ converges, i.e. stop updating when the max value of $|\Delta {\beta_j}|$ of all $j$ is less than $\delta=1e^{-15}$. How are your $\beta$s compare to what you get in question (1)?
 
 \begin{align*}
 \vec{\beta}^{(k+1)} &\leftarrow \vec{\beta}^{(k)}+(\textbf{X}^T\textbf{W}\textbf{X})^{-1}\textbf{X}^T(\textbf{y}-\hat{\textbf{y}})
