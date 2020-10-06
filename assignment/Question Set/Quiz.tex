@@ -95,6 +95,7 @@ emphstyle={\color{self}\slshape},
 %----------------------------------------------------------------------------------------
 
 \section{Maximum Likelihood}
+\subsection{Problem}
 
 Given a Gaussian distribution $f(y,\mu, \sigma=1)=\frac{1}{\sqrt{2\pi}}\exp(-\frac{(y-\mu)^2}{2})$ and a set of observations $y_1$, $y_2$ ..., $y_n$
 
@@ -104,7 +105,7 @@ Given a Gaussian distribution $f(y,\mu, \sigma=1)=\frac{1}{\sqrt{2\pi}}\exp(-\fr
 \item  if we have observed both data points $y_1=0$ and $y_2=0$, what is the $\mu$ that will maximize the likelihood of the observations?
 \end{enumerate}
 
-\section{Solution}
+\subsection{Solution}
 The likelihood function of the problem, $L=\frac{1}{(\sqrt{2\pi})^n}\exp\left( -\sum\limits_{i=1}^n\frac{(y_i-\mu)^2}{2}\right)$ or the loglikelihood function $\ell=-\sum\limits_{i=1}^n\frac{(y_i-\mu)^2}{2}+const$
 \begin{enumerate}
 \item when $y_1=1$, $\ell(y)=\frac{(y-\mu)^2}{2}+const$ is maximized if $\mu=1$ as it gives $-\sum\limits_{i=1}^n\frac{(1-\mu)^2}{2}=0$, any $\mu$ that is different from $\mu=1$ will leads to a negative first term.
