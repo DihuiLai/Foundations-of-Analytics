@@ -192,7 +192,7 @@ p, &y=1\\
 \end{cases}
 \end{align*}
 Or if you express this in a single formula it is 
-$$f(y;p)=p^y(1-p)^y$$
+$$f(y;p)=p^y(1-p)^{1-y}$$
 you can verify that when $y=1$, $f(y, p)=p$ and when $y=0$, $f(y, p)=1-p$
 
 When you draw a data point from this distribution, the likelihood that the value being 1 is $f(1, p)=p$ and the value being 0 is $f(0, p)=1-p$
@@ -206,7 +206,7 @@ When you draw a data point from this distribution, the likelihood that the value
 $$f(1, p)=\frac{1}{\sqrt{2\pi}}e^{-\frac{1}{2}}$$
 
 The likelihood that the value being $0.5$ is 
-$$f(1, p)=\frac{1}{\sqrt{2\pi}}e^{-\frac{0.5^2}{2}}$$
+$$f(0.5, p)=\frac{1}{\sqrt{2\pi}}e^{-\frac{0.5^2}{2}}$$
 
 
 \section{Maximum Likelihood Estimator of the Multivariate Linear Model}

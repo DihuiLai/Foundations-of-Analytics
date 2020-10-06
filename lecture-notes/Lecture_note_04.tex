@@ -42,7 +42,7 @@ p, &y=1\\
 \end{cases}
 \end{align*}
 Or 
-$$f(y;p)=p^y(1-p)^y$$
+$$f(y;p)=p^y(1-p)^{1-y}$$
 
 The probability mass distribution (or the likelihood function by definition) for $n$ independent events is
 $$L(p_1, p_2,...p_n)=f(y_1, y_2, ...y_n; p_1, p_2, ..., p_n)=\prod_{i=1}^{n}p_{i}^{y^i}(1-p_{i})^{1-y^{i}}$$
@@ -67,7 +67,7 @@ $y=1$ & $L(p)=p$     &$L_{max}=1$ at $p=1$\\
 Observations & $L(p)$ &$ L_{max}(p)$\\
 \hline
 $y^1=0, y^2=0$ & $L(p)=(1-p)^2$ &$L_{max}=1$ at $p=0$\\
-$y^1=1, y^2=1$ & $L(p)=p^2$     &$L_{max}=1$ at $p=0$\\
+$y^1=1, y^2=1$ & $L(p)=p^2$     &$L_{max}=1$ at $p=1$\\
 $y^1=0, y^2=1$ & $L(p)=p(1-p)$  &$L_{max}=0.25$ at $p=0.5$
 \end{tabular}
 \end{center}
@@ -134,10 +134,9 @@ p_k=\frac{x_k}{n}
 
 \section{Logistic Regression}
 \subsection{Likelihood Function}
-In general, every events could have its own underlying parameter $p$. For n-independent events, let us assume the parameters are $p_1$, $p_2$, ..., $p_n$ respectively. The corresponding log-likelihood function is thus
+In general, every events could have its own underlying parameter $p$. For n-independent events, let us assume the parameters are $p_1$, $p_2$, ..., $p_n$ respectively. The corresponding likelihood function is thus
 \begin{align}
-\ell(p_1, p_2,...p_n)&=\sum\limits_{i=1}^{n}\left(y^i \log(p_i)+(1-y^i)\log(1-p_i)\right)
-\end{align}
+L(p_1, p_2,...p_n)=\prod_{i=1}^{n}p_{i}^{y^i}(1-p_{i})^{1-y^{i}}\end{align}
 
 The log-likelihood function is the defined as the log transformation of the likelihood function
 \begin{align}
@@ -171,18 +170,18 @@ $\beta$ $\frac{1}{1+\exp(-\vec{\beta}\cdot\vec{x}^i)}$. However, we can solve th
 
 \section{Newton-Raphson Method}
 \subsection{Single Variable}
-Consider a log-likelihood function of one parameter ${\ell(\beta)}$. In general, $\ell$ can be of any function and complex. With the hope that its derivative $\ell'$ is simpler, we use Taylor expansion for approximation around some point $\beta_0$
+Consider a log-likelihood function of one parameter ${\ell(\beta)}$. In general, $\ell$ can be of any function and complex. With the hope that its derivative $\ell'$ is simpler, we use Taylor expansion for approximation around some starting point $\beta_0$
 \begin{equation}
 \ell(\beta)\sim\ell(\beta_0)+\ell'(\beta_0)(\beta-\beta_0)+\frac{1}{2}\ell''(\beta_0)(\beta-\beta_0)^2
 \end{equation}
 
-The derivative of equation (7) is thus
+The derivative of equation (7) w.r.t $\beta$ is thus
 \begin{equation}
 \ell'(\beta)\sim0+\ell'(\beta_0)+\ell''(\beta_0)(\beta-\beta_0)
 \end{equation}
 
 
-The $\beta^*$ that minimizes the log-likelihood function have $\ell'(\beta)=0$ at the point i.e. ${\ell'(\beta)|_{\beta=\beta^*}=0}$. Using equation (8), we have
+The $\beta^*$ that minimizes the log-likelihood function ensures $\ell'(\beta)=0$ i.e. ${\ell'(\beta)|_{\beta=\beta^*}=0}$. Using equation (8), we have
 \begin{equation}
 \ell'(\beta_0)+\ell''(\beta_0)(\beta^*-\beta_0)=0
 \end{equation}
@@ -194,7 +193,7 @@ Recall that this is only an approximation solution and $\beta^*$ is not exactly 
 $$
 \beta_{k+1}=\beta_k-\frac{\ell'(\beta_k)}{\ell''(\beta_k)}, \text { until } |\beta_{k+1}-\beta_{k}|<\delta
 $$
-Here, $|\beta_{k+1}-\beta_{k}|<\delta$ is the convergence condition and $\delta$ is tolerance level. $\delta$ is usually set as a small number. The algorithms says that we can stop the iteration if we are very close to the optimal point.
+Here, $|\beta_{k+1}-\beta_{k}|<\delta$ is the convergence condition and $\delta$ is tolerance level. $\delta$ is usually set to be a small number. The algorithms says that we can stop the iteration if we are very close to the optimal point.
 \subsection{Multiple Variable}
 In the case where the log-likelihood function is dependent on multiple parameters $\ell({\beta})$, the Taylor expansion is
 \begin{equation}
