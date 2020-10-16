@@ -1,0 +1,101 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Lachaise Assignment
+% LaTeX Template
+% Version 1.0 (26/6/2018)
+%
+% This template originates from:
+% http://www.LaTeXTemplates.com
+%
+% Authors:
+% Marion Lachaise & François Févotte
+% Vel (vel@LaTeXTemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+
+\documentclass{article}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr, graphicx}
+\usepackage{hyperref}
+\fancyhf{}
+
+
+\rhead{\includegraphics[width=8cm]{washulogo.eps}}
+\lhead{T81-574: Foundations of Analytics}
+
+\input{structure.tex} % Include the file specifying the document structure and custom commands
+
+%----------------------------------------------------------------------------------------
+%	ASSIGNMENT INFORMATION
+%-----------------------------------the-----------------------------------------------------
+
+\title{Cause of Mortality and Medical Transcript Analysis} % Title of the assignment
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Print the title
+
+\thispagestyle{fancy}
+\pagestyle{fancy}
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+\section{Background}
+Every year, centers for disease control and prevention (CDC) provides detailed statistics of deaths and their underlying causes in the United States. The CDC mortality data is used by various industries like medical, health and insurance to provide better services. It provides the basis of numerous researches and is widely cited in public papers.\\\\
+Because of your outstanding knowledge, you are hired as a data scientist by a prestigeous insurance company. The VP of your department wants to launch a life insurance product but would like to do an analysis on the cause of death in the US population first. The following questions needs to be answered:
+
+\section{Problems}
+\subsection{Cause of Death in the U.S.}
+\begin{itemize}
+\item What are the major causes of death in the US (show your evidence)?
+
+\item Are the major causes of death changing over time? Are there any significant increasing or decreasing trends? Can you explain the trends (using references, other sources of data etc.)? How can you address the significance of the trends using statistical modeling method?
+
+\item For different ages what are the main causes of death? What are the main causes of death among young people? What are the main cause of death among old people (can you design a way to visualize your findings)?
+
+\item Pick a few causes of death and estimate the probability of death due to those causes (For example: build a binary classification model to understand the impacts of age, gender, calendar year, education ... For example, estimate the death caued by heart disease v.s. other diseases).
+
+\item Explore the data creatively and see if you can get any insights beyond your VP's question list (OPTIONAL).
+
+\end{itemize}
+
+\subsection{Medical Transcript}
+You have sample medical transcripts of ~5000 patients.\textbf{"medicaltranscriptions.csv"}. You want to determine if any patients have medical conditions that are associated with ICD codes of major causes of death.
+\begin{itemize}
+\item Design a similarity measure metric
+\item Calculate the similarity measure between ICD code descritption and medical transcirpts
+\item Assign ICD code to a medical transcripts only if the similarity score is above certain threshold.
+\end{itemize}
+
+\section{Data} % Unnumbered section
+\begin{itemize}
+\item Download the CDC mortality data between 2005 and 2015 from \url{https://www.kaggle.com/cdc/mortality} the data files include \textbf{"2005\_data.csv", "2006\_data.csv" ... "2015\_data.csv"}. Each file contains 77 columns and the fields are selectively described as below:
+\begin{itemize}
+\item current\_data\_year: the year of the statistics
+\item detail\_age: death age
+\item icd\_code\_10th\_revision: ICD10 code, a medical classification list by the World Health Organization (WHO). It contains codes for diseases, signs and symptoms, abnormal findings, complaints, social circumstances, and external causes of injury or diseases. A detailed descriptions of the code can be found in \textbf{allvalid2011 (detailed titles headings).xls"}
+\end{itemize}
+\item Medical transcripts of 5000 patients: \textbf{"medicaltranscriptions.csv"}.
+
+\end{itemize}
+
+\section{Project Requirements}
+Please use the data provided and do the analysis that are needed to answer the questions listed above. Put together a report and present it to the VP of your department. Specifically, 
+\begin{itemize}
+\item Form a team of 3-4 people and work together to accomplish the tasks.
+\item Prepare a report that describes the project's background, your methods, results (including graphs) and conclusions.
+\item Put together a powerpoint and present your results.
+\item Submit the report together with the codes.
+\end{itemize}
+
+\end{document}

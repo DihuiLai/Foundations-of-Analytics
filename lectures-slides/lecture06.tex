@@ -1,6 +1,6 @@
 %!TeX encoding = UTF-8
 %!TeX program = xelatex
-\documentclass[notheorems, aspectratio=54]{beamer}
+\documentclass[notheorems, aspectratio=54, tikz,border=10pt,multi]{beamer}
 % aspectratio: 1610, 149, 54, 43(default), 32
 
 \usepackage{latexsym}
@@ -25,11 +25,10 @@
 \usepackage{framed}
 \usepackage{fancybox}
 \usepackage{tikz}
-\usepackage{tikz-qtree}
 \usepackage{pgf}
 \usetikzlibrary{automata, calc,trees,positioning,arrows,chains,shapes.geometric,%
     decorations.pathreplacing,decorations.pathmorphing,shapes,%
-    matrix,shapes.symbols}
+    matrix,shapes.symbols, hobby}
 \pgfmathsetseed{1} % To have predictable results
 % Define a background layer, in which the parchment shape is drawn
 \pgfdeclarelayer{background}
@@ -44,6 +43,7 @@
 
 % Macro to draw the shape behind the text, when it fits completly in the
 % page
+
 \def\parchmentframe#1{
 \tikz{
   \node[inner sep=2em] (A) {#1};  % Draw the text of the node
@@ -196,14 +196,14 @@
     showtabs=false,
     morekeywords={Str, Num, List},
 }
-
 % ---------------------------------------------------------------------
 
 %% preamble
-\title{Lecture06}
+\title{Lecture 06: Statistical Modeling}
 % \subtitle{The subtitle}
 \author{Dihui Lai}
 \institute[WUSTL]{dlai@wustl.edu}
+
 
 % -------------------------------------------------------------
 
@@ -215,180 +215,150 @@
 \end{frame}
 
 
-\begin{frame}
-CONTENT
-\begin{itemize}
-\item Supervised Learning v.s. Unsupervised Learning
-\item CART (Classification and Regression Tree)
-\item Random Forest
-\item Gradient Boosting Trees
-\end{itemize} 
-\end{frame}
-
-
-%% normal frame
-\section{Supervised Learning v.s. Unsupervised Learning}
 
 \begin{frame}
-\frametitle{Supervised Learning v.s. Unsupervised Learning}
+\frametitle{Statistical Modeling Framework}
 \begin{itemize}
-\item \textbf{Supervised Leaning}: a model/algorithm that is built on a dataset that contains both input data and desired outcome. For example, logistic regression; linear regression.
-\item \textbf{Unsupervised Leaning}: a model/algorithm that is built on a dataset that contains both input data but no desired outcome. For example, K-mean clustering
+\item A quantity to be optimized: Sum of squared errors/Likelihood function/Loss function
+\item A model that explains the predictors and the target variable, directly or indirectly
+\item An optimization algorithm: Newton-Raphson; greedy search etc..
 \end{itemize}
 \end{frame}
 
+\begin{frame}
+\frametitle{Statistical Modeling Practical Steps}
+\begin{itemize}
+\item Data wrangling, visualization, basic statistic analysis
+\item Determine the property of the target variable and the loss function to use;
+\item Variable selection; feature engineer
+\item Model quality control; prevent overfitting; 
+\end{itemize}
+\end{frame}
+
+
 %% normal frame
-\section{CART}
-\begin{frame}
-    \frametitle{CART: Impurity Measurement}
-    At node $\mathnormal{t}$, the fraction of class $\mathnormal{i}$ is denoted as $\mathnormal{p(i|t)}$
-    
-    Entropy: $\mathnormal{H(t)=-\sum\limits_{i=1}^{C}p(i|t)\log(p(i|t))}$
-    
-    Gini-Index: $\mathnormal{Gini(t)=\sum\limits_{i=1}^{C}[p(i|t)]^2}$
-    
-    Classification Error: $\mathnormal{Error(t)=1-\max\limits_{i}p(i| t)}$
-\end{frame}
+\section{Loss Function}
 
 \begin{frame}
-    \frametitle{Entropy}
-    Considering the entropy of a data set that contains two types of outcomes: {0, 1}. Running 10 experiments, we get the following out comes (0, 0, 1, 0, 1, 0, 1, 1, 0, 1). The entropy is 
-    $$
-    \mathnormal{ H(t)}=-\sum\limits_{i=1}^{2}\frac{1}{2}\log_2(\frac{1}{2})=1
-    $$
-    
-What if we have out come of (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)? The entropy is 
-    $$
-    \mathnormal{H(t)}=1\log_2(1)+0\log_2(0)=0
-    $$
-
-The less variance in the data, the smaller the entropy is. For binary outcome, a probability of 1/2 leads to the largest uncertainty/entropy.
+\frametitle{Building Statistical Models: Likelihood/Loss Function}
+\begin{itemize}
+\item We are planting some seeds in your garden. What kind of distribution shall we use if we want to know the number of seeds germinate depending on the amount of water and fertilizer (Poisson/Logistic).
+\item You were asked to develop an algorithm that makes predictions about the future sale prices of homes (Gaussian).
+\item A researcher is interested in how variables, such as GRE (Graduate Record Exam scores), GPA (grade point average) and prestige of the undergraduate institution, effect admission into graduate school (Logistic).
+\item A health-related researcher is studying the number of hospital visits in past 12 months by senior citizens in a community based on the characteristics of the individuals and the types of health plans under which each one is covered (Poisson).
+\end{itemize}
 
 \end{frame}
 
-\begin{frame}
-\frametitle{CART Model}
-John likes playing tennis on Saturday, The liklihood of John playing tennis depends on the weather. John has never played on a rainy. He may or may not play on a windy day. Given the weather, can you predict if John will play tennis this weekend?
 
+\begin{frame}
+\frametitle{How to select a Likelihood/Loss function?}
+\begin{itemize}
+\item Determine the distribution of the target variable e.g. histogram; unique values; single variable statistics
+\item Starting with something that you are familiar with; use the likelihood/loss function that is given to you (by your boss, a client or any stakeholders)
+\item Pentalty terms: L1/L2 norm 
+\begin{itemize}
+\item L1 regularization $\mathnormal{\ell+\alpha \sum\limits_{j=1}^m|\beta_j|}$
+\item L2 regularization $\mathnormal{\ell+\alpha \sum\limits_{j=1}^m\beta_j^2}$
+\end{itemize}
+
+
+\end{itemize}
+\end{frame}
+
+\section{Variable Selection}
+
+\begin{frame}
+\frametitle{Goodness of Fit}
+
+The metrics to measure the goodness of a model fitting
+
+In Ordinary Least Square (OLS), this could be the sum square errors.
+
+In GLM this could be one of the followings
+\begin{itemize}
+\item Liklihood function$$\ell=\sum_{j} \left[y^j\theta^j-b(\theta^j)\right]$$
+
+\item Deviance $$D=\ell_{max}-\ell(\theta (\hat{\beta}))$$ where $\ell_{max}$ is the log likelihood of the saturated model.
+
+\item AIC: $${\displaystyle \mathrm {AIC} \,=\,2k-2\ell}$$
+Here, k is the number of estimated parameters in the model. Besides maximizing the likelihood, AIC also penalize the complexity of a model.
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Goodness of Fit: Continued}
+\begin{itemize}
+\item BIC: $${\displaystyle \mathrm {BIC} \,=\,\log(n)k-2{\ell}}$$
+Here, n is the number of data points. Similar to AIC but penalize more on the model compelxity weighted by the amount of data.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Variable Selection}
+\begin{itemize}
+\item Determine the contribution of a variable to the following metrics: Likelihood/Loss function, Deviance, AIC and BIC
+\item Beware of target leak.
+\item Consider the context of application. Is the variable available in application scenario?
+\item Does it make intuitive sense?
+\item Variable's statistic significance, p-value (reject the variable if p-value is above certain threshold e.g. $>0.05$, $>0.01$ etc.).
+\end{itemize}
+\end{frame}
+
+\section{Feature Engineer}
+\begin{frame}
+\frametitle{Feature Engineer}
+\begin{itemize}
+\item Categorical variables
+      \begin{itemize}
+        \item[-] Regrouping
+        \item[-] Converting to numeric version
+      \end{itemize}
+\item Numeric variables
+      \begin{itemize}
+        \item[-] Function transformation: polynomial, spline, power function, exponential, log etc.
+      \end{itemize}
+      
+\item Variable interactions
+\item Features from sub-models
+\end{itemize}
+\end{frame}
+
+\section{Overfitting \& Cross-Validation}
+
+\begin{frame}
+\frametitle{Overfitting \& Cross validation}
+\begin{itemize}
+\item When a model becomes over-complex, it starts to fit noises rather than the true pattern
+\item Training data v.s. validation data: one way to prevent overfitting is to split data into training set and validation set. If the model peforms significantly worse in the validationd data, it shows a sign of overfitting. 
+\item Cross validation.
+\end{itemize}
+\end{frame}
 \begin{center}
+    
 \begin{tikzpicture}
-\tikzset{every tree node/.style={align=center,anchor=north}}
-\Tree [.Rain? No 
-		[.Hot? [.Humid? No Yes ][.Wind? No Yes ] ] ]
+    \matrix (M) [matrix of nodes,
+        nodes={minimum height = 7mm, minimum width = 1.5cm, outer sep=0, anchor=center, draw},
+        column 1/.style={nodes={draw=none}, minimum width = 4cm},
+        row sep=1mm, column sep=-\pgflinewidth, nodes in empty cells,
+        e/.style={fill=black!10}
+      ]
+      {
+        Experiment 1 & |[e]| & & & & \\
+        Experiment 2 & & |[e]| & & & \\
+        Experiment 3 & & & |[e]| & & \\
+        Experiment 4 & & & & |[e]| & \\
+        Experiment 5 & & & & & |[e]| \\
+      };
+      \draw (M-1-2.north west) ++(0,2mm) coordinate (LT) edge[|<->|, >= latex] node[above]{Total number of datasets} (LT-|M-1-6.north east);
+
 \end{tikzpicture}
+
 \end{center}
-\end{frame}
-
-\begin{frame}
-\frametitle{CART Model: How to Grow a Tree?}
-\begin{itemize}
-\item At each node, the tree algorithm will check every variable for a possible split. 
-\item A variable is selected for the split if it maximally reduces the impurity in the child nodes (e.g. the largest reduction of entroy, the largest reduction of variance etc.)
-\item Pruning: a tree can grow till each leave only contains one data point. Pruning the tree is needed to avoid overfitting.
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{CART Model: Stopping Criterion}
-Stopping criterion
-\begin{itemize}
-\item[-] The number of training sample after split is less than certain number 'min\_ samples\_ split'.
-\item[-] When the depth of the tree reaches to certain threshold 'max\_ depth'.
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Information Gain at a Split Node}
-Assuming we collect John's tennis activities for 20 weeks. Out of the 20 weekends, we have 8 sunny day and John plays tennis on all of them. Out of the rest 12 days, John played tennis on 7 days. 
-Before any split, we have the entropy calculated as 
-    $$
-     \mathnormal{H(root)}=-\frac{15}{20}\log(\frac{15}{20})-\frac{5}{20}\log(\frac{5}{20})=0.562
-    $$
-Split based on the weather, we have on sunny days
-$
- \mathnormal{H(sunny)=0}
-$
-and on other days
-$
-\mathnormal{H(!sunny)}=-\frac{7}{12}\log(\frac{7}{12})-\frac{5}{12}\log(\frac{5}{12})=0.679
-$
-Therefore the child nodes have average entropy of 
-$$
-\mathnormal{H(childs)}=\frac{8}{20}\cdot 0+\frac{12}{20}\cdot 0.679=0.407
-$$
-We have entropy reduced by $\mathnormal{\Delta H}=0.562-0.390=0.154$
-\end{frame}
-
-\begin{frame}
-\frametitle{Information Gain at a Split Node}
-Instead of splitting by forcast, we look at the wind speed. Out of the 20 weekends, 10 days are windy and 10 days are not windy. Out of the windy day, John played 6 times and 9 times for the non-windy days.
-
-Split based on the wind condition, we have on windy days
-$
-\mathnormal{H(!windy)}=-\frac{6}{10}\log(\frac{6}{10})-\frac{4}{10}\log(\frac{4}{10})=0.673
-$
-and on other days
-$
-\mathnormal{H(windy)}=\frac{9}{10} \log(\frac{9}{10})+\frac{1}{10} \log(\frac{1}{10})=0.325
-$
-
-Therefore the child nodes have average entropy of 
-$$
-\mathnormal{H(childs)}=\frac{1}{2} 0.673+\frac{1}{2} 0.325=0.499
-$$
-We have entropy reduced by $\mathnormal{\Delta H}=0.562-0.5=0.063$
-\end{frame}
 
 
 
-
-\section{Random Forest}
-\begin{frame}
-
-\frametitle{Random Forest}
-It terms out that multiple trees together can produce better model than a single tree. 
-
-In order to build a random forest, do the following to grow each individual tree.
-\begin{itemize}
-\item  use a random sub-sample with replacement, to grow each individual tree.
-\item  At each node,  $\mathnormal{M<<m}$ columns are randomly selected, out of all m predictors. Usually, the default choice of $\mathnormal{M=m/3}$ for regression tree and $\mathnormal{M=\sqrt{m}}$ for classification tree.
-\item Each tree is grown to the largest extent possible (one sample in the leaves)
-
-\end{itemize}
-\end{frame}
-\section{GBM}
-
-\begin{frame}
-
-\frametitle{Gradient Boosting Tree}
-The Gradient boosting tree is a collection of trees, where each individual tree is constructed to predict the 'residuals'.
-$\mathnormal{\hat{y}(x_i)=\sum\limits_{k=1}^K \gamma_k h_k(x_i)}$, where $\mathnormal{h_k(x)}$ is a tree. 
-
-The $\mathnormal{k^{th}}$ tree is built to fit the 'residuals' from the precedent $\mathnormal{k-1}$ trees  
-
-\end{frame}
-
-\begin{frame}
-The algorithm in a nutshell
-
-Step 1: 
-$$\mathnormal{\hat{y}_0(x) = \underset{\gamma}{\arg\min} \sum_{i=1}^n L(y^i, \gamma)}$$
-
-Step 2: Fit a tree model $\mathnormal{h_{k}}$ by training it on the dataset $\mathnormal{[\vec{x}^i, r^{i}_{k}]}$
-
-Here,
-$$\mathnormal{r^{i}_{k} = -\left[\frac{\partial L(y^i, {y}(x^i))}{\partial y(x^i)}\right]_{{y}(x)=\hat{y}_{k-1}(x)} \quad \mbox{for } i=1,\ldots,n.}$$
-
-Step 3: Update the estimator $\mathnormal{\hat{y}_{k}(x)=\hat{y}_{{k-1}}(x)+\gamma _{k}h_{k}(x)}$ 
-
-Here, 
-$\mathnormal{\gamma_k = \underset{\gamma}{\operatorname{arg\,min}} \sum_{i=1}^n L\left(y^i, \hat{y}_{k-1}(x^i) + \gamma h_k(x^i)\right)}$
-
-Reference: 
-
-\url{https://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf}
-\end{frame}
 
 
 \end{document}
-
