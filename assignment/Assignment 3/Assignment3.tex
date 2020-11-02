@@ -126,20 +126,22 @@ After looking at the SP500 index change over time i.e. plots 1.1(1), you decide 
 \begin{enumerate}[(1)]
 \item In the GLM framework that you learned, what kind of distribution will you choose from the exponential family?
 \item Build the GLM model
-\item How can you interpret the parameters in your model?
-\item Make an in sample prediction for the SP500 index between 2009 and 2018. Compare it with the actual SP500 index (visualize it in a graph). What does the model capture/not capture?
-\item Based on the model, where do you think the SP500 index will be by the end of year 2019.
-\item In order to validate your model, you also decide to use the data between 2009 and 2016 as training set and use 2017 and 2018 as test data set. What's the summed square error after applying the model on the test data set.  
+\item How can you interpret the betas in your model, phrase a few words that you can explain to Joe?
+\item Make an in sample prediction for the SP500 index between 2009-2018. Compare it with the actual SP500 index (visualize it in a graph). What does the model capture/not capture?
+\item Calculate the summed-square-error (SSE) of your in sample prediction. Do one for all data points and do one for the data points between 2017-2018
+\item Based on the model, where do you think the SP500 index will be by the end of year 2020.
+\item In order to validate your model, you also decide to use the data between 2009-2016 as training set and use 2017-2018 as test data set. What's the summed-square-error (SSE) after applying the model on the test data set. Compare your validation SSE with the insample SSE from question (5)
 \end{enumerate}
 
 \subsection{Regression - Multiple Predictors}
-After searching the website, you learned that SP500 is an index built based on the stock price 500+ companies. The largest 5 components are "Microsoft (MSFT)", "Apple Inc. (AAPL)", "Amazon.com Inc (AMZN)", "Berkshire Hathaway Inc (BRK.B)" and "Johnson \& Johnson (JNJ)". You postulate that the SP500 index might be a weighted average of the stock prices i.e. $SP500=\beta_1MSFT+\beta_2AAPL+\beta_3AMZN+\beta_4BRK.B+...+\beta0$. 
+After searching the website, you learned that SP500 is an index built based on the stock price 500+ companies. The largest 5 components are "Microsoft (MSFT)", "Apple Inc. (AAPL)", "Amazon.com Inc (AMZN)", "Berkshire Hathaway Inc (BRK.B)" and "Johnson \& Johnson (JNJ)". You speculate that the SP500 index might be a weighted average of the stock prices i.e. $SP500=\beta_1MSFT+\beta_2AAPL+\beta_3AMZN+\beta_4BRK.B+...+\beta0$. 
 
 \begin{enumerate}[(1)]
 \item Build a multi-predictor regression model using SP500 index as the target variable and the stock price of MSFT, AAPL, AMZN, BRK.B and JNJ as the predictors (only use the stock price and SP500 index between 2013-02-08 and 2018-02-07). Hint: you need to reformat the company data so that each column represents the stock price and the row represents the date. A sample code is provided to you.
-\item How does the in-sample prediction compare to the actual SP500 index now (visualize it in a graph)?
-\item Check the significance of the variables by looking at the p-values of each variable. How do you interpret the coefficients? Are they all positive, what does negative number imply here?
-\item Can the model be used to predict future SP500 price?
+\item What is the in-sample prediction summed-square-error compare (SSE) now, is it better than what you get in 1.2(5) on average?
+\item Visualize your prediction and compare it with the true value of SP500?
+\item Check the significance of the variables by looking at the p-values of each variable, are the coefficients significant? How can you phrase a few words to explain the coefficients to Joe?
+\item Can you use the model to predict future SP500 price, what is preventing you from doing that?
 \end{enumerate}
 
 \section{Mammal Classification Tree}

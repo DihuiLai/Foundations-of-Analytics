@@ -7,7 +7,6 @@
 \setlength{\parindent}{0in}
 \setlength{\parskip}{\baselineskip}%
 \setlength{\parindent}{1.5pt}%
-\DeclareMathOperator*{\argmax}{argmax} % thin space, limits underneath in displays
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\C}{\mathbb{C}}
@@ -29,258 +28,195 @@
 \usepackage{standalone}
 \usepackage{pdfpages}
 
+\tikzset{%
+  every neuron/.style={
+    circle,
+    draw,
+    minimum size=0.8cm
+  },
+  neuron missing/.style={
+    draw=none, 
+    scale=2,
+    text height=0.2cm,
+    execute at begin node=\color{black}$\vdots$
+  },
+  arro/.style={
+    ->,
+    >=latex
+  },
+  bloque/.style={
+    draw,
+    minimum height=1cm,
+    minimum width=0.5cm
+  }  
+}
 
-\title{Lecture Note - 08: NLP, Word Representation, Language Model, N-gram, MLE}
+
+\title{Lecture Note - 07: Neural Network}
 \author{Dihui Lai}
 
 \begin{document}
+
 
 \maketitle
 \tableofcontents
 
 \vspace{.25in}
 
-\section{Naive Bayes Classifier}
+\section{A Single Neuron}
 
-\subsection{Joint Probability }
-The joint probability of two random variable $X$, $Y$ can be calculated using conditional probability 
+An artificial neuron is the basic computing unit in an artificial neural network. There are different way to define a neuron. The most common one is shown in Figure 1.
+\begin{figure}
+\center
+\includegraphics[scale=0.6,page=1]{Figures/singleneuron.pdf}
+\caption{Schema: a single neuron with activation function $\sigma$}
+\end{figure}
+
+\subsection{Input}
+A neuron receives multiple inputs $x_1$, $x_2$, ..., $x_n$. The signals are summed up after modulated by a set of weights $w_1$, $w_2$, ... $w_n$. Let us denote the weighted sum $z$
 \begin{equation}
-P(X, Y)=P(X|Y)P(Y)=P(Y)P(Y|X)
+z=\sum\limits_{i=1}^{n}w_i x_i
 \end{equation}
 
-\subsection{Baye's Theorem}
-Using equation (1) it is not hard to prove the following equation
-
+Usually a biased term $w_0$ is added to the summation and we have 
 \begin{equation}
-P(Y\mid X)=\frac {P(X\mid Y)P(Y)}{P(X)}
+z=\sum\limits_{i=1}^{n}w_i x_i+w_0
 \end{equation}
 
-a.k.a. Baye's theorem. Here $P(Y)$ is called prior, which is the probability of that Y occurs without any other knowledge. $P(Y\mid X)$ is the posterior taking into consideration of X. $P(X\mid Y)$ is the likelihood.
-
-\subsection{Chain Rule}
-Apply Baye's theorem, the joint probability distribution of a set of predictor $x_1$, $x_2$, ...$x_n$ and target variable $y$ can be expressed as 
-\begin{align*}
-&p(x_1, x_2, ...x_n, y)\\
-&=p(x_1|x_2, x_3, ..., y)p(x_2, x_3, ..., y)\\
-&=p(x_1|x_2, x_3, ..., y)p(x_2|x_3, x_4, ..., y)p(x_3, x_4, ..., y)\\
-&=p(x_1|x_2, x_3, ..., y)p(x_2|x_3, x_4, ..., y)...p(x_{n-1}|x_n, y)p(x_n|y)p(y)
-\end{align*}
-
-\subsection{Naive Bayes Classifier}
-
-Assuming predictors $x_1$, $x_2$ ... $x_m$ are independent of each other and are only dependent on the target variable, then we can simplify the joint probability above as
-
+\subsection{Output}
+The weighted sum is further transferred via an activation function $\sigma$ and becomes the final output of the neuron
 \begin{equation}
-p(x_1, x_2, ...x_m, y)=p(y)\prod\limits_{j=1}^{m}p(x_j|y)
+a=\sigma(z)=\sigma(\sum\limits_{i=1}^{n}w_i x_i+w_0)
 \end{equation}
 
-If $y$ has $c$ possible outcomes, the marginal probability of $p(x_1, x_2, ...x_m)$ can be calculated as 
-\begin{equation}
-p(x_1, x_2, ...,x_m)=\sum\limits_{k}^{c}p(y_k)\prod\limits_{j=1}^{m}p(x_i|y_k)
-\end{equation}
-
-Using Bayes' theorem, $p(Y|X)=\frac{p(X,Y)}{p(X)}$, we can get the conditional probability of $y$ given $x$s as
-
-\begin{equation}
-p(y_k|x_1, x_2, ...x_m)=\frac{p(y_k)\prod\limits_{j=1}^{m}p(x_j|y_k)}{\sum\limits_{k=1}^{c}p(y_k)\prod\limits_{j=1}^{m}p(x_j|y_k)}
-\end{equation}
-
-
-The denominator is constant if the features are know. Given a data point $x_1$, $x_2$, ..., $x_m$, we need to find out the outcome $y$ that maximize $p(y|x_1, x_2, ...x_m)$, i.e.
-
-$$
-\hat{y}=\argmax_{k}p(y_k)\prod\limits_{j=1}^{m}p(x_j|y_k)
-$$
-
-Note that the conditional probability $p(x_j|y_k)$ and marginal probability $p(y_k)$ can be calculated from the data set using non-parametric methods.
-
-
-\section{Word Semantics and Vector Representations}
-\begin{itemize} 
-\item Homonymous: a word can have multiple definitions e.g. mouse could mean small rodents or it could mean computer devices. 
-\item Synonyms/antonym (words' relations): couch/sofa, vomit/throw up, filbert/hazelnut; long/short, big/little
-\item Word sentiments
-\item Can we represent a word using vectors and quantify those measures?
-\end{itemize}
-
-\subsection{Term-term matrix/Word-word matrix}
-Count the number of times ($n$) a word occurs in a context window ($w$) around the target word ($t$). Let's consider the following setence as an example:
-
-\textit{Data scientists are big data wranglers, gathering and analyzing large sets of structured and unstructured data}
-
-In the setence, the words 'are', 'and', 'of' are stop words and serve as building blocks to form a setence. While constructing a word representation, let us ignore them for the moment and consider the words in their base format. Thus we end up with a sentence as of the following 
-
-\textit{data scientist big data wrangler gather analyze large set structure unstructure data}
-
-The unique words appeared in the sentence form a dictionary: \{\textit{data, scientist big wrangler, gather, analyze, large, set, structure, unstructure}\}. 
-
-As a first step to construct a term-term matrix, we use the words from the dictionary as columns and the each word in the setence as rows. For simplicity, we consider the terms appear in a context - window of size 2, i.e. $w=\pm 1$. Check the first word in the setence \textit{data}, the words appear within the context-window are \textit{scientist} and \textit{big}. We then fill the corresponding cells $M_{12} = 1$, $M_{13} = 1$ in the term-term matrix. Similarly, the second word \textit{scientist}, has non-zero cell in the matrix $M_{21}=1$ and $M_{23}=1$. We repeat this practice and get the term-term matrix below
-
-\begin{tabular}{c c c c c c c c c c c} 
- \hline
-   & data &scientist &big &wrangler &gather &analyze &large &set &structure &unstructure\\ [0.5ex] 
- \hline\hline
- data & 0 &1 &1 &0 &0 &0 &0 &0 &0 &0\\ 
- \hline
- scientist & 1 &0 &1 &0 &0 &0 &0 &0 &0 &0\\
- \hline
- big  & 1 &1 &0 &0 &0 &0 &0 &0 &0 &0\\
- \hline
- data& 0 &0 &1 &1 &0 &0 &0 &0 &0 &0\\
- \hline
- wrangler & 1 &0 &0 &0 &1 &0 &0 &0 &0 &0\\
- \hline
- gather& 0 &0 &0 &1 &0 &1 &0 &0 &0 &0\\
- \hline
- analyze& 0 &0 &0 &0 &1 &0 &1 &0 &0 &0\\
- \hline
- large& 0 &0 &0 &0 &0 &1 &0 &1 &0 &0\\
- \hline
- set& 0 &0 &0 &0 &0 &0 &1 &0 &1 &0\\
- \hline
- structured& 0 &0 &0 &0 &0 &0 &0 &1 &0 &1\\
- \hline
- unstructured& 1 &0 &0 &0 &0 &0 &0 &0 &1 &0\\
- \hline 
- data& 0 &0 &0 &0 &0 &0 &0 &0 &0 &1 \\
- \hline
+\subsection{Activation Function}
+The activation function can of different types.  Below is a list of common activation functions. Almost all activation functions have an S-shape except for the ReLu function.
+\begin{center}
+\bgroup
+\def\arraystretch{2.5}% 
+\begin{tabular}{c|c} 
+Name & Definition\\
+\hline
+Step Function & $\sigma (z)={\begin{cases}0&{\text{for }}z<0\\1&{\text{for }}z\geq 0\end{cases}}$\\
+\hline
+Logistic or sigmoid & $\sigma(z)={\frac {1}{1+e^{-z}}}$\\
+\hline
+hyperbolic tangent &$\sigma(z)={\frac {(e^{z}-e^{-z})}{(e^{z}+e^{-z})}}$\\
+\hline
+ReLU & $\sigma(z)=\begin{cases}0&{\text{for }}z\leq 0\\z&{\text{for }}z>0\end{cases}$
 \end{tabular}
-
-To construct the term-term matrix, we aggregate the rows of in the matrix above by the row keys (see below). Each row in the term-term matrix is a representaiton of the word appeared in a document.
-
-\begin{tabular}{c c c c c c c c c c c} 
- \hline
-   & data &scientist &big &wrangler &gather &analyze &large &set &structure &unstructure\\ [0.5ex] 
- \hline\hline
- data & 0 &1 &2 &1 &0 &0 &0 &0 &0 &1\\ 
- \hline
- scientist & 1 &0 &1 &0 &0 &0 &0 &0 &0 &0\\
- \hline
- big  & 1 &1 &0 &0 &0 &0 &0 &0 &0 &0\\
- \hline
- wrangler & 1 &0 &0 &0 &1 &0 &0 &0 &0 &0\\
- \hline
- gather& 0 &0 &0 &1 &0 &1 &0 &0 &0 &0\\
- \hline
- analyze& 0 &0 &0 &0 &1 &0 &1 &0 &0 &0\\
- \hline
- large& 0 &0 &0 &0 &0 &1 &0 &1 &0 &0\\
- \hline
- set& 0 &0 &0 &0 &0 &0 &1 &0 &1 &0\\
- \hline
- structured& 0 &0 &0 &0 &0 &0 &0 &1 &0 &1\\
- \hline
- unstructured& 1 &0 &0 &0 &0 &0 &0 &0 &1 &0\\
- \hline 
- \hline
-\end{tabular}
-
-For example, $data$ and $scientist$ have vector represetations $data=[0, 1, 2, 1, 0, 0, 0, 0, 0, 1]$, $scientist=[1, 0, 1, 0, 0, 0, 0, 0, 0, 0]$, respectively.
+\egroup
+\end{center}
 
 
-\subsection{Neural Network Based Word Representation}
+\section{Neural Network}
+\subsection{Forward Path}
+Each neuron at layer ${l}$ receives inputs from all neuron from the previous layer ${l-1}$,
+\begin{equation}
+{z_k^l=\sum_jw^{l-1}_{kj}a_j^{l-1}}
+\end{equation}
+Here, $a_j^{l-1}$ is the input from $jth$ neuron from $l-1$ layer. The neurons transfer the input signal $z_k^l$ via a transfer function $\sigma$ and send as input to to the next layer
+\begin{equation}
+a_k^l=\sigma(z_k^l)
+\end{equation}
 
-Use neural network to learn word representation is a hot topics in recent years. One simple method is described as below
-
-\begin{itemize}
-
-\item The input variable is a one-hot encoding vector. If the vocabulary is of size V, an input vector is has V components ${\vec{x}=[0, 0, 0 ...1, ...0]}$ 
-\item The hidden layer has $n$ neurons. The input weights matrix ${W}$ is of size ${V\times n}$
-\item The output layer weights ${W}'$ matrix is of size ${n\times V}$
-\item CBOW: take $2m$ words ( i.e. ${w_{c-m}}$, ...${w_{c-1}}$, ${w_{c+1}}$, ${w_{c+m}}$) around the center word ${w_c}$ as input  ${w_c}$ is the target.
-\item Skip-gram: take the center word ${w_c}$ as the input and the $2m$ words ( i.e. ${w_{c-m}}$, ...${w_{c-1}}$, ${w_{c+1}}$, ${w_{c+m}}$) around it as the target.
-
-\end{itemize}
-
+Inserting equation (4) to (5), we have 
+\begin{equation}
+z_k^l=\sum_jw^{l-1}_{kj}\sigma(z_j^{l-1})=\sum_jw^{l-1}_{kj}a_j^{l-1}
+\end{equation}
 
 \begin{figure}
 \center
-\includegraphics[scale=1,page=1]{Figures/wordembedding.pdf}
-\caption{Neural network architecture for learnign COBW and skip-gram embeddings. A vocabulary is fed into the neural network using one-hot encoding methods. For a vocabulary of size V, the input vector is of size 1xV
- }
+\includestandalone[width=.6\textwidth]{Figures/neuralnetwork}
+\caption{A neural network of multiple layer structures. The hidden layers before layer $l-1$ and after layer $l$ are not shown. }
 \end{figure}
 
-The word representation/embedding can be calculated as 
 
-$${w_i=x_iW}$$
+\subsection{The Derivatives of Neural Network}
+In order to calculate the neural network properly we need to understand a few derivatives.
 
-${x_i}$ is the ${i^{th}}$ word in the dictionary, ${w_i}$ is the ${i^{th}}$ row in the input matrix ${W}$
-
-
-
-\subsection{Word Representation using Neural Network}
-
-\section{Cosine Similarity}
-
-By looking at the Term-term matrix in Table. 1, we can see that data and scientist seems to have a common context word \textit{big} and could be close in their meanings. How can we quantify this? One possibility is using the dot-product of their vector representation.
-$$
-\vec{v}\cdot\vec{w}=\sum_{i=1}^N v_i w_i
-$$
-
-However, the dot-product favors vectors of higher frequency. Words that appears often are likely to have higher dot-product value than word of low occurence. To normalize the frequency, we can use cosine similarity meature, which is defined as below 
-$$
-cosine(\vec{v}, \vec{w})=\frac{\vec{v}\cdot\vec{w}}{|\vec{v}||\vec{w}|}=\frac{\sum_{i=1}^N v_i w_i}{\sqrt{\sum_1^N v_i^2}\sqrt{\sum_1^N w_i^2}}
-$$
-
-
-
-
-\section{Language Model}
-
-\subsection{N-gram Language Models}
 \begin{itemize}
-\item Models that assign probabilities to sequences of words are called language models or LM.
-\item An n-gram is a sequence of N words e.g. 2-gram (or bigram) "Good Morning", 3-gram "Turn it on"
-\item N-gram lanuage models estimate the probability of the last word of an n-gram given the previous words
+\item The partial derivatives of $z^{l}_k$ against $z^{l-1}_j$
+\begin{equation}
+\frac{\partial z^{l}_k}{\partial z_j^{l-1}}=w^{l-1}_{kj}\sigma'(z^{l-1}_j)
+\end{equation}
+
+\item The partial derivatives of $z^{l}_k$ against a weight element $w_{kj}^{l-1}$
+\begin{equation}
+\frac{\partial z^{l}_k}{\partial w_{kj}^{l-1}}=\sigma(z^{l-1}_j)
+\end{equation}
+
+\item Given a function of $f(z^{l-1}_j)$, we can explicitly express it in terms of $z^{l}$s,
+$$
+f(z^{l-1}_j)=f(z^l_1(z^{l-1}_j), z^l_2(z^{l-1}_j)...z^l_m(z^{l-1}_j)...)
+$$
+its derivative w.r.t $z^{l-1}_j$ is
+\begin{equation}
+\frac{\partial f}{\partial z^{l-1}_j}=\sum\limits_m \frac{\partial f}{\partial z^{l}_m}\frac{\partial z^l_m}{\partial z^{l-1}_j}=\sum\limits_m \frac{\partial f}{\partial z^{l}_m}w^{l-1}_{mj}\sigma'(z^{l-1}_j)
+\end{equation}
+
 \end{itemize}
 
-LM: What is the probability of having a sentence that consists a sequence of words: $w_1$, $w_2$, $w_3$ ... $w_N$, i.e. $P(w_1, w_2, w_3...w_N)$. 
 
-Recall the chain rule:
-\begin{align*}
-&P(w_1, w_2, w_3...w_N)\\
-&=P(w_1)P(w_2|w_1)P(w_3|w_1, w_2)P(w_4|w_1, w_2, w_3)...P(w_N|w_1, w_2, ...w_{N-1})
-\end{align*}
-In the case of bigram, we assume $P(w_N|w_1,...,w_{N-1})=P(w_N|w_{N-1})$, since the word is only dependent on the previous word, it is also called Markov assumption.
-\vspace{0.2cm}
-In general case of an n-gram, we assume $P(w_N|w_1, w_2, ...w_{N-1})=P(w_N|w_{N-1}, w_{N-2}, ...w_{N-n+1})$
 
-\subsection{MLE Estimation for bigram }
-In the case of bigram, the MLE estimation can be formulated as 
-$$
-P(w_N|w_{N-1})=\frac{C(w_{N-1}w_N)}{\sum_{w}C(w_{N-1}w)}=\frac{C(w_{N-1}w_N)}{C(w_{N-1})}
-$$
-Here, $C(w_{N-1})$ is the count of a word's occurence in a document. $C(w_{N-1}w_N)$ is the number of co-occurence of the word pair $w_{N-1}~w_{N}$, where $w_{N}$ appears after $w_{N-1}$ . For example, if we are interested in knowing the probabily that "$house$" occurs after "$white$", $P(house|white)$ we can do the followings: count the total occurence of the word "$white$" in a document and then count the co-occurence of the word pair "$white$ $house$"
- 
-\subsection{Example: MLE Estimation for bigram }
-Estimate the bigram for the following corpus, here $\langle s \rangle$ and $\langle /s\rangle$ are introduced as the symbols that represents the begining and  end of a setence.
+\subsection{Backpropagation}
+Consider neural network that has N layers, the cost function is dependent on all the $z$s of neurons in all layers
+\begin{equation}
+C\left(\vec{z}^N(\vec{z}^{N-1}(...\vec{z}^{l}(\vec{z}^{l-1})...) ...\vec{z}^1)\right)
+\end{equation}
 
-$\langle s \rangle$ \textit{I am Sam} $\langle /s\rangle$\\
-$\langle s \rangle$ \textit{Sam I am} $\langle /s\rangle$\\
-$\langle s \rangle$ \textit{I do not like green eggs and ham} $\langle /s \rangle$
+In order to find the weights that optimiaze the cost function, we can use gradient descent. Recall the gradient descent methods updates weights of layer $l-1$ as of the following
 
-We begin buy counting the words occurence and have $C(I)=3$, $C(Sam)=2$, $C(\langle /s\rangle)=3$, $C(\langle s\rangle)=3$, $C(\langle s \rangle I)=2$, $C(\langle s \rangle Sam)=1$
+\begin{equation}
+w_{kj}^{l-1} \leftarrow w_{kj}^{l-1}-\eta \frac{\partial C}{\partial w_{kj}^{l-1}}
+\end{equation}
 
-\vspace{0.2cm}
+By using the chain rule, we have 
+\begin{equation}
+\frac{\partial C}{\partial w_{kj}^{l-1}}
+=\frac{\partial C(...(z^l_k(w_{kj}^{l-1},...)))}{\partial w_{kj}^{l-1}}
+=\frac{\partial C}{\partial z_k^l}\frac{\partial z_k^l}{\partial w_{kj}^{l-1}}
+\end{equation}
 
-So we have $P(I|\langle s \rangle)=\frac{2}{3}$, $P(Sam|\langle s \rangle)=\frac{1}{3}$, $P(do|I)=\frac{1}{3}$, $P(am|I)=\frac{2}{3}$, $P(Sam|am)=\frac{1}{2}$, $P(\langle /s\rangle | Sam)=\frac{1}{2}$
+There are two terms on the R.H.S. of the equation, 
 
-\vspace{0.2cm}
-
-The in-sample probability of $P(\langle s \rangle \textit{I am Sam}\langle /s\rangle)=P(I|\langle s \rangle)P(am|I)P(Sam|am)P(\langle /s\rangle | Sam)=\frac{2}{3} \times \frac{2}{3} \times \frac{1}{2} \times \frac{1}{2}=\frac{1}{9}$
-
-\subsection{Compare LMs}
-How do we compare two LM?
 \begin{itemize}
-\item A test data/hold out data set can be used to evaluate a LM. Apply the estiamated conditional probability to the test data set and compare the resulting probability.
-\item More often than not, perplexity is used as a preferred metric, instead of the raw probability. Perplexity is defined as 
+
+\item Using equation (9), the first term becomes 
 \begin{align*}
-	PP(W)&=P(w_1, w_2, ...w_N)^{-\frac{1}{N}}\\
-	&=\sqrt[N]{\frac{1}{P(w_1, w_2, ...w_N)}}
+\frac{\partial C}{\partial z_k^l}=\sum_m \frac{\partial C}{\partial z_m^{l+1}} w^l_{mk}\sigma'(z_k^l)
 \end{align*}
-\item Maximize probability is equivalent to minimize perplexity
+Use notation $\delta^l_k=\frac{\partial C}{\partial z_k^l}$ for short, we have
+\begin{equation}
+\delta^l_k=\sum_m \delta^{l+1}_m w^l_{mk}\sigma'(z_k^l)
+\end{equation}
+
+\item Using what we calculated in equation (8), the second term is simply the output from $jth$ neuron in layer $l-1$ 
+\begin{equation}
+\frac{\partial z_k^l}{\partial w_{kj}^{l-1}}=\sigma({z^{l-1}_j})=a^{l-1}_j
+\end{equation}
 
 \end{itemize}
+
+
+Finally, we get our iteration methods for calculating the gradient of the cost function w.r.t the weights i.e.
+
+\begin{equation}
+\frac{\partial C}{\partial w_{kj}^{l-1}}=\delta_k^{l}a_j^{l-1}
+\end{equation}
+
+\section{Neural Network Training Algorithm}
+So the overall backpropagation algorithm works as the following:
+
+\begin{itemize}
+\item Initialize all weights $w_{mk}^l$ in every layer of the neural network
+\item Feedfoward: use formula (6) to caculate the quantities $z_k^l$, $a_k^l$ for each neuron in all layers. Note in the input layer $a_k=x_k$, $x_k$ are he inputs to the $1st$ layer neurons
+\item Backpropagation: after calculating the feedforward path, we use the backpropagation to figure out all the $\delta_k^l$ and update the weights. In contrast to the forward path. The back propagation starts by calculating the $\delta_k^L$ of the last layer $L$. The $\delta_k^l$ is then iteratively calculated using equation (13).
+\item Calculate the gradient of the cost function w.r.t to all weights $w_{kj}^{l-1}$
+\item updates the weights using equation (11)
+
+\end{itemize}
+
 
 \end{document}
 

@@ -1,7 +1,7 @@
 \documentclass[12pt, oneside]{article} 
 \usepackage{amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry}
-\usepackage{mathtools}
 \usepackage{hyperref}
+\usepackage{standalone}
 
 \geometry{tmargin=.75in, bmargin=.75in, lmargin=.75in, rmargin = .75in}  
 \setlength{\parindent}{0in}
@@ -24,199 +24,142 @@
 \newtheorem{lem}{Lemma}
 \newtheorem{cor}{Corollary}
 \usepackage{tikz}  %TikZ central library is called.
-\usetikzlibrary{automata,positioning} 
-\usepackage{standalone}
-\usepackage{pdfpages}
-
-\tikzset{%
-  every neuron/.style={
-    circle,
-    draw,
-    minimum size=0.8cm
-  },
-  neuron missing/.style={
-    draw=none, 
-    scale=2,
-    text height=0.2cm,
-    execute at begin node=\color{black}$\vdots$
-  },
-  arro/.style={
-    ->,
-    >=latex
-  },
-  bloque/.style={
-    draw,
-    minimum height=1cm,
-    minimum width=0.5cm
-  }  
-}
 
 
-\title{Lecture Note - 07: Neural Network}
+\title{Lecture Note - 06: Tree, CART, Random Forest, Gradient Boosting Machine}
 \author{Dihui Lai}
 
 \begin{document}
-
 
 \maketitle
 \tableofcontents
 
 \vspace{.25in}
 
-\section{A Single Neuron}
 
-An artificial neuron is the basic computing unit in an artificial neural network. There are different way to define a neuron. The most common one is shown in Figure 1.
-\begin{figure}
-\center
-\includegraphics[scale=0.6,page=1]{Figures/singleneuron.pdf}
-\caption{Schema: a single neuron with activation function $\sigma$}
-\end{figure}
+%% normal frame
+\section{Classification and Regression Tree (CART)}
 
-\subsection{Input}
-A neuron receives multiple inputs $x_1$, $x_2$, ..., $x_n$. The signals are summed up after modulated by a set of weights $w_1$, $w_2$, ... $w_n$. Let us denote the weighted sum $z$
-\begin{equation}
-z=\sum\limits_{i=1}^{n}w_i x_i
-\end{equation}
+\subsection{Impurity Measurement}
+At node $\mathnormal{t}$, the fraction of class $\mathnormal{i}$ is denoted as $\mathnormal{p(i|t)}$
+    
+Entropy: $H(t)=-\sum\limits_{i=1}^{C}p(i|t)\log(p(i|t))$
+    
+Gini-Index: $Gini(t)=\sum\limits_{i=1}^{C}[p(i|t)]^2$
+    
+Classification Error: $Error(t)=1-\max\limits_{i}p(i|t)$
 
-Usually a biased term $w_0$ is added to the summation and we have 
-\begin{equation}
-z=\sum\limits_{i=1}^{n}w_i x_i+w_0
-\end{equation}
+Considering the entropy of a data set that contains two types of outcomes: {0, 1}. Running 10 experiments, we get the following out comes (0, 0, 1, 0, 1, 0, 1, 1, 0, 1). The entropy is 
+$$
+\mathnormal{ H(t)}=-\sum\limits_{i=1}^{2}\frac{1}{2}\log_2(\frac{1}{2})=1
+$$
+    
+What if we have out come of (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)? The entropy is 
+$$
+\mathnormal{H(t)}=1\log_2(1)+0\log_2(0)=0
+$$
 
-\subsection{Output}
-The weighted sum is further transferred via an activation function $\sigma$ and becomes the final output of the neuron
-\begin{equation}
-a=\sigma(z)=\sigma(\sum\limits_{i=1}^{n}w_i x_i+w_0)
-\end{equation}
+The less variance in the data, the smaller the entropy is. For binary outcome, a probability of 1/2 leads to the largest uncertainty/entropy.
 
-\subsection{Activation Function}
-The activation function can of different types.  Below is a list of common activation functions. Almost all activation functions have an S-shape except for the ReLu function.
-\begin{center}
-\bgroup
-\def\arraystretch{2.5}% 
-\begin{tabular}{c|c} 
-Name & Definition\\
-\hline
-Step Function & $\sigma (z)={\begin{cases}0&{\text{for }}z<0\\1&{\text{for }}z\geq 0\end{cases}}$\\
-\hline
-Logistic or sigmoid & $\sigma(z)={\frac {1}{1+e^{-z}}}$\\
-\hline
-hyperbolic tangent &$\sigma(z)={\frac {(e^{z}-e^{-z})}{(e^{z}+e^{-z})}}$\\
-\hline
-ReLU & $\sigma(z)=\begin{cases}0&{\text{for }}z\leq 0\\z&{\text{for }}z>0\end{cases}$
-\end{tabular}
-\egroup
-\end{center}
-
-
-\section{Neural Network}
-\subsection{Forward Path}
-Each neuron at layer ${l}$ receives inputs from all neuron from the previous layer ${l-1}$,
-\begin{equation}
-{z_k^l=\sum_jw^{l-1}_{kj}a_j^{l-1}}
-\end{equation}
-Here, $a_j^{l-1}$ is the input from $jth$ neuron from $l-1$ layer. The neurons transfer the input signal $z_k^l$ via a transfer function $\sigma$ and send as input to to the next layer
-\begin{equation}
-a_k^l=\sigma(z_k^l)
-\end{equation}
-
-Inserting equation (4) to (5), we have 
-\begin{equation}
-z_k^l=\sum_jw^{l-1}_{kj}\sigma(z_j^{l-1})=\sum_jw^{l-1}_{kj}a_j^{l-1}
-\end{equation}
+\subsection{Model}
+John likes playing tennis on Saturday, The liklihood of John playing tennis depends on the weather. John has never played on a rainy. He may or may not play on a windy day. Given the weather, can you predict if John will play tennis this weekend?
 
 \begin{figure}
 \center
-\includestandalone[width=.6\textwidth]{Figures/neuralnetwork}
-\caption{A neural network of multiple layer structures. The hidden layers before layer $l-1$ and after layer $l$ are not shown. }
+\includegraphics[scale=1.2,page=1]{Figures/CART.pdf}
 \end{figure}
 
-
-\subsection{The Derivatives of Neural Network}
-In order to calculate the neural network properly we need to understand a few derivatives.
-
+\subsection{Model: How to Grow a Tree?}
 \begin{itemize}
-\item The partial derivatives of $z^{l}_k$ against $z^{l-1}_j$
-\begin{equation}
-\frac{\partial z^{l}_k}{\partial z_j^{l-1}}=w^{l-1}_{kj}\sigma'(z^{l-1}_j)
-\end{equation}
+\item At each node, the tree algorithm will check every variable for a possible split. 
+\item A variable is selected for the split if it maximally reduces the impurity in the child nodes (e.g. the largest reduction of entroy, the largest reduction of variance etc.)
+\item Pruning: a tree can grow till each leave only contains one data point. Pruning the tree is needed to avoid overfitting.
+\end{itemize}
 
-\item The partial derivatives of $z^{l}_k$ against a weight element $w_{kj}^{l-1}$
-\begin{equation}
-\frac{\partial z^{l}_k}{\partial w_{kj}^{l-1}}=\sigma(z^{l-1}_j)
-\end{equation}
+Stopping criterion
+\begin{itemize}
+\item[-] The number of training sample after split is less than certain number 'min\_ samples\_ split'.
+\item[-] When the depth of the tree reaches to certain threshold 'max\_ depth'.
+\end{itemize}
 
-\item Given a function of $f(z^{l-1}_j)$, we can explicitly express it in terms of $z^{l}$s,
+\subsection{ Gain at a Split Node}
+Assuming we collect John's tennis activities for 20 weeks. Out of the 20 weekends, we have 8 sunny day and John plays tennis on all of them. Out of the rest 12 days, John played tennis on 7 days. 
+Before any split, we have the entropy calculated as 
 $$
-f(z^{l-1}_j)=f(z^l_1(z^{l-1}_j), z^l_2(z^{l-1}_j)...z^l_m(z^{l-1}_j)...)
+\mathnormal{H(root)}=-\frac{15}{20}\log(\frac{15}{20})-\frac{5}{20}\log(\frac{5}{20})=0.562
 $$
-its derivative w.r.t $z^{l-1}_j$ is
-\begin{equation}
-\frac{\partial f}{\partial z^{l-1}_j}=\sum\limits_m \frac{\partial f}{\partial z^{l}_m}\frac{\partial z^l_m}{\partial z^{l-1}_j}=\sum\limits_m \frac{\partial f}{\partial z^{l}_m}w^{l-1}_{mj}\sigma'(z^{l-1}_j)
-\end{equation}
 
-\end{itemize}
+Split based on the weather, we have on sunny days
+$
+ \mathnormal{H(sunny)=0}
+$
+and on other days
+$
+\mathnormal{H(!sunny)}=-\frac{7}{12}\log(\frac{7}{12})-\frac{5}{12}\log(\frac{5}{12})=0.679
+$
+Therefore the child nodes have average entropy of 
+$$
+\mathnormal{H(childs)}=\frac{8}{20}\cdot 0+\frac{12}{20}\cdot 0.679=0.407
+$$
+We have entropy reduced by $\mathnormal{\Delta H}=0.562-0.390=0.154$
+
+Instead of splitting by forcast, we look at the wind speed. Out of the 20 weekends, 10 days are windy and 10 days are not windy. Out of the windy day, John played 6 times and 9 times for the non-windy days.
+
+Split based on the wind condition, we have on windy days
+$
+\mathnormal{H(!windy)}=-\frac{6}{10}\log(\frac{6}{10})-\frac{4}{10}\log(\frac{4}{10})=0.673
+$
+and on other days
+$
+\mathnormal{H(windy)}=\frac{9}{10} \log(\frac{9}{10})+\frac{1}{10} \log(\frac{1}{10})=0.325
+$
+
+Therefore the child nodes have average entropy of 
+$$
+\mathnormal{H(childs)}=\frac{1}{2} 0.673+\frac{1}{2} 0.325=0.499
+$$
+We have entropy reduced by $\mathnormal{\Delta H}=0.562-0.5=0.063$
 
 
 
-\subsection{Backpropagation}
-Consider neural network that has N layers, the cost function is dependent on all the $z$s of neurons in all layers
-\begin{equation}
-C\left(\vec{z}^N(\vec{z}^{N-1}(...\vec{z}^{l}(\vec{z}^{l-1})...) ...\vec{z}^1)\right)
-\end{equation}
 
-In order to find the weights that optimiaze the cost function, we can use gradient descent. Recall the gradient descent methods updates weights of layer $l-1$ as of the following
+\section{Random Forest}
 
-\begin{equation}
-w_{kj}^{l-1} \leftarrow w_{kj}^{l-1}-\eta \frac{\partial C}{\partial w_{kj}^{l-1}}
-\end{equation}
+It terms out that multiple trees together can produce better model than a single tree. 
 
-By using the chain rule, we have 
-\begin{equation}
-\frac{\partial C}{\partial w_{kj}^{l-1}}
-=\frac{\partial C(...(z^l_k(w_{kj}^{l-1},...)))}{\partial w_{kj}^{l-1}}
-=\frac{\partial C}{\partial z_k^l}\frac{\partial z_k^l}{\partial w_{kj}^{l-1}}
-\end{equation}
-
-There are two terms on the R.H.S. of the equation, 
-
+In order to build a random forest, do the following to grow each individual tree.
 \begin{itemize}
-
-\item Using equation (9), the first term becomes 
-\begin{align*}
-\frac{\partial C}{\partial z_k^l}=\sum_m \frac{\partial C}{\partial z_m^{l+1}} w^l_{mk}\sigma'(z_k^l)
-\end{align*}
-Use notation $\delta^l_k=\frac{\partial C}{\partial z_k^l}$ for short, we have
-\begin{equation}
-\delta^l_k=\sum_m \delta^{l+1}_m w^l_{mk}\sigma'(z_k^l)
-\end{equation}
-
-\item Using what we calculated in equation (8), the second term is simply the output from $jth$ neuron in layer $l-1$ 
-\begin{equation}
-\frac{\partial z_k^l}{\partial w_{kj}^{l-1}}=\sigma({z^{l-1}_j})=a^{l-1}_j
-\end{equation}
+\item  use a random sub-sample with replacement, to grow each individual tree.
+\item  At each node,  $\mathnormal{M<<m}$ columns are randomly selected, out of all m predictors. Usually, the default choice of $\mathnormal{M=m/3}$ for regression tree and $\mathnormal{M=\sqrt{m}}$ for classification tree.
+\item Each tree is grown to the largest extent possible (one sample in the leaves)
 
 \end{itemize}
 
+\section{Gradient Bossting Machine (GBM)}
 
-Finally, we get our iteration methods for calculating the gradient of the cost function w.r.t the weights i.e.
+The Gradient boosting tree is a collection of trees, where each individual tree is constructed to predict the 'residuals'.
+$\mathnormal{\hat{y}(x_i)=\sum\limits_{k=1}^K \gamma_k h_k(x_i)}$, where $\mathnormal{h_k(x)}$ is a tree. 
 
-\begin{equation}
-\frac{\partial C}{\partial w_{kj}^{l-1}}=\delta_k^{l}a_j^{l-1}
-\end{equation}
+The $\mathnormal{k^{th}}$ tree is built to fit the 'residuals' from the precedent ${k-1}$ trees  
 
-\section{Neural Network Training Algorithm}
-So the overall backpropagation algorithm works as the following:
+The algorithm in a nutshell
 
-\begin{itemize}
-\item Initialize all weights $w_{mk}^l$ in every layer of the neural network
-\item Feedfoward: use formula (6) to caculate the quantities $z_k^l$, $a_k^l$ for each neuron in all layers. Note in the input layer $a_k=x_k$, $x_k$ are he inputs to the $1st$ layer neurons
-\item Backpropagation: after calculating the feedforward path, we use the backpropagation to figure out all the $\delta_k^l$ and update the weights. In contrast to the forward path. The back propagation starts by calculating the $\delta_k^L$ of the last layer $L$. The $\delta_k^l$ is then iteratively calculated using equation (13).
-\item Calculate the gradient of the cost function w.r.t to all weights $w_{kj}^{l-1}$
-\item updates the weights using equation (11)
+Step 1: Build an initial tree to minimize the loss function of the $n$ data points
+$$\mathnormal{\hat{y}_0(x) = \underset{\gamma}{\arg\min} \sum_{i=1}^n L(y^i, \gamma)}$$, where $L$ is the loss function
 
-\end{itemize}
+Step 2: Fit a tree model $\mathnormal{h_{k}}$ by training it on the dataset $\mathnormal{[\vec{x}^i, r^{i}_{k}]}$
 
+Here,
+$$\mathnormal{r^{i}_{k} = -\left[\frac{\partial L(y^i, {\hat{y}}(x^i))}{\partial \hat{y}(x^i)}\right]_{{\hat{y}}({x})={\hat{y}}_{k-1}(x)} \quad \mbox{for } i=1,\ldots,n.}$$
+
+As a simple example when $L=\frac{(y^i-\hat{y}{(x^i}))^2}{2}$, we have $r^i_k=y^i-\hat{y}(x^i)$, which is basically the difference between the model estimation and the observed $y^i$.
+
+Step 3: Update the estimator $\mathnormal{\hat{y}_{k}(x)=\hat{y}_{{k-1}}(x)+\gamma _{k}h_{k}(x)}$ 
+
+Here, 
+$\mathnormal{\gamma_k = \underset{\gamma}{\operatorname{arg\,min}} \sum_{i=1}^n L\left(y^i, \hat{y}_{k-1}(x^i) + \gamma h_k(x^i)\right)}$
+
+Reference: \href{https://xgboost.readthedocs.io/en/latest/tutorials/model.html#:~:text=XGBoost%20stands%20for%20%E2%80%9CExtreme%20Gradient,Gradient%20Boosting%20Machine%2C%20by%20Friedman.&text=The%20gradient%20boosted%20trees%20has,of%20materials%20on%20the%20topic.}{Xgboost tree model}
 
 \end{document}
 

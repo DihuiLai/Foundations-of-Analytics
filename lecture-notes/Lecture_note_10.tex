@@ -2,7 +2,6 @@
 \usepackage{amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry}
 \usepackage{mathtools}
 \usepackage{hyperref}
-\usepackage{listings}
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
@@ -56,7 +55,7 @@
 }
 
 
-\title{Lecture Note - 10: Document Classification, Support Vector Machine (SVM), Sentiment Analysis}
+\title{Lecture Note - 09: POS Tagging, HMM, NER}
 \author{Dihui Lai}
 
 \begin{document}
@@ -66,132 +65,92 @@
 
 \vspace{.25in}
 
+\section{Part-of-Speech (POS) Tagging}
+As you perhaps learned in grammer class that a word could be one the following types: noun, verb, article, adjective, preposition, pronoun, adverb etc. These categories are called part of speech tags. We can certainly have a refined version of the tags. An important tagset for English is the 45-tag Use \href{https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html}{\underline{Penn Treebank tagset}}. Here is one example of POS tag for a sentence using Penn Treebank:
 
-\section{Document Representation}
+The$[DT]$ Itek$[NNP]$ Air$[NNP]$ Boeing$[NNP]$ 737$[CD]$ took$[VBD]$ off$[RP]$ bound$[VBN]$ for$[IN]$ Mashhad$[NNP]$ in$[IN]$ north-eastern$[JJ]$ Iran$[NNP]$.
 
-\subsection{Document Representations}
-A document can be represented by the words and the number of their occurrence using term-document matrix
-\begin{center}
- \begin{tabular}{c c c c c} 
- \hline
- Words & As You Like It& Twelfth Night& Ulius Caesar& Henry V\\ [0.5ex] 
- \hline\hline
- battle & 1 & 0 & 7 &13 \\ 
- \hline
- good & 114 & 80 &62 & 89\\
- \hline
- fool & 36 & 58 & 1 & 5 \\
- \hline
- wit & 20 & 15 & 2 & 3 \\
- \hline
-\end{tabular}
-\end{center}
+How can we get a program to understand the POS tag of a word in a sentence? A most straight forward way is to calculate the probability using the following algorithm
+
+If a word $w$ that could be tagged as $\mathnormal{t_1}$, $\mathnormal{t_2}$, ... $\mathnormal{t_k}$, the probability that the word has tag $\mathnormal{t_i}$ is
+\begin{equation*}
+{p(t_i|w) = \frac{c(w,t_i)}{\sum\limits_{i=1}^{k}c(w, t_i)}}
+\end{equation*}
+
+However, this approach does not take the context of the word into consideration, which is very important to POS tagging. For example the word \textit{account} could be a noun or verb depending on the context: 
+
+A number of factors \textit{account} [VERB] for the differences between the two scores.
+
+How do I open an \textit{account} [NOUN] with your bank?
 
 
+\section{Hidden Markove Model}
 
-\subsection{tf-idf Weighted Measure}
-Certain words are more common in all documents e.g. the, it, they. The less frequent like "litigation" might be more important that the more frequent word "good". The tf-idf algorithms can be used to adjust the intuition.
-$$
-w_{t,d} = tf_{t,d}\times idf_{t}
-$$
+Provided that we have a sequence of words $\mathnormal{W=w_1, w_2,  ...w_i, ...w_n}$ and we want to figure out the corresponding POS tag sequence $\mathnormal{T= t_1, t_2, ... t_i ...t_n}$
 
-Here,
-$$
-tf_{t, d}=1 + log_{10}(count(t, d)) \text{ if } count(t, d) > 0, \text{ else } 0
-$$
-With $count(t, d)$  the number of occurence of the term $t$ in the document $d$
+Using Bayes' theorem, the conditional probability of having a POS tag sequence T given a word sequence W is 
+\begin{equation}
+\mathnormal{P(T | W) = P(W|T) P(T) / P(W) = const \times P(W|T) P(T)}
+\end{equation}
 
-$$
-idf_{t}=log_{10}\left(\frac{N}{df_t}\right)
-$$ 
-N is the total number of documents in the collection, and $df_t$ is the number of documents in which term t occurs. If word good appears in all collected document, $idf_t=0$
+Generally, we have 
+\begin{align*}
+P(T)&= P(t_1) P(t_2 | t_1) P(t_3 | t_1, t_2) P(t_4 | t_1, t_2, t_3)  ...P(t_n | t_{1}, t_{2}, ... t_{n-1})
+\end{align*}
+Assume that ${t_i}$ is only dependent on ${t_{i-1}}$ (Markov assumption) we have 
+\begin{equation}
+P(T)=P(t_1) P(t_2 | t_1) P(t_3 | t_2) P(t_4 |  t_3)  ...P(t_n | t_{n-1})
+\end{equation}
+The conditional probability $P(t_i|t_{i-1})$ is called transition probability. It describe the probability that a tag $t_i$ appears after a tag $t_{i-1}$. To calculate the emission probability we can use the following equation
+\begin{equation}
+\mathnormal{P(t_{i}|t_{i-1}) = \frac{c(t_{i-1},t_{i})}{c(t_{i-1})}} \text{ (transition probability)}
+\end{equation}
+Where $c(t_{i-1},t_{i})$ is the frequency that tag $t_i$ occurs next to $t_{i-1}$ and $c(t_{i})$ is the frequency that tag $t_i$ occurs in a document.
 
+To calculate the term $P(W|T)$ in equation, we assume that $w_i$ is only dependent on $t_i$ and  
+\begin{equation}
+P(W|T) = P(w_1 | t_1) P(w_2 | t_2) P(w_3 | t_3)  ...P(w_n | t_{n})
+\end{equation}
 
-\subsection{Document/Paragraph to Vector Representation}
+The condtional probabily $P(w_i|t_i)$ is called emission probability, and can be calculated as 
 
-\begin{itemize}
-\item Average of the word embedding: take the mean of the vector embedding of the words in the document. 
-\item LDA (Latent Dirichlet Allocation) [David Blei, Andrew Ng, and Michael I. Jordan, 2003]
-\item Distributed Memory version of Paragraph Vector (PV-DM)
-\item ...
-\end{itemize}
+\begin{equation}
+\mathnormal{P(w_i|t_i) = \frac{c(w_i,t_i)}{c(t_i)}} \text{ (emission probability)}
+\end{equation}
 
+Where $c(w_i, t_i)$ is the frequency that a word $w_i$ is tagged as $t_i$ or that a tag $t_i$ is used for word $w_i$. In the denominator, $c(t_i)$ is the frequency that the tag $t_i$ occurs in a document.
 
+In summary, we have 
+\begin{equation}
+{P(T|W) \sim P(t_1) P(t_2|t_1) ... P(t_{n}|t_{n-1}) P(w_1|t_1) P(w_2|t_2) ... P(w_n|t_n)}
+\end{equation}
 
+The best tag sequence is the sequence that maximize the conditional probability $P(T|W)$ i.e.
+\begin{align*}
+\mathnormal{(t_1, t_2, ...t_n)} & = \mathnormal{\argmax_{t_1, t_2, ...t_n}P(t_1, t_2..., t_n|w_1, w_2, ...w_n)}\\
+&= \mathnormal{\argmax_{t_1, t_2, ...t_n} \prod\limits_{i=1}^n P(w_i |t_i ) P(t_i |t_{i-1})}
+\end{align*}
 
-\section{Document Classification, Sentiment Analysis}
-\begin{itemize}
-\item Document classification: use machine learning to classify a document type, novel, news, entertainment etc. 
-\item Sentiment Analysis: given a document/paragraph, infer the underlying sentiment (positive/negative, like/dislike)
-\end{itemize}
+To solve the problem, we use an algorithm called Viterbi Algorithms. 
 
+\section{Named Entity Recognition}
+POS tag helps understanding document at a single word level. Yet we often need to go beyond single word level to understand the semantics of a document. When read independently, the word \textit{white} and \textit{house} means color and the place where people live. When put together, \textit{white house} means a special place where the American president live. In order to understand thw words' meaning as a group. We use an algorithm called named entity recogition(NER). NER labels word chucks in a corpus that are names of things e.g. person, organization, money amount, gene and proteins etc. 
 
+For exmpale, {Alex$[PERSON]$ is going to Los $[LOCATION]$ Angeles $[LOCATION]$}
 
-\section{Support Vector Machine (SVM)}
+One chanllenge of NER tagging is that not all words belong to an entity. In the example abve, words \textit{is going to} do not belong to any entity. On the other hand, Los Angeles belong to the same entity but we are not reflecting this fact by tagging them separately. 
 
-\begin{itemize}
-\item SVM is a classification/regression model that use hyperplane to categorize data points in high dimension space. 
-\item Loss function: $\mathnormal{L=\frac{1}{2}|w|^2}$ when $\mathnormal{y^i (\vec{w}\cdot \vec{x}^i+b)\geq 1}$
-\item or equivalently  $\mathnormal{L'=\frac{1}{2}|w|^2-\sum\limits_{i=1}^N \alpha_i (y^i (\vec{w}\cdot \vec{x}^i+b)-1)}$ 
-\item Optimization: $\mathnormal{\frac{\partial L'}{\partial w_i}=0}$
-\end{itemize}
+A better way of tagging the entiteis properly is using a tagging method called IOB $[\textit{I-Inside}]$, $[\textit{O-Outside}]$, $[\textit{B-Begin}]$.
 
-
-
-
-\section{Other NLP Challenges and Transfer Learning}
-
-\begin{itemize}
-\item Question and answer, e.g. SQuAD (the Stanford Question Answering Dataset)
-\item Machine translation
-\item Multi-lingual NLP
-\item Transfer learning e.g. BERT (\url {https://arxiv.org/abs/1810.04805})
-\end{itemize}
-
-
-
-%% normal frame
-\section{Regular Expression}
-
-
-\begin{itemize}
-\item Algebraic notation for characterizing a set of strings.
-\item Useful for searching in corpus of texts
-\item Python example: str = "The rain in Spain"; x = re.findall("Spain", str)
-\end{itemize}
-
-
-
-
-
-\begin{itemize}
-\item[-][]: Used to indicate a set of characters e.g. [abc] will match 'a', 'b', or 'c'.
-\item[-]'\textbackslash d': matches any decimal digit; equivalent to the set [0-9].
-\item[-] '+': match 1 or more repetitions of the preceding RE
-\item[-]'\textbackslash D': anything but a number (a non-digit)	
-\item[-] '\textbackslash s': space (tab,space,newline etc.)
-\item[-] '\textbackslash S': anything but a space e.g. '\textbackslash S+@\textbackslash S+' represents email address
-\item[-]'\textasciicircum': This expression matches the start of a string
-\end{itemize}
-
-
-
-\subsection{Expression in Python}
-re.search(regex, text) returns a match object when the pattern is found or not match if the pattern is not found.
-\begin{lstlisting}
-import re
-m = re.search('hello', 'hello world, hello all, good afternoon')
-print m.group(0)
-#hello
-\end{lstlisting}
-
-re.findall(regex, text) will return a list of all the matches.
-\begin{lstlisting}
-m = re.findall('hello', 'hello world, hello all, good afternoon')
-print m
-#['hello', 'hello']
-\end{lstlisting}
-
+For the example above, we tag the words as below
+\begin{align*}
+&{Alex} [\textit{I-PER}]\\
+&\textit{is} [\textit{O}]\\
+&\textit{going} [\textit{O}]\\
+&\textit{to} [\textit{O}]\\
+&\textit{Los} [\textit{B-LOC}]\\
+&\textit{Angeles} [\textit{I-LOC}]
+\end{align*}
 
 \end{document}
 
