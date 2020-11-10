@@ -429,20 +429,5 @@ $$
 \end{enumerate}
 \end{frame}
 
-
-
-\begin{frame}
-\frametitle{Multinomial distribution and multi-class classification}
-
-Multinomial distribution: there could be $\mathnormal{c}$ outcome of an experiment, each of probability  $\mathnormal{p_1}$, $\mathnormal{p_2}$, $\mathnormal{p_3}$, ..., $\mathnormal{p_c}$ and $\mathnormal{\sum\limits_{j=1}^c p_j=1}$. If one perform $\mathnormal{N}$ experiments, the probability of getting $\mathnormal{x_1}$, $\mathnormal{x_2}$, $\mathnormal{x_3}$, ... $\mathnormal{x_c}$ of each out come can be described as 
-$$\mathnormal{f(x_1, x_2, x_3, ... x_c)=\frac{N!}{x_1! x_2! ... x_c!} p_1^{x_1} p_2^{x_2} ... p_c^{x_c}}$$
-
-The likelihood function can be accordingly written as 
-$\mathnormal{L= \prod \limits_{i=1}^n\prod \limits_{j=1}^c p_{j}^{x^i_j}}$
-
-The log-likelihood function (a.k.a log-loss) is
-$$\mathnormal{\ell=\log(L)=\sum\limits_{i=1}^n \sum\limits_{j=1}^c x_j^i \log(p_j)}$$
-\end{frame}
-
 \end{document}
 
