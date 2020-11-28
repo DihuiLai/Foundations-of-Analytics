@@ -47,12 +47,13 @@
 %	PROBLEM 1
 %----------------------------------------------------------------------------------------
 
-
-\section{Document Classification} % Unnumbered section
+\section{POS tagging and Document Classification} % Unnumbered section
 Use the  data set of ~5000 medical cases \textbf{"medicaltranscriptions.csv"}. Build a document classification model.
 
 \begin{enumerate}[(1)]
 
+\item Peform POS-tag on each medical transcript and create a diciontary of nouns only for all documents (i.e. NN, NNP, NNS and NNPS)
+\item Create a document vector representation using word count. 
 \item Convert the "description" of each case to a vector (using the pretrained word to vector dictionary "PubMed-and-PMC-w2v.bin"). You may use the average of word vectors as the document vector representation.
 \item Build a multi-class classification SVM model to classify a document into one of the "medical\_ specialty" categories.  Use the document vector as your predictors and use "medical\_ specialty" as your target variable. 
 \item What are the in-sample recall rates for each document types?
