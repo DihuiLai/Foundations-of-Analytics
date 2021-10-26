@@ -28,7 +28,6 @@
 \fancyhf{}
 
 
-\rhead{\includegraphics[width=8cm]{washulogo.eps}}
 \lhead{T81-574: Foundations of Analytics}
 
 \input{structure.tex} % Include the file specifying the document structure and custom commands
@@ -52,20 +51,23 @@
 %----------------------------------------------------------------------------------------
 \section{Background}
 Every year, centers for disease control and prevention (CDC) provides detailed statistics of deaths and their underlying causes in the United States. The CDC mortality data is used by various industries like medical, health and insurance to provide better services. It provides the basis of numerous researches and is widely cited in public papers.\\\\
-Because of your outstanding knowledge, you are hired as a data scientist by a prestigeous insurance company. The VP of your department wants to launch a life insurance product but would like to do an analysis on the cause of death in the US population first. The following questions needs to be answered:
+Because of your outstanding knowledge, you are hired as a data scientist by a prestigious insurance company. The VP of your department wants to launch a life insurance product but would like to do an analysis on the cause of death in the US population first. The following questions needs to be answered:
 
 \section{Problems}
 \subsection{Cause of Death in the U.S.}
+Understand the cause of death and analyze the trends. Pick a few causes of death and do deep analysis (e.g.  death caused by heart disease v.s. other diseases). You may want to analyze the cause of death by using different data science techniques that you learned in class, for example, visualize the data, statistical modeling. Answer the following questions:
+
 \begin{itemize}
-\item What are the major causes of death in the US (show your evidence)?
 
-\item Are the major causes of death changing over time? Are there any significant increasing or decreasing trends? Can you explain the trends (using references, other sources of data etc.)? How can you address the significance of the trends using statistical modeling method?
+\item What are the major causes of death in the US? Do the causes vary by year, age, gender or other variables? Do you see any interesting trends? Visualize the trend by variables. 
 
-\item For different ages what are the main causes of death? What are the main causes of death among young people? What are the main cause of death among old people (can you design a way to visualize your findings)?
+\item Can you design statistical models to address the trends' significance against age/gender/year/seasons/locations etc.? You can look at one cause at a time. How can you address non-linear trends using feature engineering? Did you do any other types of feature engineers? 
 
-\item Pick a few causes of death and estimate the probability of death due to those causes (For example: build a binary classification model to understand the impacts of age, gender, calendar year, education ... For example, estimate the death caued by heart disease v.s. other diseases).
+\item Can you verify the trends using ways other than statistic modeling (citing references, other sources of data etc.)?
 
-\item Explore the data creatively and see if you can get any insights beyond your VP's question list (OPTIONAL).
+\item Explain the design of your model, the process of your variable selection. How do you prevent over-fitting? Is the size of the data causing issues for your analysis and how do you handle the issues?
+
+\item What are the major contributing factors/variables to the cause of death that you picked.
 
 \end{itemize}
 
@@ -75,6 +77,7 @@ You have sample medical transcripts of ~5000 patients.\textbf{"medicaltranscript
 \item Design a similarity measure metric
 \item Calculate the similarity measure between ICD code descritption and medical transcirpts
 \item Assign ICD code to a medical transcripts only if the similarity score is above certain threshold.
+\item How would you assess the accuracy of your similarity score design? Are they making sense?
 \end{itemize}
 
 \section{Data} % Unnumbered section
