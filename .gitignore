@@ -17,6 +17,7 @@
 **.Rhistory
 **.eps
 **.DS_Store
+**.tex
 ~**
 assignment/data
 venv/
